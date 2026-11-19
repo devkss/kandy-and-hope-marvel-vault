@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 350" width="250" height="350">
+  <defs>
+    <clipPath id="clip_d5_r2c4">
+      <rect x="6" y="6" width="238" height="338" rx="12"/>
+    </clipPath>
+    <linearGradient id="bg_d5_r2c4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#052e16"/>
+      <stop offset="55%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#052e16"/>
+    </linearGradient>
+    <linearGradient id="shine_d5_r2c4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.34)"/>
+      <stop offset="35%" stop-color="rgba(255,255,255,0.0)"/>
+      <stop offset="65%" stop-color="rgba(255,255,255,0.14)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.28)"/>
+    </linearGradient>
+  </defs>
+  <rect width="250" height="350" rx="16" fill="#0f172a"/>
+  <rect x="6" y="6" width="238" height="338" rx="12" fill="url(#bg_d5_r2c4)"/>
+  <g clip-path="url(#clip_d5_r2c4)">
+    <g><path d="M42,57 L44.1,61.9 L49,64 L44.1,66.1 L42,71 L39.9,66.1 L35,64 L39.9,61.9 Z" fill="#ffffff" opacity="0.72"/><path d="M210,77.5 L211.35,80.65 L214.5,82 L211.35,83.35 L210,86.5 L208.65,83.35 L205.5,82 L208.65,80.65 Z" fill="#ffffff" opacity="0.72"/><path d="M68,173 L70.1,177.9 L75,180 L70.1,182.1 L68,187 L65.9,182.1 L61,180 L65.9,177.9 Z" fill="#ffffff" opacity="0.72"/><path d="M196,205.5 L197.35,208.65 L200.5,210 L197.35,211.35 L196,214.5 L194.65,211.35 L191.5,210 L194.65,208.65 Z" fill="#ffffff" opacity="0.72"/><path d="M130,45 L132.1,49.9 L137,52 L132.1,54.1 L130,59 L127.9,54.1 L123,52 L127.9,49.9 Z" fill="#ffffff" opacity="0.72"/><path d="M48,250.5 L49.35,253.65 L52.5,255 L49.35,256.35 L48,259.5 L46.65,256.35 L43.5,255 L46.65,253.65 Z" fill="#ffffff" opacity="0.72"/><path d="M215,263 L217.1,267.9 L222,270 L217.1,272.1 L215,277 L212.9,272.1 L208,270 L212.9,267.9 Z" fill="#ffffff" opacity="0.72"/><path d="M152,135.5 L153.35,138.65 L156.5,140 L153.35,141.35 L152,144.5 L150.65,141.35 L147.5,140 L150.65,138.65 Z" fill="#ffffff" opacity="0.72"/><path d="M88,88 L90.1,92.9 L95,95 L90.1,97.1 L88,102 L85.9,97.1 L81,95 L85.9,92.9 Z" fill="#ffffff" opacity="0.72"/><path d="M180,143.5 L181.35,146.65 L184.5,148 L181.35,149.35 L180,152.5 L178.65,149.35 L175.5,148 L178.65,146.65 Z" fill="#ffffff" opacity="0.72"/></g>
+  </g>
+  <rect x="6" y="6" width="238" height="338" rx="12" fill="url(#shine_d5_r2c4)" stroke="#4ade80" stroke-width="2.5"/>
+  <rect x="16" y="16" width="218" height="24" rx="6" fill="rgba(15,23,42,0.78)"/>
+  <text x="24" y="32" font-family="sans-serif" font-size="9.5" font-weight="800" fill="#f8fafc" letter-spacing="0.9">TOPPS NEON MARVEL</text>
+  <text x="226" y="32" text-anchor="end" font-family="monospace" font-size="10" font-weight="700" fill="#4ade80">#2</text>
+  <g transform="translate(125,163) scale(1.0)">
+          <circle r="52" fill="rgba(15,23,42,0.34)" stroke="#4ade80" stroke-width="2.5"/>
+          <rect x="-28" y="-24" width="56" height="30" rx="6" fill="#e2e8f0" stroke="#ffffff" stroke-width="2.5"/>
+          <rect x="-6" y="6" width="12" height="30" rx="4" fill="#92400e" stroke="#fde047" stroke-width="2"/>
+          <polygon points="-16,-38 -4,-16 -14,-16 0,4 -12,-12 -22,-12" fill="#fde047"/>
+        </g>
+  
+  
+  <rect x="16" y="296" width="218" height="40" rx="8" fill="rgba(15,23,42,0.86)" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+  <text x="125" y="316" text-anchor="middle" font-family="sans-serif" font-size="21" font-weight="900" fill="#ffffff" letter-spacing="0.5">THOR</text>
+  <text x="125" y="330" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="700" fill="#bbf7d0">Green Sparkle Foil</text>
+  <rect x="154" y="270" width="78" height="20" rx="6" fill="rgba(15,23,42,0.92)" stroke="#4ade80" stroke-width="1.4"/>
+  <text x="193" y="284" text-anchor="middle" font-family="monospace" font-size="10.5" font-weight="800" fill="#fde047">53/99</text>
+</svg>

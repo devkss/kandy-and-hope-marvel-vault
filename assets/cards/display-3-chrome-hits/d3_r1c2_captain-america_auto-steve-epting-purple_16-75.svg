@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 350" width="250" height="350">
+  <defs>
+    <clipPath id="clip_d3_r1c2">
+      <rect x="6" y="6" width="238" height="338" rx="12"/>
+    </clipPath>
+    <linearGradient id="bg_d3_r1c2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#581c87"/>
+      <stop offset="55%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#581c87"/>
+    </linearGradient>
+    <linearGradient id="shine_d3_r1c2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.34)"/>
+      <stop offset="35%" stop-color="rgba(255,255,255,0.0)"/>
+      <stop offset="65%" stop-color="rgba(255,255,255,0.14)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.28)"/>
+    </linearGradient>
+  </defs>
+  <rect width="250" height="350" rx="16" fill="#0f172a"/>
+  <rect x="6" y="6" width="238" height="338" rx="12" fill="url(#bg_d3_r1c2)"/>
+  <g clip-path="url(#clip_d3_r1c2)">
+    <rect x="14" y="14" width="222" height="322" rx="12" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
+  </g>
+  <rect x="6" y="6" width="238" height="338" rx="12" fill="url(#shine_d3_r1c2)" stroke="#e879f9" stroke-width="2.5"/>
+  <rect x="16" y="16" width="218" height="24" rx="6" fill="rgba(15,23,42,0.78)"/>
+  <text x="24" y="32" font-family="sans-serif" font-size="9.5" font-weight="800" fill="#f8fafc" letter-spacing="0.9">TOPPS CHROME MARVEL</text>
+  <text x="226" y="32" text-anchor="end" font-family="monospace" font-size="10" font-weight="700" fill="#e879f9">#AA-SE</text>
+  <g transform="translate(125,163) scale(1.0)">
+          <circle r="52" fill="rgba(15,23,42,0.34)" stroke="#e879f9" stroke-width="3"/>
+          <circle r="36" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.72"/>
+          <polygon points="0,-30 9,-9 31,-9 13,5 20,27 0,14 -20,27 -13,5 -31,-9 -9,-9" fill="#ffffff" stroke="#e879f9" stroke-width="2"/>
+        </g>
+  <g>
+          <rect x="26" y="256" width="198" height="34" rx="6" fill="rgba(255,255,255,0.92)" stroke="#e879f9" stroke-width="2"/>
+          <text x="125" y="278" text-anchor="middle" font-family="serif" font-style="italic" font-size="14" fill="#1d4ed8" font-weight="700">Steve Epting</text>
+        </g>
+  <rect x="18" y="232" width="64" height="20" rx="6" fill="#facc15"/>
+        <text x="50" y="246" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="900" fill="#0f172a">ACE 10</text>
+  <rect x="16" y="296" width="218" height="40" rx="8" fill="rgba(15,23,42,0.86)" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+  <text x="125" y="316" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="900" fill="#ffffff" letter-spacing="0.5">CAPTAIN AMERICA</text>
+  <text x="125" y="330" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="700" fill="#f3e8ff">Artist Autograph — Purple Refract…</text>
+  <rect x="154" y="232" width="78" height="20" rx="6" fill="rgba(15,23,42,0.92)" stroke="#e879f9" stroke-width="1.4"/>
+  <text x="193" y="246" text-anchor="middle" font-family="monospace" font-size="10.5" font-weight="800" fill="#fde047">16/75</text>
+</svg>

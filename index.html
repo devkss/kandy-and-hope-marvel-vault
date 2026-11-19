@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kandy &amp; Hope's Marvel Card Vault ✨ 2026 Chrome &amp; Neon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=JetBrains+Mono:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+  <div id="toast" class="toast"></div>
+
+  <!-- Hidden file inputs for live local photo preview -->
+  <input type="file" id="hero-photo-input" accept="image/*" hidden />
+  <input type="file" id="folder-upload-input" webkitdirectory directory multiple hidden />
+  <input type="file" id="modal-photo-input" accept="image/*" hidden />
+
+  <div class="container">
+    <!-- Top Control Strip -->
+    <div class="top-strip">
+      <div class="brand-pill">
+        <span class="brand-dot"></span>
+        <span>Kandy &amp; Hope's Marvel Card Vault · 2026 Edition</span>
+      </div>
+      <div class="top-actions">
+        <span id="photo-progress-badge" class="pill">0 / 180 Real Photos Loaded</span>
+        <button id="load-folder-btn" class="btn btn-soft">📁 Load Card Photos Folder</button>
+        <button id="theme-toggle" class="btn btn-soft">🌙 Dark Vault Mode</button>
+        <button id="sparkle-btn" class="btn btn-sparkle">✨ Sparkle Party!</button>
+      </div>
+    </div>
+
+    <!-- Hero Banner -->
+    <header class="hero">
+      <div class="hero-photo-wrap">
+        <div class="hero-polaroid">
+          <img id="hero-photo" src="assets/photos/kandy-and-hope.svg" alt="Kandy and Hope" />
+        </div>
+        <button class="photo-upload-chip" onclick="document.getElementById('hero-photo-input').click()">
+          📸 Load Our Photo
+        </button>
+      </div>
+
+      <div class="hero-copy">
+        <div class="hero-eyebrow">🦸‍♀️ Hope's Rainbow + Kandy's Chrome &amp; Neon Vaults</div>
+        <h1>Kandy &amp; Hope's Marvel Card Vault!</h1>
+        <p>
+          Welcome to our interactive wall-display showcase featuring <strong>Hope's 66-card Moon Girl &amp; Devil Dinosaur Rainbow</strong>
+          and <strong>Kandy's 114-card 2026 Topps Chrome &amp; Neon Marvel</strong> slabs, artist autographs, and case hits.
+          Hover over any card for 3D holographic shine, or click to inspect serials, pull odds, and GBP values!
+        </p>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Display Cards</div>
+            <div id="stat-total-cards" class="stat-value">180</div>
+            <div id="stat-total-sub" class="stat-sub">66 Hope · 114 Kandy</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">ACE Graded Slabs</div>
+            <div id="stat-slabs" class="stat-value">13</div>
+            <div id="stat-slabs-sub" class="stat-sub">10× ACE 10 · 3× ACE 9</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Ultra-Rare &amp; Case Hits</div>
+            <div id="stat-ultra" class="stat-value">17</div>
+            <div class="stat-sub">/5, /10 &amp; SSP Case Hits</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Est. Vault Value (GBP)</div>
+            <div id="stat-value" class="stat-value">£6,264</div>
+            <div id="stat-value-range" class="stat-sub">Range: £4,669 – £7,858</div>
+            <div class="val-toggle">
+              <button data-mode="low">Low</button>
+              <button data-mode="mid" class="active">Mid</button>
+              <button data-mode="high">High</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs" aria-label="Vault Sections">
+      <button class="tab-btn tab-hope active" data-tab="hope">🌈 Hope's Rainbow Room (66)</button>
+      <button class="tab-btn tab-chrome" data-tab="chrome">🏆 Kandy's Chrome Vault (75)</button>
+      <button class="tab-btn tab-neon" data-tab="neon">⚡ Kandy's Neon Vault (39)</button>
+      <button class="tab-btn" data-tab="explorer">🔎 All 180 Cards Explorer</button>
+      <button class="tab-btn" data-tab="sets">📚 Sets, Checklists &amp; Odds</button>
+      <button class="tab-btn" data-tab="guide">📷 Photo Setup &amp; Filenames</button>
+    </nav>
+
+    <!-- Tab 1: Hope's Rainbow Room -->
+    <main>
+      <section id="panel-hope" class="tab-panel active">
+        <div id="hope-displays-wrap"></div>
+      </section>
+
+      <!-- Tab 2: Kandy's Chrome Vault -->
+      <section id="panel-chrome" class="tab-panel">
+        <div id="chrome-displays-wrap"></div>
+      </section>
+
+      <!-- Tab 3: Kandy's Neon Vault -->
+      <section id="panel-neon" class="tab-panel">
+        <div id="neon-displays-wrap"></div>
+      </section>
+
+      <!-- Tab 4: All 180 Cards Explorer -->
+      <section id="panel-explorer" class="tab-panel">
+        <div class="display-section">
+          <div class="display-header">
+            <div class="display-title-group">
+              <h2>🔎 Master 180-Card Vault Explorer</h2>
+              <p id="explorer-summary">Showing 180 of 180 cards</p>
+            </div>
+          </div>
+
+          <div class="filter-bar">
+            <input type="search" id="f-search" placeholder="Search character, artist, parallel, serial (e.g. Moon Girl, 01/39, Auto)..." />
+            <select id="f-owner">
+              <option value="all">Both Owners (180)</option>
+              <option value="Hope">Hope's Cards (66)</option>
+              <option value="Kandy">Kandy's Cards (114)</option>
+            </select>
+            <select id="f-display">
+              <option value="all">All 5 Wall Displays</option>
+              <option value="1">Display 1: Moon Girl (36)</option>
+              <option value="2">Display 2: Devil Dinosaur (30)</option>
+              <option value="3">Display 3: Chrome Slabs &amp; Autos (35)</option>
+              <option value="4">Display 4: Chrome Covers &amp; Inserts (40)</option>
+              <option value="5">Display 5: Neon Marvel (39)</option>
+            </select>
+            <select id="f-set">
+              <option value="all">All 2026 Sets</option>
+              <option value="2026 Topps Chrome Marvel">2026 Topps Chrome Marvel</option>
+              <option value="2026 Topps Neon Marvel">2026 Topps Neon Marvel</option>
+              <option value="2026 Topps Chrome Marvel Sapphire">2026 Chrome Sapphire</option>
+            </select>
+            <select id="f-sort">
+              <option value="slot">Sort: Wall Display Order</option>
+              <option value="val-desc">Sort: Highest GBP Value</option>
+              <option value="val-asc">Sort: Lowest GBP Value</option>
+              <option value="rarity">Sort: Rarest Print Run (/5 → Base)</option>
+              <option value="alpha">Sort: Character A–Z</option>
+            </select>
+          </div>
+
+          <div class="quick-tags">
+            <button class="qtag active" data-qtag="all">✨ All Cards</button>
+            <button class="qtag" data-qtag="ace">💎 ACE Graded Slabs (13)</button>
+            <button class="qtag" data-qtag="low10">🔥 /5 &amp; /10 Ultra Rares</button>
+            <button class="qtag" data-qtag="auto">✍️ Autographs (8)</button>
+            <button class="qtag" data-qtag="casehit">⚡ Case Hits</button>
+            <button class="qtag" data-qtag="special">👑 Alpha #1 &amp; Bookends</button>
+          </div>
+
+          <div id="explorer-grid" class="cards-grid"></div>
+        </div>
+      </section>
+
+      <!-- Tab 5: Sets, Checklists, Pull Odds & GBP Dashboard -->
+      <section id="panel-sets" class="tab-panel">
+        <div id="sets-cards-wrap" class="sets-grid"></div>
+
+        <div class="display-section">
+          <div class="display-header">
+            <div class="display-title-group">
+              <h2>🎲 Published Pull Odds Across Our Vaults</h2>
+              <p>Official Topps pack odds showing just how rare Hope's and Kandy's biggest pulls really are.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Set</th>
+                  <th>Card / Parallel Tier</th>
+                  <th>Hobby Odds</th>
+                  <th>Mega Odds</th>
+                  <th>Blaster Odds</th>
+                  <th>Vault Highlights</th>
+                </tr>
+              </thead>
+              <tbody id="odds-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="display-section">
+          <div class="display-header">
+            <div class="display-title-group">
+              <h2>💷 Estimated Market Value Breakdown (GBP)</h2>
+              <p>Benchmarked against recent UK/global completed sales (Nov 2026) including ACE 10/9 slab &amp; bookend premiums.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Wall Display</th>
+                  <th>Owner</th>
+                  <th>Cards</th>
+                  <th>Low Est. (£)</th>
+                  <th>Mid Est. (£)</th>
+                  <th>High Est. (£)</th>
+                </tr>
+              </thead>
+              <tbody id="valuation-tbody"></tbody>
+            </table>
+          </div>
+
+          <h3 style="font-family:'Fredoka',sans-serif;margin:26px 0 4px;">🎯 Active Chase Tracker</h3>
+          <p style="margin:0;color:var(--text-muted);font-size:0.9rem;">The biggest missing pieces we're still hunting for the walls!</p>
+          <div id="chase-grid" class="chase-grid"></div>
+        </div>
+      </section>
+
+      <!-- Tab 6: Photo Setup & Filename Guide -->
+      <section id="panel-guide" class="tab-panel">
+        <div class="display-section">
+          <div class="display-header">
+            <div class="display-title-group">
+              <h2>📷 How to Drop In Your Real Flat Card Photos</h2>
+              <p>Every display already has its own folder under <code>assets/cards/</code> with temporary crystal-clear vector placeholders.</p>
+            </div>
+            <div class="display-badges">
+              <button id="guide-folder-btn" class="btn btn-primary">📁 Load Local Photos Now</button>
+              <button id="download-csv-btn" class="btn btn-soft">⬇️ Download 180-Card CSV</button>
+            </div>
+          </div>
+
+          <div class="rainbow-bar-box" style="margin-bottom:20px;">
+            <strong>3-Step Photo Swap (Zero Code Changes Needed!):</strong>
+            <ol style="margin:8px 0 0;padding-left:20px;line-height:1.65;color:var(--text-muted);font-size:0.9rem;">
+              <li>Save your photo of you &amp; Hope into <code>assets/photos/kandy-and-hope.jpg</code> (or <code>.png</code>).</li>
+              <li>Save each flat-cropped card photo into its matching folder below using the exact filename shown (<code>.jpg</code>, <code>.png</code>, or <code>.webp</code> all work automatically!).</li>
+              <li>Refresh <code>index.html</code> — the site automatically checks for your real photo first and falls back to the temporary vector card if a photo isn't in the folder yet!</li>
+            </ol>
+          </div>
+
+          <div class="filter-bar" style="grid-template-columns: 2fr 1fr;">
+            <input type="search" id="guide-search" placeholder="Filter filename guide by character, serial, or filename..." />
+            <select id="guide-display-filter">
+              <option value="all">All 5 Folders (180 Files)</option>
+              <option value="1">assets/cards/display-1-moon-girl/ (36)</option>
+              <option value="2">assets/cards/display-2-devil-dinosaur/ (30)</option>
+              <option value="3">assets/cards/display-3-chrome-hits/ (35)</option>
+              <option value="4">assets/cards/display-4-chrome-inserts/ (40)</option>
+              <option value="5">assets/cards/display-5-neon-marvel/ (39)</option>
+            </select>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Slot</th>
+                  <th>Character</th>
+                  <th>Parallel &amp; Serial</th>
+                  <th>Exact File Path to Save</th>
+                  <th>Current Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="guide-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Card Inspector Modal -->
+  <div id="card-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-box">
+      <button id="modal-close-btn" class="modal-close" aria-label="Close">✕</button>
+      <div class="modal-grid">
+        <div class="modal-preview-card">
+          <img id="modal-img" src="" alt="Card preview" />
+        </div>
+        <div>
+          <span id="modal-owner-badge" class="pill pill-pink" style="margin-bottom:10px;"></span>
+          <h2 id="modal-title" style="font-family:'Fredoka',sans-serif;font-size:1.85rem;margin:0 0 4px;"></h2>
+          <p id="modal-subtitle" style="margin:0;color:var(--text-muted);font-weight:700;"></p>
+          <div id="modal-details" class="detail-list"></div>
+
+          <div class="file-box">
+            <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">
+              Real Card Photo File Path
+            </div>
+            <code id="modal-filepath" class="fname" style="display:block;margin-bottom:10px;"></code>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              <button id="modal-copy-btn" class="btn btn-soft" style="padding:7px 13px;font-size:0.8rem;">📋 Copy Filename</button>
+              <button class="btn btn-primary" style="padding:7px 13px;font-size:0.8rem;" onclick="document.getElementById('modal-photo-input').click()">📸 Preview Real Photo Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

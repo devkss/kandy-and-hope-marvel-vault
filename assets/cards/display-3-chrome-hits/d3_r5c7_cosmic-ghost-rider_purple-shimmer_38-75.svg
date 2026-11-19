@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 350" width="250" height="350">
+  <defs>
+    <clipPath id="clip_d3_r5c7">
+      <rect x="6" y="6" width="238" height="338" rx="12"/>
+    </clipPath>
+    <linearGradient id="bg_d3_r5c7" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#581c87"/>
+      <stop offset="55%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#581c87"/>
+    </linearGradient>
+    <linearGradient id="shine_d3_r5c7" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.34)"/>
+      <stop offset="35%" stop-color="rgba(255,255,255,0.0)"/>
+      <stop offset="65%" stop-color="rgba(255,255,255,0.14)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.28)"/>
+    </linearGradient>
+  </defs>
+  <rect width="250" height="350" rx="16" fill="#0f172a"/>
+  <rect x="6" y="6" width="238" height="338" rx="12" fill="url(#bg_d3_r5c7)"/>
+  <g clip-path="url(#clip_d3_r5c7)">
+    <defs><linearGradient id="sh_d3_r5c7" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.02)"/>
+          <stop offset="30%" stop-color="rgba(255,255,255,0.28)"/>
+          <stop offset="50%" stop-color="rgba(255,255,255,0.04)"/>
+          <stop offset="75%" stop-color="rgba(255,255,255,0.24)"/>
+          <stop offset="100%" stop-color="rgba(255,255,255,0.02)"/>
+        </linearGradient></defs><rect x="6" y="6" width="238" height="338" fill="url(#sh_d3_r5c7)"/>
+  </g>
+  <rect x="6" y="6" width="238" height="338" rx="12" fill="url(#shine_d3_r5c7)" stroke="#e879f9" stroke-width="2.5"/>
+  <rect x="16" y="16" width="218" height="24" rx="6" fill="rgba(15,23,42,0.78)"/>
+  <text x="24" y="32" font-family="sans-serif" font-size="9.5" font-weight="800" fill="#f8fafc" letter-spacing="0.9">TOPPS CHROME MARVEL</text>
+  <text x="226" y="32" text-anchor="end" font-family="monospace" font-size="10" font-weight="700" fill="#e879f9">#106</text>
+  <g transform="translate(125,163) scale(1.0)">
+          <circle r="52" fill="rgba(15,23,42,0.34)" stroke="#e879f9" stroke-width="2.5"/>
+          <path d="M0,-36 C16,-20 28,-4 22,14 C18,28 8,34 0,34 C-12,34 -24,26 -24,10 C-24,-6 -12,-18 0,-36 Z" fill="#f97316" stroke="#fef08a" stroke-width="2.5"/>
+          <path d="M0,-12 C10,0 14,10 8,22 C4,28 -4,28 -8,22 C-14,10 -8,0 0,-12 Z" fill="#fde047"/>
+        </g>
+  
+  
+  <rect x="16" y="296" width="218" height="40" rx="8" fill="rgba(15,23,42,0.86)" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+  <text x="125" y="316" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="900" fill="#ffffff" letter-spacing="0.5">COSMIC GHOST RIDER</text>
+  <text x="125" y="330" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="700" fill="#f3e8ff">Purple Shimmer Refractor</text>
+  <rect x="154" y="270" width="78" height="20" rx="6" fill="rgba(15,23,42,0.92)" stroke="#e879f9" stroke-width="1.4"/>
+  <text x="193" y="284" text-anchor="middle" font-family="monospace" font-size="10.5" font-weight="800" fill="#fde047">38/75</text>
+</svg>

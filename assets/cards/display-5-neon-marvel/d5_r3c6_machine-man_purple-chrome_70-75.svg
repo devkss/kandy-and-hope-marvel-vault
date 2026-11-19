@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 350" width="250" height="350">
+  <defs>
+    <clipPath id="clip_d5_r3c6">
+      <rect x="6" y="6" width="238" height="338" rx="12"/>
+    </clipPath>
+    <linearGradient id="bg_d5_r3c6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b0764"/>
+      <stop offset="55%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#3b0764"/>
+    </linearGradient>
+    <linearGradient id="shine_d5_r3c6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.34)"/>
+      <stop offset="35%" stop-color="rgba(255,255,255,0.0)"/>
+      <stop offset="65%" stop-color="rgba(255,255,255,0.14)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.28)"/>
+    </linearGradient>
+  </defs>
+  <rect width="250" height="350" rx="16" fill="#0f172a"/>
+  <rect x="6" y="6" width="238" height="338" rx="12" fill="url(#bg_d5_r3c6)"/>
+  <g clip-path="url(#clip_d5_r3c6)">
+    <rect x="14" y="14" width="222" height="322" rx="12" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
+  </g>
+  <rect x="6" y="6" width="238" height="338" rx="12" fill="url(#shine_d5_r3c6)" stroke="#c084fc" stroke-width="2.5"/>
+  <rect x="16" y="16" width="218" height="24" rx="6" fill="rgba(15,23,42,0.78)"/>
+  <text x="24" y="32" font-family="sans-serif" font-size="9.5" font-weight="800" fill="#f8fafc" letter-spacing="0.9">TOPPS NEON MARVEL</text>
+  <text x="226" y="32" text-anchor="end" font-family="monospace" font-size="10" font-weight="700" fill="#c084fc">#127</text>
+  <g transform="translate(125,163) scale(1.0)">
+          <polygon points="0,-48 42,-24 42,24 0,48 -42,24 -42,-24" fill="rgba(15,23,42,0.42)" stroke="#c084fc" stroke-width="3"/>
+          <polygon points="0,-38 33,-19 33,19 0,38 -33,19 -33,-19" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"/>
+          <text x="0" y="12" text-anchor="middle" font-family="sans-serif" font-size="32" font-weight="900" fill="#ffffff" letter-spacing="1">MM</text>
+        </g>
+  
+  
+  <rect x="16" y="296" width="218" height="40" rx="8" fill="rgba(15,23,42,0.86)" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+  <text x="125" y="316" text-anchor="middle" font-family="sans-serif" font-size="21" font-weight="900" fill="#ffffff" letter-spacing="0.5">MACHINE MAN</text>
+  <text x="125" y="330" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="700" fill="#e9d5ff">Purple Foil (Chrome)</text>
+  <rect x="154" y="270" width="78" height="20" rx="6" fill="rgba(15,23,42,0.92)" stroke="#c084fc" stroke-width="1.4"/>
+  <text x="193" y="284" text-anchor="middle" font-family="monospace" font-size="10.5" font-weight="800" fill="#fde047">70/75</text>
+</svg>
