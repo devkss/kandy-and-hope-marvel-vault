@@ -13,7 +13,7 @@
   <canvas id="confetti-canvas"></canvas>
   <div id="toast" class="toast"></div>
 
-  <!-- Hidden file inputs for live local photo preview -->
+  <!-- Hidden file inputs -->
   <input type="file" id="hero-photo-input" accept="image/*" hidden />
   <input type="file" id="folder-upload-input" webkitdirectory directory multiple hidden />
   <input type="file" id="modal-photo-input" accept="image/*" hidden />
@@ -27,7 +27,8 @@
       </div>
       <div class="top-actions">
         <span id="photo-progress-badge" class="pill">0 / 180 Real Photos Loaded</span>
-        <button id="load-folder-btn" class="btn btn-soft">📁 Load Card Photos Folder</button>
+        <button id="gh-settings-btn" class="btn btn-soft">☁️ GitHub Sync</button>
+        <button id="load-folder-btn" class="btn btn-soft">📁 Load Folder</button>
         <button id="theme-toggle" class="btn btn-soft">🌙 Dark Vault Mode</button>
         <button id="sparkle-btn" class="btn btn-sparkle">✨ Sparkle Party!</button>
       </div>
@@ -40,8 +41,12 @@
           <img id="hero-photo" src="assets/photos/kandy-and-hope.svg" alt="Kandy and Hope" />
         </div>
         <button class="photo-upload-chip" onclick="document.getElementById('hero-photo-input').click()">
-          📸 Load Our Photo
+          📸 Change Our Photo
         </button>
+        <div id="hero-save-actions" class="hero-save-actions">
+          <button id="hero-save-gh-btn" class="photo-upload-chip" style="background:#059669;color:#fff;border-color:#059669;">☁️ Save to GitHub</button>
+          <button id="hero-save-local-btn" class="photo-upload-chip">💾 Save Locally</button>
+        </div>
       </div>
 
       <div class="hero-copy">
@@ -50,7 +55,7 @@
         <p>
           Welcome to our interactive wall-display showcase featuring <strong>Hope's 66-card Moon Girl &amp; Devil Dinosaur Rainbow</strong>
           and <strong>Kandy's 114-card 2026 Topps Chrome &amp; Neon Marvel</strong> slabs, artist autographs, and case hits.
-          Hover over any card for 3D holographic shine, or click to inspect serials, pull odds, and GBP values!
+          Hover over any card for 3D holographic shine, or click to inspect serials, pull odds, GBP values, or snap/upload your own photo!
         </p>
 
         <div class="stats-grid">
@@ -93,8 +98,8 @@
       <button class="tab-btn" data-tab="guide">📷 Photo Setup &amp; Filenames</button>
     </nav>
 
-    <!-- Tab 1: Hope's Rainbow Room -->
     <main>
+      <!-- Tab 1: Hope's Rainbow Room -->
       <section id="panel-hope" class="tab-panel active">
         <div id="hope-displays-wrap"></div>
       </section>
@@ -224,21 +229,22 @@
         <div class="display-section">
           <div class="display-header">
             <div class="display-title-group">
-              <h2>📷 How to Drop In Your Real Flat Card Photos</h2>
-              <p>Every display already has its own folder under <code>assets/cards/</code> with temporary crystal-clear vector placeholders.</p>
+              <h2>📷 Zero-Rename Photo Uploader &amp; Filename Guide</h2>
+              <p>Click any card in the vault to pick, paste from Google Photos, save directly to GitHub, or auto-save locally with the exact filename!</p>
             </div>
             <div class="display-badges">
-              <button id="guide-folder-btn" class="btn btn-primary">📁 Load Local Photos Now</button>
+              <button id="guide-gh-btn" class="btn btn-primary">☁️ Connect GitHub Sync</button>
+              <button id="guide-folder-btn" class="btn btn-soft">📁 Load Local Folder</button>
               <button id="download-csv-btn" class="btn btn-soft">⬇️ Download 180-Card CSV</button>
             </div>
           </div>
 
           <div class="rainbow-bar-box" style="margin-bottom:20px;">
-            <strong>3-Step Photo Swap (Zero Code Changes Needed!):</strong>
+            <strong>Fastest Way to Swap All 180 Photos (Zero Manual Renaming!):</strong>
             <ol style="margin:8px 0 0;padding-left:20px;line-height:1.65;color:var(--text-muted);font-size:0.9rem;">
-              <li>Save your photo of you &amp; Hope into <code>assets/photos/kandy-and-hope.jpg</code> (or <code>.png</code>).</li>
-              <li>Save each flat-cropped card photo into its matching folder below using the exact filename shown (<code>.jpg</code>, <code>.png</code>, or <code>.webp</code> all work automatically!).</li>
-              <li>Refresh <code>index.html</code> — the site automatically checks for your real photo first and falls back to the temporary vector card if a photo isn't in the folder yet!</li>
+              <li><strong>On your phone (easiest for Google Photos!):</strong> Open this live site on your Pixel, click <strong>☁️ GitHub Sync</strong> once to paste your token, then tap any card → <strong>📸 Choose Photo</strong> (opens your Google Photos albums directly) → <strong>☁️ Confirm &amp; Save to GitHub</strong>!</li>
+              <li><strong>On your Windows PC with Google Photos:</strong> Open your Google Photos album side-by-side, right-click any card photo → <strong>Copy image</strong>, click the card here and press <strong>Ctrl+V</strong> (or click <strong>📋 Paste Image</strong>), then hit <strong>☁️ Save to GitHub</strong> or <strong>💾 Save Locally (Auto-Renamed)</strong>!</li>
+              <li>Every saved photo is automatically optimised to a razor-sharp web JPEG (~150 KB) and given its exact filename automatically.</li>
             </ol>
           </div>
 
@@ -261,7 +267,7 @@
                   <th>Slot</th>
                   <th>Character</th>
                   <th>Parallel &amp; Serial</th>
-                  <th>Exact File Path to Save</th>
+                  <th>Exact File Path</th>
                   <th>Current Status</th>
                   <th>Action</th>
                 </tr>
@@ -274,12 +280,12 @@
     </main>
   </div>
 
-  <!-- Card Inspector Modal -->
+  <!-- Card Inspector & Photo Upload Studio Modal -->
   <div id="card-modal" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal-box">
       <button id="modal-close-btn" class="modal-close" aria-label="Close">✕</button>
       <div class="modal-grid">
-        <div class="modal-preview-card">
+        <div class="modal-preview-card" id="modal-drop-preview">
           <img id="modal-img" src="" alt="Card preview" />
         </div>
         <div>
@@ -288,18 +294,85 @@
           <p id="modal-subtitle" style="margin:0;color:var(--text-muted);font-weight:700;"></p>
           <div id="modal-details" class="detail-list"></div>
 
-          <div class="file-box">
-            <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">
-              Real Card Photo File Path
+          <div class="photo-studio" id="photo-studio-zone">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;">
+              <span style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);">
+                📸 Swap Card Photo (Auto-Renames!)
+              </span>
+              <button id="modal-copy-btn" class="btn btn-soft" style="padding:4px 10px;font-size:0.72rem;">📋 Copy Filename</button>
             </div>
-            <code id="modal-filepath" class="fname" style="display:block;margin-bottom:10px;"></code>
-            <div style="display:flex;flex-wrap:wrap;gap:8px;">
-              <button id="modal-copy-btn" class="btn btn-soft" style="padding:7px 13px;font-size:0.8rem;">📋 Copy Filename</button>
-              <button class="btn btn-primary" style="padding:7px 13px;font-size:0.8rem;" onclick="document.getElementById('modal-photo-input').click()">📸 Preview Real Photo Now</button>
+            <code id="modal-filepath" class="fname" style="display:block;margin-bottom:6px;"></code>
+            <p class="studio-drop-hint">
+              Pick from your <strong>Phone / Google Photos</strong>, drag &amp; drop a file here, or right-click a photo in Google Photos → <em>Copy image</em> and press <strong>Ctrl+V</strong>!
+            </p>
+
+            <div class="studio-pick-row">
+              <button id="modal-choose-btn" class="btn btn-primary" style="padding:8px 14px;font-size:0.82rem;">📸 Choose Photo</button>
+              <button id="modal-paste-btn" class="btn btn-soft" style="padding:8px 14px;font-size:0.82rem;">📋 Paste from Google Photos</button>
+            </div>
+
+            <!-- Appears once a new photo is selected/pasted/dropped -->
+            <div id="staged-panel" class="staged-panel">
+              <div class="staged-meta">
+                <span id="staged-size-info">Ready to save</span>
+                <label class="staged-opt-label">
+                  <input type="checkbox" id="opt-web-jpeg" checked />
+                  Optimise for fast web JPEG
+                </label>
+              </div>
+              <div class="staged-actions">
+                <button id="modal-save-gh-btn" class="btn btn-success" style="padding:9px 15px;font-size:0.84rem;">☁️ Confirm &amp; Save to GitHub</button>
+                <button id="modal-save-local-btn" class="btn btn-soft" style="padding:9px 15px;font-size:0.84rem;">💾 Save Locally (Auto-Renamed)</button>
+                <button id="modal-cancel-stage-btn" class="btn btn-danger-soft" style="padding:9px 12px;font-size:0.8rem;">↺ Cancel</button>
+              </div>
+              <div id="modal-upload-status" class="upload-status"></div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- GitHub Direct Sync Settings Modal -->
+  <div id="gh-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-box gh-modal-box">
+      <button id="gh-close-btn" class="modal-close" aria-label="Close">✕</button>
+      <h2 style="font-family:'Fredoka',sans-serif;font-size:1.7rem;margin:0 0 6px;">☁️ GitHub Direct Upload Sync</h2>
+      <p style="margin:0 0 14px;color:var(--text-muted);font-size:0.9rem;">
+        Connect once on your own PC or phone to overwrite card photos directly in your GitHub repository without renaming files manually.
+      </p>
+
+      <div class="gh-info-box">
+        <strong>🔒 Safe &amp; Private:</strong> Your token is stored <strong>only in this browser's localStorage</strong>—it is never uploaded to GitHub, so Hope and visitors stay read-only.<br/>
+        <strong>How to create a token (30 secs):</strong> GitHub → <em>Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token</em> → Select <strong>Only select repositories</strong> (<code>kandy-and-hope-marvel-vault</code>) → <strong>Repository permissions → Contents: Read and write</strong>.
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="gh-owner">GitHub Username</label>
+          <input type="text" id="gh-owner" value="devkss" />
+        </div>
+        <div class="form-group">
+          <label for="gh-branch">Branch</label>
+          <input type="text" id="gh-branch" value="main" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="gh-repo">Repository Name</label>
+        <input type="text" id="gh-repo" value="kandy-and-hope-marvel-vault" />
+      </div>
+
+      <div class="form-group">
+        <label for="gh-token">Fine-Grained Personal Access Token</label>
+        <input type="password" id="gh-token" placeholder="github_pat_..." autocomplete="off" />
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:6px;">
+        <button id="gh-save-btn" class="btn btn-success">✅ Test &amp; Save Connection</button>
+        <button id="gh-clear-btn" class="btn btn-danger-soft">🗑️ Disconnect Token</button>
+      </div>
+      <div id="gh-test-status" class="upload-status"></div>
     </div>
   </div>
 

@@ -5,12 +5,41 @@
   const ODDS = window.VAULT_ODDS || [];
   const CHASES = window.VAULT_CHASES || [];
 
+  const GH_STORAGE_KEY = 'kh_vault_gh_config_v1';
+  const RECENT_UPLOADS_KEY = 'kh_vault_recent_uploads_v1';
+
+  function loadGHConfig() {
+    try {
+      const raw = localStorage.getItem(GH_STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (_) {}
+    return { owner: 'devkss', repo: 'kandy-and-hope-marvel-vault', branch: 'main', token: '' };
+  }
+
+  function saveGHConfig(cfg) {
+    try { localStorage.setItem(GH_STORAGE_KEY, JSON.stringify(cfg)); } catch (_) {}
+  }
+
+  function loadRecentUploads() {
+    try { return JSON.parse(localStorage.getItem(RECENT_UPLOADS_KEY) || '{}'); } catch (_) { return {}; }
+  }
+
+  function markRecentUpload(path) {
+    const map = loadRecentUploads();
+    map[path] = Date.now();
+    try { localStorage.setItem(RECENT_UPLOADS_KEY, JSON.stringify(map)); } catch (_) {}
+  }
+
   const state = {
     activeTab: 'hope',
-    valMode: 'mid', // low | mid | high
+    valMode: 'mid',
     viewMode: { 1: 'wall', 2: 'wall', 3: 'wall', 4: 'wall', 5: 'wall' },
     sessionPhotos: {}, // card.id -> objectURL
     realPhotoLoaded: {}, // card.id -> true/false
+    recentUploads: loadRecentUploads(),
+    gh: loadGHConfig(),
+    stagedCardPhoto: null, // { file, rawBlob, previewUrl, optBlob, optBase64 }
+    stagedHeroPhoto: null, // { file, rawBlob, previewUrl, optBlob, optBase64 }
     filters: {
       search: '',
       owner: 'all',
@@ -25,6 +54,7 @@
 
   // Helpers
   const fmtGBP = (n) => '£' + Math.round(n).toLocaleString('en-GB');
+  const fmtKB = (bytes) => bytes < 1024 * 1024 ? `${Math.round(bytes / 1024)} KB` : `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   const cardVal = (c, mode = state.valMode) => {
     if (mode === 'low') return c.valLow;
     if (mode === 'high') return c.valHigh;
@@ -37,14 +67,154 @@
     t.textContent = msg;
     t.classList.add('show');
     clearTimeout(showToast._timer);
-    showToast._timer = setTimeout(() => t.classList.remove('show'), 2600);
+    showToast._timer = setTimeout(() => t.classList.remove('show'), 3000);
   }
 
-  // Hero Photo auto-loader (.jpg -> .png -> .webp -> .svg)
+  // Convert any image Blob/File into an optimised crisp web JPEG (max 1200px long edge)
+  function processImageBlob(blob, optimise = true) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const maxDim = optimise ? 1200 : 2400;
+          let w = img.naturalWidth || img.width;
+          let h = img.naturalHeight || img.height;
+          if (Math.max(w, h) > maxDim) {
+            const ratio = maxDim / Math.max(w, h);
+            w = Math.round(w * ratio);
+            h = Math.round(h * ratio);
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#0f172a';
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(img, 0, 0, w, h);
+          const quality = optimise ? 0.88 : 0.95;
+          canvas.toBlob((outBlob) => {
+            URL.revokeObjectURL(url);
+            if (!outBlob) return reject(new Error('Could not encode JPEG'));
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const dataUrl = reader.result;
+              const base64 = String(dataUrl).split(',')[1];
+              resolve({ blob: outBlob, base64, width: w, height: h });
+            };
+            reader.onerror = () => reject(new Error('Could not read encoded image'));
+            reader.readAsDataURL(outBlob);
+          }, 'image/jpeg', quality);
+        } catch (err) {
+          URL.revokeObjectURL(url);
+          reject(err);
+        }
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Invalid or unreadable image file'));
+      };
+      img.src = url;
+    });
+  }
+
+  // Upload/Overwrite a file directly in GitHub via REST Contents API
+  async function uploadToGitHub(repoFilePath, base64Content, commitMessage) {
+    const { owner, repo, branch, token } = state.gh;
+    if (!token || !owner || !repo) {
+      throw new Error('NOT_CONFIGURED');
+    }
+
+    const encodedPath = repoFilePath.split('/').map(encodeURIComponent).join('/');
+    const apiBase = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${encodedPath}`;
+    const headers = {
+      'Authorization': `Bearer ${token.trim()}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    };
+
+    // Step 1: Check if file already exists to grab its SHA (required by GitHub to overwrite)
+    let existingSha = null;
+    const checkRes = await fetch(`${apiBase}?ref=${encodeURIComponent(branch || 'main')}`, { headers });
+    if (checkRes.status === 200) {
+      const existingData = await checkRes.json();
+      existingSha = existingData.sha || null;
+    } else if (checkRes.status !== 404) {
+      const errBody = await checkRes.json().catch(() => ({}));
+      throw new Error(errBody.message || `GitHub check failed (${checkRes.status})`);
+    }
+
+    // Step 2: PUT the new/updated file content
+    const payload = {
+      message: commitMessage,
+      content: base64Content,
+      branch: branch || 'main'
+    };
+    if (existingSha) payload.sha = existingSha;
+
+    const putRes = await fetch(apiBase, {
+      method: 'PUT',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!putRes.ok) {
+      const errBody = await putRes.json().catch(() => ({}));
+      throw new Error(errBody.message || `GitHub upload failed (${putRes.status})`);
+    }
+    return await putRes.json();
+  }
+
+  // Save Blob locally with the exact required filename (uses File System Access API on Chrome/Edge PC, falls back to download)
+  async function saveBlobLocally(blob, exactFilename) {
+    if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: exactFilename,
+          types: [{ description: 'JPEG Image', accept: { 'image/jpeg': ['.jpg', '.jpeg'] } }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        return 'picker';
+      } catch (err) {
+        if (err && err.name === 'AbortError') return 'cancelled';
+        // Fall through to standard download if picker is blocked/unsupported
+      }
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = exactFilename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+    return 'download';
+  }
+
+  // Update GitHub Sync button badge
+  function updateGHButtonState() {
+    const btn = document.getElementById('gh-settings-btn');
+    const guideBtn = document.getElementById('guide-gh-btn');
+    const connected = Boolean(state.gh.token && state.gh.owner && state.gh.repo);
+    if (btn) {
+      btn.textContent = connected ? '✅ GitHub Connected' : '☁️ GitHub Sync';
+      btn.classList.toggle('btn-github-connected', connected);
+      btn.classList.toggle('btn-soft', !connected);
+    }
+    if (guideBtn) {
+      guideBtn.textContent = connected ? '✅ GitHub Sync Connected' : '☁️ Connect GitHub Sync';
+    }
+  }
+
+  // Hero Photo auto-loader & uploader
   function initHeroPhoto() {
     const img = document.getElementById('hero-photo');
+    const recentTs = state.recentUploads['assets/photos/kandy-and-hope.jpg'];
+    const qs = recentTs ? `?v=${recentTs}` : '';
     const candidates = [
-      'assets/photos/kandy-and-hope.jpg',
+      `assets/photos/kandy-and-hope.jpg${qs}`,
       'assets/photos/kandy-and-hope.jpeg',
       'assets/photos/kandy-and-hope.png',
       'assets/photos/kandy-and-hope.webp',
@@ -58,13 +228,59 @@
     img.onerror = tryNext;
     tryNext();
 
-    document.getElementById('hero-photo-input').addEventListener('change', (e) => {
+    document.getElementById('hero-photo-input').addEventListener('change', async (e) => {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
+      const previewUrl = URL.createObjectURL(file);
       img.onerror = null;
-      img.src = URL.createObjectURL(file);
-      showToast('Kandy & Hope photo loaded!');
-      burstConfetti();
+      img.src = previewUrl;
+      state.stagedHeroPhoto = { file, previewUrl };
+      document.getElementById('hero-save-actions').classList.add('visible');
+      showToast('Previewing your photo! Click "Save to GitHub" or "Save Locally" below it.');
+      e.target.value = '';
+    });
+
+    document.getElementById('hero-save-gh-btn').addEventListener('click', async () => {
+      if (!state.stagedHeroPhoto) return;
+      if (!state.gh.token) {
+        openGHModal('Paste your GitHub token to save your photo directly to the repo.');
+        return;
+      }
+      const btn = document.getElementById('hero-save-gh-btn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Saving...';
+      try {
+        const processed = await processImageBlob(state.stagedHeroPhoto.file, true);
+        await uploadToGitHub(
+          'assets/photos/kandy-and-hope.jpg',
+          processed.base64,
+          'Update hero photo: Kandy & Hope'
+        );
+        markRecentUpload('assets/photos/kandy-and-hope.jpg');
+        state.recentUploads = loadRecentUploads();
+        document.getElementById('hero-save-actions').classList.remove('visible');
+        state.stagedHeroPhoto = null;
+        showToast('✅ Kandy & Hope photo saved to GitHub! Live site refreshes in ~45s.');
+        burstConfetti();
+      } catch (err) {
+        showToast(`Upload error: ${err.message}`);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '☁️ Save to GitHub';
+      }
+    });
+
+    document.getElementById('hero-save-local-btn').addEventListener('click', async () => {
+      if (!state.stagedHeroPhoto) return;
+      try {
+        const processed = await processImageBlob(state.stagedHeroPhoto.file, true);
+        const res = await saveBlobLocally(processed.blob, 'kandy-and-hope.jpg');
+        if (res !== 'cancelled') {
+          showToast('💾 Saved locally as kandy-and-hope.jpg!');
+        }
+      } catch (err) {
+        showToast(`Save error: ${err.message}`);
+      }
     });
   }
 
@@ -93,18 +309,21 @@
     });
   }
 
-  // Smart Image Resolver per Card:
-  // Checks session upload -> .jpg -> .png -> .webp -> custom placeholder .svg
+  // Smart Image Resolver per Card (with cache-busting for freshly uploaded GitHub photos)
   function attachSmartImage(imgEl, card, tileEl) {
     if (state.sessionPhotos[card.id]) {
+      imgEl.onload = null;
+      imgEl.onerror = null;
       imgEl.src = state.sessionPhotos[card.id];
       state.realPhotoLoaded[card.id] = true;
       if (tileEl) tileEl.classList.add('has-real-photo');
       return;
     }
     const base = `assets/cards/${card.folder}/${card.baseFilename}`;
+    const ts = state.recentUploads[card.recommendedPath];
+    const qs = ts ? `?v=${ts}` : '';
     const candidates = [
-      { url: `${base}.jpg`, isReal: true },
+      { url: `${base}.jpg${qs}`, isReal: true },
       { url: `${base}.jpeg`, isReal: true },
       { url: `${base}.png`, isReal: true },
       { url: `${base}.webp`, isReal: true },
@@ -193,7 +412,7 @@
     return tile;
   }
 
-  // Render a Display Case Section (Supports Wall Shelf View & Clean Grid View)
+  // Render Display Case Section
   function renderDisplaySection(container, displayId) {
     const meta = DISPLAYS.find(d => d.id === displayId);
     const dCards = CARDS.filter(c => c.display === displayId);
@@ -331,9 +550,9 @@
         <p style="color:var(--text-muted);line-height:1.58;font-size:0.94rem;">${s.summary}</p>
         <strong style="font-size:0.82rem;text-transform:uppercase;letter-spacing:0.05em;">Box Formats</strong>
         <ul>${s.formats.map(x => `<li>${x}</li>`).join('')}</ul>
-        <strong style="font-size:0.82rem;text-transform:uppercase;letter-spacing:0.05em;">Key Inserts & Chases</strong>
+        <strong style="font-size:0.82rem;text-transform:uppercase;letter-spacing:0.05em;">Key Inserts &amp; Chases</strong>
         <ul>${s.inserts.map(x => `<li>${x}</li>`).join('')}</ul>
-        <strong style="font-size:0.82rem;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">Full Base & Insert Character Checklists</strong>
+        <strong style="font-size:0.82rem;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">Full Base &amp; Insert Character Checklists</strong>
         <div class="checklist-links">
           ${s.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer"><span>🔗 ${l.label}</span><span>↗</span></a>`).join('')}
         </div>
@@ -388,7 +607,7 @@
     `).join('');
   }
 
-  // Render Photo Setup & Filename Naming Guide Tab
+  // Render Photo Setup & Filename Guide Tab
   function renderGuideTab() {
     const tbody = document.getElementById('guide-tbody');
     const q = state.guideSearch.trim().toLowerCase();
@@ -407,7 +626,12 @@
           <td>${c.parallel} <span style="color:var(--text-muted);">(${c.serial})</span></td>
           <td><code class="fname">${c.recommendedPath}</code></td>
           <td>${hasReal ? '<span class="pill" style="background:rgba(16,185,129,0.2);color:#059669;">✅ Real Photo</span>' : '<span class="pill">🎨 Placeholder SVG</span>'}</td>
-          <td><button class="btn btn-soft" style="padding:5px 10px;font-size:0.74rem;" data-copy="${c.baseFilename}.jpg">Copy Name</button></td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-primary" style="padding:5px 10px;font-size:0.74rem;" data-open-card="${c.id}">📸 Swap</button>
+              <button class="btn btn-soft" style="padding:5px 10px;font-size:0.74rem;" data-copy="${c.baseFilename}.jpg">Copy</button>
+            </div>
+          </td>
         </tr>
       `;
     }).join('');
@@ -418,12 +642,74 @@
         showToast(`Copied: ${btn.dataset.copy}`);
       });
     });
+
+    tbody.querySelectorAll('button[data-open-card]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = CARDS.find(x => x.id === btn.dataset.openCard);
+        if (card) openCardModal(card);
+      });
+    });
   }
 
-  // Card Inspector Modal
+  // ==========================================================================
+  // CARD INSPECTOR MODAL + STAGED PHOTO STUDIO
+  // ==========================================================================
   let currentModalCard = null;
+
+  function clearStagedCardPhoto(restoreImg = false) {
+    if (state.stagedCardPhoto && state.stagedCardPhoto.previewUrl) {
+      URL.revokeObjectURL(state.stagedCardPhoto.previewUrl);
+    }
+    state.stagedCardPhoto = null;
+    document.getElementById('staged-panel').classList.remove('visible');
+    const statusEl = document.getElementById('modal-upload-status');
+    statusEl.textContent = '';
+    statusEl.className = 'upload-status';
+    if (restoreImg && currentModalCard) {
+      attachSmartImage(document.getElementById('modal-img'), currentModalCard, null);
+    }
+  }
+
+  async function stageCardPhotoBlob(blob) {
+    if (!currentModalCard || !blob) return;
+    const statusEl = document.getElementById('modal-upload-status');
+    const sizeInfo = document.getElementById('staged-size-info');
+    const optChecked = document.getElementById('opt-web-jpeg').checked;
+
+    const previewUrl = URL.createObjectURL(blob);
+    const modalImg = document.getElementById('modal-img');
+    modalImg.onload = null;
+    modalImg.onerror = null;
+    modalImg.src = previewUrl;
+
+    document.getElementById('staged-panel').classList.add('visible');
+    statusEl.textContent = 'Preparing photo preview...';
+    statusEl.className = 'upload-status';
+
+    try {
+      const processed = await processImageBlob(blob, optChecked);
+      if (state.stagedCardPhoto && state.stagedCardPhoto.previewUrl) {
+        URL.revokeObjectURL(state.stagedCardPhoto.previewUrl);
+      }
+      state.stagedCardPhoto = {
+        rawBlob: blob,
+        previewUrl,
+        outBlob: processed.blob,
+        outBase64: processed.base64
+      };
+      sizeInfo.textContent = `Preview Ready · ${processed.width}×${processed.height}px (${fmtKB(processed.blob.size)})`;
+      statusEl.textContent = 'Looks good? Confirm to save to GitHub or save locally!';
+      statusEl.className = 'upload-status ok';
+    } catch (err) {
+      statusEl.textContent = `Could not process image: ${err.message}`;
+      statusEl.className = 'upload-status err';
+    }
+  }
+
   function openCardModal(card) {
     currentModalCard = card;
+    clearStagedCardPhoto(false);
+
     const modal = document.getElementById('card-modal');
     const img = document.getElementById('modal-img');
     attachSmartImage(img, card, null);
@@ -451,10 +737,29 @@
   }
 
   function closeCardModal() {
+    clearStagedCardPhoto(false);
     document.getElementById('card-modal').classList.remove('open');
   }
 
-  // Batch Folder Photo Loader (Lets Kandy pick his folder of card .jpg/.png files live!)
+  // ==========================================================================
+  // GITHUB SYNC SETTINGS MODAL
+  // ==========================================================================
+  function openGHModal(hintMsg = '') {
+    document.getElementById('gh-owner').value = state.gh.owner || 'devkss';
+    document.getElementById('gh-repo').value = state.gh.repo || 'kandy-and-hope-marvel-vault';
+    document.getElementById('gh-branch').value = state.gh.branch || 'main';
+    document.getElementById('gh-token').value = state.gh.token || '';
+    const st = document.getElementById('gh-test-status');
+    st.textContent = hintMsg;
+    st.className = 'upload-status';
+    document.getElementById('gh-modal').classList.add('open');
+  }
+
+  function closeGHModal() {
+    document.getElementById('gh-modal').classList.remove('open');
+  }
+
+  // Batch Folder Photo Loader
   function handleFolderUpload(files) {
     let matched = 0;
     const mapByStem = {};
@@ -489,9 +794,10 @@
     }
   }
 
-  // Render whichever tab is active
+  // Render active tab
   function renderActiveTab() {
     renderHeroStats();
+    updateGHButtonState();
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === state.activeTab));
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === `panel-${state.activeTab}`));
 
@@ -518,7 +824,7 @@
     }
   }
 
-  // Sparkle / Confetti Celebration for Hope!
+  // Confetti Celebration
   function burstConfetti() {
     const canvas = document.getElementById('confetti-canvas');
     const ctx = canvas.getContext('2d');
@@ -548,13 +854,8 @@
         ctx.translate(p.x, p.y);
         ctx.rotate(p.rot);
         ctx.fillStyle = p.color;
-        if (p.shape === 'rect') {
-          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
-        } else {
-          ctx.beginPath();
-          ctx.arc(0, 0, p.size * 0.45, 0, Math.PI * 2);
-          ctx.fill();
-        }
+        if (p.shape === 'rect') ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
+        else { ctx.beginPath(); ctx.arc(0, 0, p.size * 0.45, 0, Math.PI * 2); ctx.fill(); }
         ctx.restore();
       });
       frame++;
@@ -564,7 +865,7 @@
     tick();
   }
 
-  // CSV Download helper right inside the UI
+  // CSV Download
   function downloadCSV() {
     const header = ['Display','Slot','Owner','Set','CardNum','Character','Parallel','Serial','Grade','EstLowGBP','EstHighGBP','Folder','ExactFilenameToSave'];
     const rows = CARDS.map(c => [
@@ -582,21 +883,16 @@
   // Boot & Event Wiring
   document.addEventListener('DOMContentLoaded', () => {
     initHeroPhoto();
+    updateGHButtonState();
 
     // Tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        state.activeTab = btn.dataset.tab;
-        renderActiveTab();
-      });
+      btn.addEventListener('click', () => { state.activeTab = btn.dataset.tab; renderActiveTab(); });
     });
 
-    // Valuation toggle (Low / Mid / High)
+    // Valuation toggle
     document.querySelectorAll('.val-toggle button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        state.valMode = btn.dataset.mode;
-        renderActiveTab();
-      });
+      btn.addEventListener('click', () => { state.valMode = btn.dataset.mode; renderActiveTab(); });
     });
 
     // Theme switcher
@@ -606,7 +902,7 @@
       e.currentTarget.textContent = isDark ? '🌈 Bubble Pop Mode' : '🌙 Dark Vault Mode';
     });
 
-    // Sparkle Party button
+    // Sparkle button
     document.getElementById('sparkle-btn').addEventListener('click', () => {
       burstConfetti();
       showToast('✨ Boom! Hope & Kandy Rainbow Sparkle Mode!');
@@ -633,17 +929,78 @@
       });
     });
 
-    // Guide tab filters & CSV export
+    // Guide tab filters & CSV
     document.getElementById('guide-display-filter').addEventListener('change', e => { state.guideFilter = e.target.value; renderGuideTab(); });
     document.getElementById('guide-search').addEventListener('input', e => { state.guideSearch = e.target.value; renderGuideTab(); });
     document.getElementById('download-csv-btn').addEventListener('click', downloadCSV);
 
-    // Modal controls
-    document.getElementById('modal-close-btn').addEventListener('click', closeCardModal);
-    document.getElementById('card-modal').addEventListener('click', (e) => {
-      if (e.target.id === 'card-modal') closeCardModal();
+    // GitHub Sync Modal controls
+    document.getElementById('gh-settings-btn').addEventListener('click', () => openGHModal());
+    document.getElementById('guide-gh-btn').addEventListener('click', () => openGHModal());
+    document.getElementById('gh-close-btn').addEventListener('click', closeGHModal);
+    document.getElementById('gh-modal').addEventListener('click', (e) => { if (e.target.id === 'gh-modal') closeGHModal(); });
+
+    document.getElementById('gh-save-btn').addEventListener('click', async () => {
+      const owner = document.getElementById('gh-owner').value.trim();
+      const repo = document.getElementById('gh-repo').value.trim();
+      const branch = document.getElementById('gh-branch').value.trim() || 'main';
+      const token = document.getElementById('gh-token').value.trim();
+      const st = document.getElementById('gh-test-status');
+
+      if (!owner || !repo || !token) {
+        st.textContent = 'Please enter Username, Repository Name, and Token.';
+        st.className = 'upload-status err';
+        return;
+      }
+
+      st.textContent = '⏳ Testing connection to GitHub...';
+      st.className = 'upload-status';
+      try {
+        const res = await fetch(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28'
+          }
+        });
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.message || `HTTP ${res.status}`);
+        }
+        const repoData = await res.json();
+        if (repoData.permissions && repoData.permissions.push === false) {
+          throw new Error('Token connected, but lacks Contents Read & Write permission.');
+        }
+        state.gh = { owner, repo, branch, token };
+        saveGHConfig(state.gh);
+        updateGHButtonState();
+        st.textContent = `✅ Connected to ${owner}/${repo} (${branch})! You can now save photos directly to GitHub.`;
+        st.className = 'upload-status ok';
+        showToast('✅ GitHub Direct Upload connected!');
+        setTimeout(() => closeGHModal(), 1100);
+      } catch (err) {
+        st.textContent = `❌ Connection failed: ${err.message}`;
+        st.className = 'upload-status err';
+      }
     });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeCardModal(); });
+
+    document.getElementById('gh-clear-btn').addEventListener('click', () => {
+      state.gh.token = '';
+      saveGHConfig(state.gh);
+      document.getElementById('gh-token').value = '';
+      updateGHButtonState();
+      const st = document.getElementById('gh-test-status');
+      st.textContent = 'Token cleared from this browser.';
+      st.className = 'upload-status';
+      showToast('GitHub token disconnected.');
+    });
+
+    // Card Modal controls
+    document.getElementById('modal-close-btn').addEventListener('click', closeCardModal);
+    document.getElementById('card-modal').addEventListener('click', (e) => { if (e.target.id === 'card-modal') closeCardModal(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { closeCardModal(); closeGHModal(); }
+    });
 
     document.getElementById('modal-copy-btn').addEventListener('click', () => {
       if (!currentModalCard) return;
@@ -652,16 +1009,162 @@
       showToast(`Copied filename: ${fn}`);
     });
 
+    // 1) Choose Photo (Native Android Google Photos picker on phone / file picker on PC)
+    document.getElementById('modal-choose-btn').addEventListener('click', () => {
+      document.getElementById('modal-photo-input').click();
+    });
     document.getElementById('modal-photo-input').addEventListener('change', (e) => {
       const file = e.target.files && e.target.files[0];
-      if (!file || !currentModalCard) return;
-      const url = URL.createObjectURL(file);
-      state.sessionPhotos[currentModalCard.id] = url;
-      state.realPhotoLoaded[currentModalCard.id] = true;
-      document.getElementById('modal-img').src = url;
-      renderActiveTab();
-      updatePhotoCounter();
-      showToast(`Loaded real photo for ${currentModalCard.character}!`);
+      if (file) stageCardPhotoBlob(file);
+      e.target.value = '';
+    });
+
+    // 2) Paste from Google Photos button + Ctrl+V global listener when card modal is open
+    document.getElementById('modal-paste-btn').addEventListener('click', async () => {
+      if (!navigator.clipboard || !navigator.clipboard.read) {
+        showToast('Press Ctrl+V on your keyboard to paste the copied photo!');
+        return;
+      }
+      try {
+        const items = await navigator.clipboard.read();
+        for (const item of items) {
+          const imgType = item.types.find(t => t.startsWith('image/'));
+          if (imgType) {
+            const blob = await item.getType(imgType);
+            await stageCardPhotoBlob(blob);
+            return;
+          }
+        }
+        showToast('No image found on clipboard — right-click a photo in Google Photos and click "Copy image" first!');
+      } catch (_) {
+        showToast('Tip: Press Ctrl+V on your keyboard to paste your copied Google Photos image!');
+      }
+    });
+
+    window.addEventListener('paste', (e) => {
+      if (!document.getElementById('card-modal').classList.contains('open')) return;
+      const items = e.clipboardData && e.clipboardData.items;
+      if (!items) return;
+      for (const item of items) {
+        if (item.type && item.type.startsWith('image/')) {
+          const blob = item.getAsFile();
+          if (blob) {
+            e.preventDefault();
+            stageCardPhotoBlob(blob);
+            return;
+          }
+        }
+      }
+    });
+
+    // 3) Drag & Drop onto Photo Studio or Card Preview
+    ['photo-studio-zone', 'modal-drop-preview'].forEach(elId => {
+      const zone = document.getElementById(elId);
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        document.getElementById('photo-studio-zone').classList.add('drag-over');
+      });
+      zone.addEventListener('dragleave', () => {
+        document.getElementById('photo-studio-zone').classList.remove('drag-over');
+      });
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        document.getElementById('photo-studio-zone').classList.remove('drag-over');
+        const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) stageCardPhotoBlob(file);
+      });
+    });
+
+    // Re-encode if user toggles "Optimise for fast web JPEG"
+    document.getElementById('opt-web-jpeg').addEventListener('change', () => {
+      if (state.stagedCardPhoto && state.stagedCardPhoto.rawBlob) {
+        stageCardPhotoBlob(state.stagedCardPhoto.rawBlob);
+      }
+    });
+
+    // Cancel staged preview
+    document.getElementById('modal-cancel-stage-btn').addEventListener('click', () => {
+      clearStagedCardPhoto(true);
+    });
+
+    // Save Staged Photo Directly to GitHub (overwriting old photo)
+    document.getElementById('modal-save-gh-btn').addEventListener('click', async () => {
+      if (!currentModalCard || !state.stagedCardPhoto) return;
+      if (!state.gh.token) {
+        openGHModal('Paste your GitHub Personal Access Token once to enable direct saving to GitHub!');
+        return;
+      }
+
+      const btn = document.getElementById('modal-save-gh-btn');
+      const statusEl = document.getElementById('modal-upload-status');
+      btn.disabled = true;
+      btn.textContent = '⏳ Uploading to GitHub...';
+      statusEl.textContent = `Committing ${currentModalCard.recommendedPath} to GitHub...`;
+      statusEl.className = 'upload-status';
+
+      try {
+        await uploadToGitHub(
+          currentModalCard.recommendedPath,
+          state.stagedCardPhoto.outBase64,
+          `Update card photo: ${currentModalCard.character} (${currentModalCard.slot} ${currentModalCard.serial})`
+        );
+
+        // Immediately show the new real photo in the live UI
+        const keepUrl = URL.createObjectURL(state.stagedCardPhoto.outBlob);
+        state.sessionPhotos[currentModalCard.id] = keepUrl;
+        state.realPhotoLoaded[currentModalCard.id] = true;
+        markRecentUpload(currentModalCard.recommendedPath);
+        state.recentUploads = loadRecentUploads();
+
+        document.getElementById('modal-img').src = keepUrl;
+        renderActiveTab();
+        updatePhotoCounter();
+
+        statusEl.textContent = '✅ Saved to GitHub! Your live site updates automatically in ~45 seconds.';
+        statusEl.className = 'upload-status ok';
+        showToast(`☁️ Saved ${currentModalCard.character} to GitHub!`);
+        burstConfetti();
+
+        // Hide staged actions cleanly after brief confirmation
+        setTimeout(() => {
+          if (state.stagedCardPhoto && state.stagedCardPhoto.previewUrl) {
+            URL.revokeObjectURL(state.stagedCardPhoto.previewUrl);
+          }
+          state.stagedCardPhoto = null;
+          document.getElementById('staged-panel').classList.remove('visible');
+        }, 1800);
+      } catch (err) {
+        statusEl.textContent = `❌ Upload failed: ${err.message}`;
+        statusEl.className = 'upload-status err';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '☁️ Confirm & Save to GitHub';
+      }
+    });
+
+    // Save Staged Photo Locally with Exact Auto-Renamed Filename
+    document.getElementById('modal-save-local-btn').addEventListener('click', async () => {
+      if (!currentModalCard || !state.stagedCardPhoto) return;
+      const exactFilename = `${currentModalCard.baseFilename}.jpg`;
+      const statusEl = document.getElementById('modal-upload-status');
+      try {
+        const res = await saveBlobLocally(state.stagedCardPhoto.outBlob, exactFilename);
+        if (res === 'cancelled') return;
+
+        const keepUrl = URL.createObjectURL(state.stagedCardPhoto.outBlob);
+        state.sessionPhotos[currentModalCard.id] = keepUrl;
+        state.realPhotoLoaded[currentModalCard.id] = true;
+        document.getElementById('modal-img').src = keepUrl;
+        renderActiveTab();
+        updatePhotoCounter();
+
+        statusEl.textContent = `💾 Saved locally as ${exactFilename}! (Put in assets/cards/${currentModalCard.folder}/)`;
+        statusEl.className = 'upload-status ok';
+        showToast(`💾 Saved as ${exactFilename}`);
+      } catch (err) {
+        statusEl.textContent = `❌ Local save failed: ${err.message}`;
+        statusEl.className = 'upload-status err';
+      }
     });
 
     renderActiveTab();

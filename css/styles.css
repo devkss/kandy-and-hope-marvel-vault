@@ -983,3 +983,153 @@ code.fname {
   .filter-bar { grid-template-columns: 1fr; }
   .shelf-cards { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ==========================================================================
+   PHOTO UPLOAD STUDIO, DRAG/DROP & GITHUB DIRECT SYNC UI
+   ========================================================================== */
+.btn-github-connected {
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.32);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+}
+
+.btn-danger-soft {
+  background: rgba(239, 68, 68, 0.14);
+  color: #dc2626;
+  border: 1.5px solid rgba(239, 68, 68, 0.35);
+}
+body.dark-vault .btn-danger-soft { color: #fca5a5; }
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.hero-save-actions {
+  display: none;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+.hero-save-actions.visible { display: flex; }
+
+.photo-studio {
+  background: var(--surface-soft);
+  border: 2px dashed var(--purple);
+  border-radius: 18px;
+  padding: 14px 16px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.photo-studio.drag-over {
+  border-color: var(--pink);
+  background: rgba(236, 72, 153, 0.12);
+}
+
+.studio-drop-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 6px 0 12px;
+  line-height: 1.45;
+}
+
+.studio-pick-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.staged-panel {
+  display: none;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1.5px solid var(--border);
+}
+.staged-panel.visible { display: block; }
+
+.staged-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.staged-opt-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.staged-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.upload-status {
+  margin-top: 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  min-height: 18px;
+}
+.upload-status.ok { color: #059669; }
+body.dark-vault .upload-status.ok { color: #34d399; }
+.upload-status.err { color: #dc2626; }
+body.dark-vault .upload-status.err { color: #f87171; }
+
+/* GitHub Settings Modal */
+.gh-modal-box {
+  max-width: 560px;
+}
+.form-group {
+  margin-bottom: 14px;
+}
+.form-group label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+.form-group input {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 14px;
+  border: 2px solid var(--border);
+  background: var(--surface-soft);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.86rem;
+}
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.gh-info-box {
+  background: var(--surface-soft);
+  border-radius: 16px;
+  padding: 12px 14px;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  border: 1.5px solid var(--border);
+}
