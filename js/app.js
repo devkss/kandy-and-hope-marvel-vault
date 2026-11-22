@@ -33,26 +33,28 @@
   const state = {
     activeTab: 'hope',
     valMode: 'mid',
-    viewMode: { 1: 'wall', 2: 'wall', 3: 'wall', 4: 'wall', 5: 'wall' },
-    sessionPhotos: {}, // card.id -> objectURL
-    realPhotoLoaded: {}, // card.id -> true/false
+    sectionSort: { 1: 'rarity', 2: 'rarity', 3: 'rarity', 4: 'rarity', 5: 'rarity' },
+    sessionPhotos: {},
+    realPhotoLoaded: {},
     recentUploads: loadRecentUploads(),
     gh: loadGHConfig(),
-    stagedCardPhoto: null, // { file, rawBlob, previewUrl, optBlob, optBase64 }
-    stagedHeroPhoto: null, // { file, rawBlob, previewUrl, optBlob, optBase64 }
+    stagedCardPhoto: null,
+    stagedHeroPhoto: null,
     filters: {
       search: '',
       owner: 'all',
       display: 'all',
       set: 'all',
-      sort: 'slot',
+      sort: 'rarity',
       quickTag: 'all'
     },
     guideFilter: 'all',
     guideSearch: ''
   };
 
-  // Helpers
+  // ==========================================================================
+  // HELPERS & SMART SORTING (PULL RARITY / VALUE / NAME)
+  // ==========================================================================
   const fmtGBP = (n) => '£' + Math.round(n).toLocaleString('en-GB');
   const fmtKB = (bytes) => bytes < 1024 * 1024 ? `${Math.round(bytes / 1024)} KB` : `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   const cardVal = (c, mode = state.valMode) => {
@@ -61,6 +63,93 @@
     return Math.round((c.valLow + c.valHigh) / 2);
   };
   const sumVals = (list, mode = state.valMode) => list.reduce((acc, c) => acc + cardVal(c, mode), 0);
+
+  function parseSerialNum(serial) {
+    if (!serial || String(serial).toLowerCase() === 'unnumbered') return 999999;
+    const m = String(serial).match(/^(\d+)\s*\//);
+    return m ? parseInt(m[1], 10) : 999999;
+  }
+
+  function getRarityTier(c) {
+    if (c.printRun !== null && c.printRun !== undefined) return c.printRun;
+    const sub = (c.subset || '').toLowerCase();
+    const par = (c.parallel || '').toLowerCase();
+    const tags = (c.tags || []).map(t => t.toLowerCase());
+    if (sub.includes('autograph') || tags.includes('autograph')) return 1000;
+    if (tags.includes('case hit')) return 1010;
+    if (sub.includes('classic comic')) return 1020;
+    if (sub.includes('neon variation') || par.includes('etch')) return 1030;
+    if (tags.includes('insert') || ['marvel icons', 'fanfare', 'future stars', 'manga madness', 'neon insert'].includes(sub)) return 1040;
+    if (sub === 'base' || par === 'base card') return 1060;
+    return 1050; // Unnumbered base parallels (RayWave, Storm, X-Fractor, Refractor)
+  }
+
+  // Exact finish sub-order within the same 'Numbered to' (same colour) tier:
+  // RayWave -> Storm -> X-Fractor -> Shimmer -> Lazer -> Wave -> Base
+  function getFinishRank(c) {
+    const par = (c.parallel || '').toLowerCase();
+    const sub = (c.subset || '').toLowerCase();
+
+    // Special non-base hits sharing a print run (Clawed /10, Autos /10, Insert /50)
+    if (par.includes('clawed')) return 0.1;
+    if (sub.includes('facsimile autograph')) return 0.2;
+    if (sub.includes('artist autograph')) return 0.3;
+    if (['marvel icons', 'future stars', 'fanfare', 'manga madness'].includes(sub)) return 0.4;
+
+    // Requested parallel order within same print run:
+    if (par.includes('raywave') || par.includes('ray wave')) return 1;
+    if (par.includes('storm') || par.includes('lightning')) return 2;
+    if (par.includes('x-fractor') || par.includes('xfractor')) return 3;
+    if (par.includes('shimmer')) return 4;
+    if (par.includes('lazer') || par.includes('laser')) return 5;
+    if (par.includes('wave')) return 6;
+
+    // Neon-specific textured foils before plain Chrome/Base foil
+    if (par.includes('sparkle')) return 6.2;
+    if (par.includes('diamante')) return 6.4;
+
+    // Sapphire parallel at /99 placed after standard Chrome Green rainbow
+    if (par.includes('sapphire') || sub.includes('sapphire')) return 8;
+
+    // Plain Base / Solid Refractor / Chrome Foil
+    if (par === 'base card') return 7.5;
+    return 7;
+  }
+
+  function comparePullRarity(a, b) {
+    const tierDiff = getRarityTier(a) - getRarityTier(b);
+    if (tierDiff !== 0) return tierDiff;
+
+    const finishDiff = getFinishRank(a) - getFinishRank(b);
+    if (finishDiff !== 0) return finishDiff;
+
+    // Keep unnumbered insert subsets grouped cleanly (e.g., Classic Covers CC-01..09, Marvel Icons, Fanfare)
+    if (a.printRun == null && b.printRun == null) {
+      if (a.subset !== b.subset) return (a.subset || '').localeCompare(b.subset || '');
+      if (a.subset === 'Classic Comic Book Covers') {
+        return (a.cardNum || '').localeCompare(b.cardNum || '');
+      }
+    }
+
+    const serDiff = parseSerialNum(a.serial) - parseSerialNum(b.serial);
+    if (serDiff !== 0) return serDiff;
+
+    return (a.character || '').localeCompare(b.character || '');
+  }
+
+  function sortCards(list, sortMode) {
+    const copy = [...list];
+    if (sortMode === 'val-desc' || sortMode === 'value') {
+      copy.sort((a, b) => (cardVal(b) - cardVal(a)) || comparePullRarity(a, b));
+    } else if (sortMode === 'val-asc') {
+      copy.sort((a, b) => (cardVal(a) - cardVal(b)) || comparePullRarity(a, b));
+    } else if (sortMode === 'alpha' || sortMode === 'name') {
+      copy.sort((a, b) => (a.character || '').localeCompare(b.character || '') || comparePullRarity(a, b));
+    } else {
+      copy.sort(comparePullRarity);
+    }
+    return copy;
+  }
 
   function showToast(msg) {
     const t = document.getElementById('toast');
@@ -121,9 +210,7 @@
   // Upload/Overwrite a file directly in GitHub via REST Contents API
   async function uploadToGitHub(repoFilePath, base64Content, commitMessage) {
     const { owner, repo, branch, token } = state.gh;
-    if (!token || !owner || !repo) {
-      throw new Error('NOT_CONFIGURED');
-    }
+    if (!token || !owner || !repo) throw new Error('NOT_CONFIGURED');
 
     const encodedPath = repoFilePath.split('/').map(encodeURIComponent).join('/');
     const apiBase = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${encodedPath}`;
@@ -133,7 +220,6 @@
       'X-GitHub-Api-Version': '2022-11-28'
     };
 
-    // Step 1: Check if file already exists to grab its SHA (required by GitHub to overwrite)
     let existingSha = null;
     const checkRes = await fetch(`${apiBase}?ref=${encodeURIComponent(branch || 'main')}`, { headers });
     if (checkRes.status === 200) {
@@ -144,7 +230,6 @@
       throw new Error(errBody.message || `GitHub check failed (${checkRes.status})`);
     }
 
-    // Step 2: PUT the new/updated file content
     const payload = {
       message: commitMessage,
       content: base64Content,
@@ -165,7 +250,7 @@
     return await putRes.json();
   }
 
-  // Save Blob locally with the exact required filename (uses File System Access API on Chrome/Edge PC, falls back to download)
+  // Save Blob locally with exact required filename
   async function saveBlobLocally(blob, exactFilename) {
     if (window.showSaveFilePicker) {
       try {
@@ -179,7 +264,6 @@
         return 'picker';
       } catch (err) {
         if (err && err.name === 'AbortError') return 'cancelled';
-        // Fall through to standard download if picker is blocked/unsupported
       }
     }
     const url = URL.createObjectURL(blob);
@@ -193,7 +277,6 @@
     return 'download';
   }
 
-  // Update GitHub Sync button badge
   function updateGHButtonState() {
     const btn = document.getElementById('gh-settings-btn');
     const guideBtn = document.getElementById('guide-gh-btn');
@@ -228,7 +311,7 @@
     img.onerror = tryNext;
     tryNext();
 
-    document.getElementById('hero-photo-input').addEventListener('change', async (e) => {
+    document.getElementById('hero-photo-input').addEventListener('change', (e) => {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
       const previewUrl = URL.createObjectURL(file);
@@ -275,9 +358,7 @@
       try {
         const processed = await processImageBlob(state.stagedHeroPhoto.file, true);
         const res = await saveBlobLocally(processed.blob, 'kandy-and-hope.jpg');
-        if (res !== 'cancelled') {
-          showToast('💾 Saved locally as kandy-and-hope.jpg!');
-        }
+        if (res !== 'cancelled') showToast('💾 Saved locally as kandy-and-hope.jpg!');
       } catch (err) {
         showToast(`Save error: ${err.message}`);
       }
@@ -309,7 +390,7 @@
     });
   }
 
-  // Smart Image Resolver per Card (with cache-busting for freshly uploaded GitHub photos)
+  // Smart Image Resolver per Card
   function attachSmartImage(imgEl, card, tileEl) {
     if (state.sessionPhotos[card.id]) {
       imgEl.onload = null;
@@ -350,19 +431,20 @@
     if (badge) badge.textContent = `${realCount} / ${CARDS.length} Real Photos Loaded`;
   }
 
-  // Create a 3D Holographic Card Tile
+  // Create a Uniform-Height, Bottom-Aligned 3D Holographic Card Tile
   function createCardTile(card) {
     const tile = document.createElement('div');
     tile.className = 'card-tile' + (card.orientation === 'landscape' ? ' landscape' : '');
     tile.dataset.cardId = card.id;
 
     const isSlab = Boolean(card.grade);
-    const slabClass = isSlab ? (card.grade.includes('10') ? 'is-slab ace-10' : 'is-slab ace-9') : '';
-    const slabHeaderHTML = isSlab ? `
-      <div class="slab-header ${card.grade.includes('10') ? 'ace-10' : 'ace-9'}">
-        <span>ACE ${card.grade.includes('10') ? 'GEM MINT' : 'MINT'}</span>
-        <span class="slab-grade-box">${card.grade.includes('10') ? '10' : '9'}</span>
-      </div>` : '';
+    const slabTier = isSlab ? (card.grade.includes('10') ? 'ace-10' : 'ace-9') : '';
+    const slabClass = isSlab ? `is-slab ${slabTier}` : '';
+    const aceBadgeHTML = isSlab ? `
+      <span class="ace-floating-badge ${slabTier}">
+        <span>ACE</span>
+        <span class="grade-num">${card.grade.includes('10') ? '10' : '9'}</span>
+      </span>` : '';
 
     const specialEmoji = card.tags.includes('Alpha #1') ? '🥇 ' :
                          card.tags.includes('Bookend') ? '👑 ' :
@@ -370,19 +452,21 @@
                          card.tags.includes('Autograph') ? '✍️ ' : '';
 
     tile.innerHTML = `
-      <div class="card-3d ${slabClass}">
-        ${slabHeaderHTML}
-        <div class="card-img-wrap">
-          <span class="real-photo-dot">REAL PHOTO</span>
-          <img alt="${card.character} - ${card.parallel}" loading="lazy"/>
-          <div class="holo-glare"></div>
+      <div class="card-stage">
+        <div class="card-3d ${slabClass}">
+          <div class="card-img-wrap">
+            ${aceBadgeHTML}
+            <span class="real-photo-dot">✓ Photo</span>
+            <img alt="${card.character} - ${card.parallel}" loading="lazy"/>
+            <div class="holo-glare"></div>
+          </div>
         </div>
       </div>
       <div class="card-caption">
         <div class="card-char" title="${card.character}">${specialEmoji}${card.character}</div>
         <div class="card-par" title="${card.parallel}">${card.parallel}</div>
         <div class="card-meta-row">
-          <span class="serial-chip">${card.serial === 'Unnumbered' ? card.slot : card.serial}</span>
+          <span class="serial-chip">${card.serial === 'Unnumbered' ? card.cardNum : card.serial}</span>
           <span class="price-chip">${fmtGBP(cardVal(card))}</span>
         </div>
       </div>
@@ -412,11 +496,11 @@
     return tile;
   }
 
-  // Render Display Case Section
+  // Render Display Section (Gallery View Default + Per-Section Sort Controls)
   function renderDisplaySection(container, displayId) {
     const meta = DISPLAYS.find(d => d.id === displayId);
-    const dCards = CARDS.filter(c => c.display === displayId);
-    const mode = state.viewMode[displayId] || 'wall';
+    const sortMode = state.sectionSort[displayId] || 'rarity';
+    const dCards = sortCards(CARDS.filter(c => c.display === displayId), sortMode);
 
     const sec = document.createElement('section');
     sec.className = 'display-section';
@@ -453,50 +537,30 @@
       ${rainbowBar}
       <div class="view-bar">
         <span style="font-size:0.84rem;color:var(--text-muted);font-weight:600;">💡 ${meta.extraNote}</span>
-        <div class="segmented">
-          <button class="${mode === 'wall' ? 'active' : ''}" data-view="wall">🖼️ Wall Case View</button>
-          <button class="${mode === 'grid' ? 'active' : ''}" data-view="grid">✨ Gallery Grid</button>
+        <div class="sort-controls">
+          <span class="sort-label">Sort by:</span>
+          <div class="segmented">
+            <button class="${sortMode === 'rarity' ? 'active' : ''}" data-sort="rarity">🎯 Pull Rarity</button>
+            <button class="${sortMode === 'value' ? 'active' : ''}" data-sort="value">💷 Value</button>
+            <button class="${sortMode === 'name' ? 'active' : ''}" data-sort="name">🔤 Name</button>
+          </div>
         </div>
       </div>
       <div class="display-body"></div>
     `;
 
-    sec.querySelectorAll('.segmented button').forEach(btn => {
+    sec.querySelectorAll('.segmented button[data-sort]').forEach(btn => {
       btn.addEventListener('click', () => {
-        state.viewMode[displayId] = btn.dataset.view;
+        state.sectionSort[displayId] = btn.dataset.sort;
         renderActiveTab();
       });
     });
 
     const body = sec.querySelector('.display-body');
-    if (mode === 'wall') {
-      const wall = document.createElement('div');
-      wall.className = 'wall-case';
-      const rows = [...new Set(dCards.map(c => c.row))].sort((a, b) => a - b);
-      rows.forEach(r => {
-        const rowCards = dCards.filter(c => c.row === r).sort((a, b) => a.col - b.col);
-        const rowWrap = document.createElement('div');
-        rowWrap.className = 'shelf-row-wrap';
-        const rowTitle = r === 0 ? 'TOP OF DISPLAY CASE — CLASSIC COMIC BOOK COVERS (9 OF 10 · MISSING CC-10)' : `SHELF ROW ${r}`;
-        rowWrap.innerHTML = `
-          <div class="shelf-row-label">
-            <span>${rowTitle}</span>
-            <span>${rowCards.length} cards</span>
-          </div>
-          ${r > 0 ? '<div class="shelf-led-bar"></div>' : ''}
-          <div class="shelf-cards"></div>
-        `;
-        const grid = rowWrap.querySelector('.shelf-cards');
-        rowCards.forEach(c => grid.appendChild(createCardTile(c)));
-        wall.appendChild(rowWrap);
-      });
-      body.appendChild(wall);
-    } else {
-      const grid = document.createElement('div');
-      grid.className = 'cards-grid';
-      dCards.forEach(c => grid.appendChild(createCardTile(c)));
-      body.appendChild(grid);
-    }
+    const grid = document.createElement('div');
+    grid.className = 'cards-grid';
+    dCards.forEach(c => grid.appendChild(createCardTile(c)));
+    body.appendChild(grid);
 
     container.appendChild(sec);
   }
@@ -523,10 +587,7 @@
       return true;
     });
 
-    if (f.sort === 'val-desc') list.sort((a, b) => cardVal(b) - cardVal(a));
-    else if (f.sort === 'val-asc') list.sort((a, b) => cardVal(a) - cardVal(b));
-    else if (f.sort === 'rarity') list.sort((a, b) => (a.printRun || 9999) - (b.printRun || 9999));
-    else if (f.sort === 'alpha') list.sort((a, b) => a.character.localeCompare(b.character));
+    list = sortCards(list, f.sort);
 
     document.getElementById('explorer-summary').textContent =
       `Showing ${list.length} of ${CARDS.length} cards · Filtered Est. Value: ${fmtGBP(sumVals(list))}`;
@@ -1009,7 +1070,7 @@
       showToast(`Copied filename: ${fn}`);
     });
 
-    // 1) Choose Photo (Native Android Google Photos picker on phone / file picker on PC)
+    // Choose Photo
     document.getElementById('modal-choose-btn').addEventListener('click', () => {
       document.getElementById('modal-photo-input').click();
     });
@@ -1019,7 +1080,7 @@
       e.target.value = '';
     });
 
-    // 2) Paste from Google Photos button + Ctrl+V global listener when card modal is open
+    // Paste from Google Photos button + Ctrl+V listener
     document.getElementById('modal-paste-btn').addEventListener('click', async () => {
       if (!navigator.clipboard || !navigator.clipboard.read) {
         showToast('Press Ctrl+V on your keyboard to paste the copied photo!');
@@ -1057,7 +1118,7 @@
       }
     });
 
-    // 3) Drag & Drop onto Photo Studio or Card Preview
+    // Drag & Drop onto Photo Studio or Card Preview
     ['photo-studio-zone', 'modal-drop-preview'].forEach(elId => {
       const zone = document.getElementById(elId);
       zone.addEventListener('dragover', (e) => {
@@ -1075,19 +1136,17 @@
       });
     });
 
-    // Re-encode if user toggles "Optimise for fast web JPEG"
     document.getElementById('opt-web-jpeg').addEventListener('change', () => {
       if (state.stagedCardPhoto && state.stagedCardPhoto.rawBlob) {
         stageCardPhotoBlob(state.stagedCardPhoto.rawBlob);
       }
     });
 
-    // Cancel staged preview
     document.getElementById('modal-cancel-stage-btn').addEventListener('click', () => {
       clearStagedCardPhoto(true);
     });
 
-    // Save Staged Photo Directly to GitHub (overwriting old photo)
+    // Save Staged Photo Directly to GitHub
     document.getElementById('modal-save-gh-btn').addEventListener('click', async () => {
       if (!currentModalCard || !state.stagedCardPhoto) return;
       if (!state.gh.token) {
@@ -1109,7 +1168,6 @@
           `Update card photo: ${currentModalCard.character} (${currentModalCard.slot} ${currentModalCard.serial})`
         );
 
-        // Immediately show the new real photo in the live UI
         const keepUrl = URL.createObjectURL(state.stagedCardPhoto.outBlob);
         state.sessionPhotos[currentModalCard.id] = keepUrl;
         state.realPhotoLoaded[currentModalCard.id] = true;
@@ -1125,7 +1183,6 @@
         showToast(`☁️ Saved ${currentModalCard.character} to GitHub!`);
         burstConfetti();
 
-        // Hide staged actions cleanly after brief confirmation
         setTimeout(() => {
           if (state.stagedCardPhoto && state.stagedCardPhoto.previewUrl) {
             URL.revokeObjectURL(state.stagedCardPhoto.previewUrl);
@@ -1142,7 +1199,7 @@
       }
     });
 
-    // Save Staged Photo Locally with Exact Auto-Renamed Filename
+    // Save Staged Photo Locally (Auto-Renamed)
     document.getElementById('modal-save-local-btn').addEventListener('click', async () => {
       if (!currentModalCard || !state.stagedCardPhoto) return;
       const exactFilename = `${currentModalCard.baseFilename}.jpg`;

@@ -1133,3 +1133,190 @@ body.dark-vault .upload-status.err { color: #f87171; }
   margin-bottom: 16px;
   border: 1.5px solid var(--border);
 }
+
+/* ==========================================================================
+   V2 UI UPDATES: GALLERY DEFAULT, PERFECT ROW ALIGNMENT & PER-SECTION SORT
+   ========================================================================== */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  gap: 18px;
+  align-items: stretch;
+}
+
+.card-tile {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-soft);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 10px;
+  transition: transform 0.2s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.card-tile:hover {
+  border-color: rgba(236, 72, 153, 0.5);
+  box-shadow: var(--shadow-hover);
+}
+
+.card-stage {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.card-3d {
+  width: 100%;
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0b0f19;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+  transform-style: preserve-3d;
+  transition: transform 0.14s ease-out, box-shadow 0.2s ease;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Uniform-height ACE slab styling (floating badge — never pushes text down!) */
+.card-3d.is-slab {
+  padding: 0;
+  background: #0b0f19;
+  border: 2.5px solid rgba(250, 204, 21, 0.78);
+  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.34), 0 0 14px rgba(250, 204, 21, 0.22);
+}
+.card-3d.is-slab.ace-9 {
+  border-color: rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 24px rgba(100, 116, 139, 0.34);
+}
+
+.ace-floating-badge {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 7px;
+  border-radius: 8px;
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  background: linear-gradient(135deg, rgba(15,23,42,0.92), rgba(124,58,237,0.92));
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px);
+}
+.ace-floating-badge .grade-num {
+  background: #facc15;
+  color: #0f172a;
+  padding: 1px 5px;
+  border-radius: 5px;
+  font-size: 0.68rem;
+}
+.ace-floating-badge.ace-9 .grade-num {
+  background: #e2e8f0;
+}
+
+.card-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2.5 / 3.5;
+  overflow: hidden;
+  border-radius: 12px;
+  background: radial-gradient(circle at 50% 40%, #1b2238 0%, #090d18 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-tile.landscape .card-img-wrap {
+  aspect-ratio: 3.5 / 2.5;
+}
+
+.card-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Real uploaded photos use object-fit: contain so tall ACE slabs & custom crops never clip and every card box stays identical height */
+.card-tile.has-real-photo .card-img-wrap img {
+  object-fit: contain;
+  padding: 3px;
+}
+
+/* Subtle bottom-left real-photo pill so it never obscures top ACE or Topps logos */
+.real-photo-dot {
+  top: auto;
+  bottom: 7px;
+  left: 7px;
+  padding: 2px 7px;
+  font-size: 0.6rem;
+  background: rgba(16, 185, 129, 0.9);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.35);
+}
+
+/* Bottom-aligned caption locked identically across every card in a row */
+.card-caption {
+  margin-top: auto;
+  padding: 10px 2px 2px;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+}
+
+.card-char {
+  font-weight: 800;
+  font-size: 0.86rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-par {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  opacity: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+.card-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 7px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.sort-controls {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.sort-label {
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+@media (max-width: 560px) {
+  .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .card-tile { padding: 8px; }
+}
