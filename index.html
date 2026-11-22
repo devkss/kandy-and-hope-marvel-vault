@@ -90,10 +90,10 @@
 
     <!-- Navigation Tabs -->
     <nav class="nav-tabs" aria-label="Vault Sections">
-      <button class="tab-btn tab-hope active" data-tab="hope">🌈 Hope's Rainbow Room (66)</button>
+      <button class="tab-btn tab-hope active" data-tab="hope" id="tab-btn-hope">🌈 Hope's Rainbow Room (66)</button>
       <button class="tab-btn tab-chrome" data-tab="chrome">🏆 Kandy's Chrome Vault (75)</button>
       <button class="tab-btn tab-neon" data-tab="neon">⚡ Kandy's Neon Vault (39)</button>
-      <button class="tab-btn" data-tab="explorer">🔎 All 180 Cards Explorer</button>
+      <button class="tab-btn" data-tab="explorer" id="tab-btn-explorer">🔎 Vault Explorer</button>
       <button class="tab-btn" data-tab="sets">📚 Sets, Checklists &amp; Odds</button>
       <button class="tab-btn" data-tab="guide">📷 Photo Setup &amp; Filenames</button>
     </nav>
@@ -132,12 +132,13 @@
               <option value="Kandy">Kandy's Cards (114)</option>
             </select>
             <select id="f-display">
-              <option value="all">All 5 Wall Displays</option>
-              <option value="1">Display 1: Moon Girl (36)</option>
-              <option value="2">Display 2: Devil Dinosaur (30)</option>
-              <option value="3">Display 3: Chrome Slabs &amp; Autos (35)</option>
-              <option value="4">Display 4: Chrome Covers &amp; Inserts (40)</option>
-              <option value="5">Display 5: Neon Marvel (39)</option>
+              <option value="all">All Sections</option>
+              <option value="1">Hope: Moon Girl Chrome Rainbow</option>
+              <option value="2">Hope: Devil Dinosaur Chrome Rainbow</option>
+              <option value="6">Hope: Neon/Sapphire Others (6)</option>
+              <option value="3">Kandy: Chrome Slabs &amp; Autos (35)</option>
+              <option value="4">Kandy: Chrome Covers &amp; Inserts (40)</option>
+              <option value="5">Kandy: Neon Marvel (39)</option>
             </select>
             <select id="f-set">
               <option value="all">All 2026 Sets</option>
@@ -154,7 +155,8 @@
           </div>
 
           <div class="quick-tags">
-            <button class="qtag active" data-qtag="all">✨ All Cards</button>
+            <button class="qtag active" data-qtag="all">✨ All Owned Cards</button>
+            <button class="qtag" data-qtag="missing">🔍 Missing Rainbow Cards</button>
             <button class="qtag" data-qtag="ace">💎 ACE Graded Slabs (13)</button>
             <button class="qtag" data-qtag="low10">🔥 /5 &amp; /10 Ultra Rares</button>
             <button class="qtag" data-qtag="auto">✍️ Autographs (8)</button>
@@ -250,12 +252,13 @@
           <div class="filter-bar" style="grid-template-columns: 2fr 1fr;">
             <input type="search" id="guide-search" placeholder="Filter filename guide by character, serial, or filename..." />
             <select id="guide-display-filter">
-              <option value="all">All 5 Folders (180 Files)</option>
-              <option value="1">assets/cards/display-1-moon-girl/ (36)</option>
-              <option value="2">assets/cards/display-2-devil-dinosaur/ (30)</option>
-              <option value="3">assets/cards/display-3-chrome-hits/ (35)</option>
-              <option value="4">assets/cards/display-4-chrome-inserts/ (40)</option>
-              <option value="5">assets/cards/display-5-neon-marvel/ (39)</option>
+              <option value="all">All Sections (Owned + Missing Slots)</option>
+              <option value="1">Hope: Moon Girl Chrome Rainbow</option>
+              <option value="2">Hope: Devil Dinosaur Chrome Rainbow</option>
+              <option value="6">Hope: Neon/Sapphire Others (6)</option>
+              <option value="3">Kandy: Chrome Slabs &amp; Autos (35)</option>
+              <option value="4">Kandy: Chrome Covers &amp; Inserts (40)</option>
+              <option value="5">Kandy: Neon Marvel (39)</option>
             </select>
           </div>
 
@@ -293,6 +296,29 @@
           <p id="modal-subtitle" style="margin:0;color:var(--text-muted);font-weight:700;"></p>
           <div id="modal-details" class="detail-list"></div>
 
+          <!-- Collection Status Control (Missing <-> Collected + Serial/Value Editor) -->
+          <div class="status-studio" id="modal-status-studio">
+            <div class="status-studio-top">
+              <span id="modal-status-pill" class="status-pill-owned">✅ Owned in Collection</span>
+              <button id="modal-toggle-status-btn" class="btn btn-soft" style="padding:6px 13px;font-size:0.78rem;">Mark as Missing</button>
+            </div>
+            <div id="status-edit-fields" class="status-edit-fields">
+              <div>
+                <label for="status-serial-input">Card Serial # (e.g. 03/5)</label>
+                <input type="text" id="status-serial-input" placeholder="/5" />
+              </div>
+              <div>
+                <label for="status-value-input">Est. Value (£ GBP)</label>
+                <input type="number" id="status-value-input" min="0" step="1" placeholder="0" />
+              </div>
+            </div>
+            <div id="status-save-row" class="status-save-row">
+              <button id="status-save-local-btn" class="btn btn-primary" style="padding:7px 13px;font-size:0.78rem;">💾 Save Status Locally</button>
+              <button id="status-save-gh-btn" class="btn btn-success" style="padding:7px 13px;font-size:0.78rem;">☁️ Save Status to GitHub</button>
+            </div>
+            <div id="modal-status-msg" class="upload-status"></div>
+          </div>
+
           <div class="photo-studio" id="photo-studio-zone">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;">
               <span style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);">
@@ -314,10 +340,16 @@
             <div id="staged-panel" class="staged-panel">
               <div class="staged-meta">
                 <span id="staged-size-info">Ready to save</span>
-                <label class="staged-opt-label">
-                  <input type="checkbox" id="opt-web-jpeg" checked />
-                  Optimise for fast web JPEG
-                </label>
+                <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
+                  <label class="staged-opt-label" id="opt-mark-owned-wrap" style="display:none;">
+                    <input type="checkbox" id="opt-mark-owned" checked />
+                    Also mark as Collected
+                  </label>
+                  <label class="staged-opt-label">
+                    <input type="checkbox" id="opt-web-jpeg" checked />
+                    Optimise for fast web JPEG
+                  </label>
+                </div>
               </div>
               <div class="staged-actions">
                 <button id="modal-save-gh-btn" class="btn btn-success" style="padding:9px 15px;font-size:0.84rem;">☁️ Confirm &amp; Save to GitHub</button>

@@ -1,4 +1,4 @@
-// Kandy & Hope's Marvel Card Vault — Verified 180-Card Master Dataset
+// Kandy & Hope's Marvel Card Vault — Master Dataset (180 Owned + Complete 48-Card Hope Rainbows)
 window.VAULT_DISPLAYS = [
   {
     "id": 1,
@@ -6,8 +6,8 @@ window.VAULT_DISPLAYS = [
     "shortTitle": "Moon Girl Rainbow",
     "owner": "Hope",
     "folder": "display-1-moon-girl",
-    "subtitle": "2026 Topps Chrome Marvel #138 + Sapphire & Neon Bonus Hits",
-    "badge": "36 Cards \u00b7 Incl. 4/5 Red X-Fractor & 06/10 Black Clawed!",
+    "subtitle": "Complete 48-Card 2026 Topps Chrome Marvel #138 Rainbow Tracker (Owned + Missing Slots)",
+    "badge": "Complete 2026 Chrome Rainbow",
     "accent": "#ec4899",
     "extraNote": "Displayed below Funko Pop! #1119 Moon Girl & above CGC 9.8 Moon Girl and Devil Dinosaur #1 comic slab."
   },
@@ -17,10 +17,22 @@ window.VAULT_DISPLAYS = [
     "shortTitle": "Devil Dinosaur Rainbow",
     "owner": "Hope",
     "folder": "display-2-devil-dinosaur",
-    "subtitle": "2026 Topps Chrome Marvel #110 + Sapphire & Neon Inserts",
-    "badge": "30 Cards \u00b7 Incl. Bookend 10/10 Black Clawed & 04/10 Black X-Fractor!",
+    "subtitle": "Complete 48-Card 2026 Topps Chrome Marvel #110 Rainbow Tracker (Owned + Missing Slots)",
+    "badge": "Complete 2026 Chrome Rainbow",
     "accent": "#ef4444",
-    "extraNote": "Paired side-by-side with Moon Girl to form a 66-card character rainbow showcase."
+    "extraNote": "Paired side-by-side with Moon Girl to track every single 2026 Topps Chrome Marvel base & Clawed Chrome parallel."
+  },
+  {
+    "id": 6,
+    "title": "Neon/Sapphire Others",
+    "shortTitle": "Neon/Sapphire Others",
+    "owner": "Hope",
+    "folder": "display-1-moon-girl",
+    "subtitle": "Hope's Moon Girl & Devil Dinosaur Cards from 2026 Chrome Sapphire & 2026 Neon Marvel",
+    "badge": "6 Bonus Cards \u00b7 Grouped by Set & Character",
+    "accent": "#06b6d4",
+    "groupedBySetAndChar": true,
+    "extraNote": "Organised with one row per Set per Character so Hope's pure 2026 Chrome rainbows stay separate above."
   },
   {
     "id": 3,
@@ -294,7 +306,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r1c1_moon-girl_black-clawed_06-10",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r1c1_moon-girl_black-clawed_06-10.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r1c1_moon-girl_black-clawed_06-10.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r1c1_moon-girl_black-clawed_06-10.svg",
+    "missing": false
   },
   {
     "id": "d1-r1c2",
@@ -326,7 +339,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r1c2_moon-girl_chrome-clawed_19-20",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r1c2_moon-girl_chrome-clawed_19-20.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r1c2_moon-girl_chrome-clawed_19-20.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r1c2_moon-girl_chrome-clawed_19-20.svg",
+    "missing": false
   },
   {
     "id": "d1-r1c3",
@@ -358,7 +372,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r1c3_moon-girl_red-xfractor_4-5",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r1c3_moon-girl_red-xfractor_4-5.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r1c3_moon-girl_red-xfractor_4-5.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r1c3_moon-girl_red-xfractor_4-5.svg",
+    "missing": false
   },
   {
     "id": "d1-r1c4",
@@ -389,7 +404,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r1c4_moon-girl_orange-raywave_23-25",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r1c4_moon-girl_orange-raywave_23-25.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r1c4_moon-girl_orange-raywave_23-25.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r1c4_moon-girl_orange-raywave_23-25.svg",
+    "missing": false
   },
   {
     "id": "d1-r1c5",
@@ -421,7 +437,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r1c5_moon-girl_orange-storm_25-25",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r1c5_moon-girl_orange-storm_25-25.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r1c5_moon-girl_orange-storm_25-25.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r1c5_moon-girl_orange-storm_25-25.svg",
+    "missing": false
   },
   {
     "id": "d1-r1c6",
@@ -452,7 +469,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r1c6_moon-girl_orange-wave_12-25",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r1c6_moon-girl_orange-wave_12-25.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r1c6_moon-girl_orange-wave_12-25.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r1c6_moon-girl_orange-wave_12-25.svg",
+    "missing": false
   },
   {
     "id": "d1-r1c7",
@@ -483,7 +501,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r1c7_moon-girl_human-torch_24-39",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r1c7_moon-girl_human-torch_24-39.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r1c7_moon-girl_human-torch_24-39.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r1c7_moon-girl_human-torch_24-39.svg",
+    "missing": false
   },
   {
     "id": "d1-r2c1",
@@ -514,7 +533,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r2c1_moon-girl_gold-raywave_49-50",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r2c1_moon-girl_gold-raywave_49-50.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r2c1_moon-girl_gold-raywave_49-50.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r2c1_moon-girl_gold-raywave_49-50.svg",
+    "missing": false
   },
   {
     "id": "d1-r2c2",
@@ -545,7 +565,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r2c2_moon-girl_gold-xfractor_30-50",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r2c2_moon-girl_gold-xfractor_30-50.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r2c2_moon-girl_gold-xfractor_30-50.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r2c2_moon-girl_gold-xfractor_30-50.svg",
+    "missing": false
   },
   {
     "id": "d1-r2c3",
@@ -576,7 +597,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r2c3_moon-girl_gold-storm-18_18-50",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r2c3_moon-girl_gold-storm-18_18-50.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r2c3_moon-girl_gold-storm-18_18-50.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r2c3_moon-girl_gold-storm-18_18-50.svg",
+    "missing": false
   },
   {
     "id": "d1-r2c4",
@@ -607,7 +629,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r2c4_moon-girl_gold-storm-36_36-50",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r2c4_moon-girl_gold-storm-36_36-50.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r2c4_moon-girl_gold-storm-36_36-50.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r2c4_moon-girl_gold-storm-36_36-50.svg",
+    "missing": false
   },
   {
     "id": "d1-r2c5",
@@ -638,7 +661,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r2c5_moon-girl_marvel-logofractor_16-61",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r2c5_moon-girl_marvel-logofractor_16-61.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r2c5_moon-girl_marvel-logofractor_16-61.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r2c5_moon-girl_marvel-logofractor_16-61.svg",
+    "missing": false
   },
   {
     "id": "d1-r2c6",
@@ -667,7 +691,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r2c6_moon-girl_purple-raywave-17_17-75",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r2c6_moon-girl_purple-raywave-17_17-75.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r2c6_moon-girl_purple-raywave-17_17-75.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r2c6_moon-girl_purple-raywave-17_17-75.svg",
+    "missing": false
   },
   {
     "id": "d1-r2c7",
@@ -696,7 +721,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r2c7_moon-girl_purple-raywave-50_50-75",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r2c7_moon-girl_purple-raywave-50_50-75.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r2c7_moon-girl_purple-raywave-50_50-75.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r2c7_moon-girl_purple-raywave-50_50-75.svg",
+    "missing": false
   },
   {
     "id": "d1-r3c1",
@@ -725,7 +751,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r3c1_moon-girl_purple-shimmer_25-75",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r3c1_moon-girl_purple-shimmer_25-75.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r3c1_moon-girl_purple-shimmer_25-75.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r3c1_moon-girl_purple-shimmer_25-75.svg",
+    "missing": false
   },
   {
     "id": "d1-r3c2",
@@ -754,7 +781,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r3c2_moon-girl_purple-xfractor_23-75",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r3c2_moon-girl_purple-xfractor_23-75.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r3c2_moon-girl_purple-xfractor_23-75.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r3c2_moon-girl_purple-xfractor_23-75.svg",
+    "missing": false
   },
   {
     "id": "d1-r3c3",
@@ -783,7 +811,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r3c3_moon-girl_purple-storm_28-75",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r3c3_moon-girl_purple-storm_28-75.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r3c3_moon-girl_purple-storm_28-75.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r3c3_moon-girl_purple-storm_28-75.svg",
+    "missing": false
   },
   {
     "id": "d1-r3c4",
@@ -814,7 +843,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r3c4_moon-girl_dazzler-rhythm_12-80",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r3c4_moon-girl_dazzler-rhythm_12-80.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r3c4_moon-girl_dazzler-rhythm_12-80.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r3c4_moon-girl_dazzler-rhythm_12-80.svg",
+    "missing": false
   },
   {
     "id": "d1-r3c5",
@@ -843,7 +873,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r3c5_moon-girl_green-xfractor_69-99",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r3c5_moon-girl_green-xfractor_69-99.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r3c5_moon-girl_green-xfractor_69-99.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r3c5_moon-girl_green-xfractor_69-99.svg",
+    "missing": false
   },
   {
     "id": "d1-r3c6",
@@ -872,7 +903,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r3c6_moon-girl_green-storm_25-99",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r3c6_moon-girl_green-storm_25-99.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r3c6_moon-girl_green-storm_25-99.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r3c6_moon-girl_green-storm_25-99.svg",
+    "missing": false
   },
   {
     "id": "d1-r3c7",
@@ -903,7 +935,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r3c7_moon-girl_hulk-green-lazer_37-99",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r3c7_moon-girl_hulk-green-lazer_37-99.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r3c7_moon-girl_hulk-green-lazer_37-99.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r3c7_moon-girl_hulk-green-lazer_37-99.svg",
+    "missing": false
   },
   {
     "id": "d1-r4c1",
@@ -932,7 +965,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r4c1_moon-girl_green-raywave_22-99",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r4c1_moon-girl_green-raywave_22-99.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r4c1_moon-girl_green-raywave_22-99.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r4c1_moon-girl_green-raywave_22-99.svg",
+    "missing": false
   },
   {
     "id": "d1-r4c2",
@@ -961,7 +995,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r4c2_moon-girl_aqua_079-199",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r4c2_moon-girl_aqua_079-199.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r4c2_moon-girl_aqua_079-199.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r4c2_moon-girl_aqua_079-199.svg",
+    "missing": false
   },
   {
     "id": "d1-r4c3",
@@ -990,7 +1025,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r4c3_moon-girl_blue_035-150",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r4c3_moon-girl_blue_035-150.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r4c3_moon-girl_blue_035-150.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r4c3_moon-girl_blue_035-150.svg",
+    "missing": false
   },
   {
     "id": "d1-r4c4",
@@ -1019,7 +1055,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r4c4_moon-girl_pink_200-250",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r4c4_moon-girl_pink_200-250.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r4c4_moon-girl_pink_200-250.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r4c4_moon-girl_pink_200-250.svg",
+    "missing": false
   },
   {
     "id": "d1-r4c5",
@@ -1048,7 +1085,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r4c5_moon-girl_yellow-088_088-275",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r4c5_moon-girl_yellow-088_088-275.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r4c5_moon-girl_yellow-088_088-275.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r4c5_moon-girl_yellow-088_088-275.svg",
+    "missing": false
   },
   {
     "id": "d1-r4c6",
@@ -1077,7 +1115,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r4c6_moon-girl_yellow-271_271-275",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r4c6_moon-girl_yellow-271_271-275.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r4c6_moon-girl_yellow-271_271-275.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r4c6_moon-girl_yellow-271_271-275.svg",
+    "missing": false
   },
   {
     "id": "d1-r4c7",
@@ -1108,7 +1147,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r4c7_moon-girl_spider-web_241-399",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r4c7_moon-girl_spider-web_241-399.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r4c7_moon-girl_spider-web_241-399.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r4c7_moon-girl_spider-web_241-399.svg",
+    "missing": false
   },
   {
     "id": "d1-r5c1",
@@ -1137,7 +1177,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r5c1_moon-girl_storm-lightning_unnumbered",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r5c1_moon-girl_storm-lightning_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c1_moon-girl_storm-lightning_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c1_moon-girl_storm-lightning_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d1-r5c2",
@@ -1166,7 +1207,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r5c2_moon-girl_raywave_unnumbered",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r5c2_moon-girl_raywave_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c2_moon-girl_raywave_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c2_moon-girl_raywave_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d1-r5c3",
@@ -1195,7 +1237,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r5c3_moon-girl_xfractor_unnumbered",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r5c3_moon-girl_xfractor_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c3_moon-girl_xfractor_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c3_moon-girl_xfractor_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d1-r5c4",
@@ -1224,7 +1267,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r5c4_moon-girl_refractor_unnumbered",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r5c4_moon-girl_refractor_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c4_moon-girl_refractor_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c4_moon-girl_refractor_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d1-r5c5",
@@ -1253,11 +1297,12 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r5c5_moon-girl_base_unnumbered",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r5c5_moon-girl_base_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c5_moon-girl_base_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c5_moon-girl_base_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d1-r5c6",
-    "display": 1,
+    "display": 6,
     "row": 5,
     "col": 6,
     "slot": "R5-C6",
@@ -1284,11 +1329,12 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r5c6_moon-girl_green-sapphire_43-99",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r5c6_moon-girl_green-sapphire_43-99.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c6_moon-girl_green-sapphire_43-99.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c6_moon-girl_green-sapphire_43-99.svg",
+    "missing": false
   },
   {
     "id": "d1-r5c7",
-    "display": 1,
+    "display": 6,
     "row": 5,
     "col": 7,
     "slot": "R5-C7",
@@ -1315,11 +1361,12 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r5c7_moon-girl_neon-pink_236-250",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r5c7_moon-girl_neon-pink_236-250.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c7_moon-girl_neon-pink_236-250.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c7_moon-girl_neon-pink_236-250.svg",
+    "missing": false
   },
   {
     "id": "d1-r5c8",
-    "display": 1,
+    "display": 6,
     "row": 5,
     "col": 8,
     "slot": "R5-C8",
@@ -1347,7 +1394,8 @@ window.VAULT_CARDS = [
     "folder": "display-1-moon-girl",
     "baseFilename": "d1_r5c8_moon-girl_neon-chrome-etch_unnumbered",
     "recommendedPath": "assets/cards/display-1-moon-girl/d1_r5c8_moon-girl_neon-chrome-etch_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c8_moon-girl_neon-chrome-etch_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-1-moon-girl/d1_r5c8_moon-girl_neon-chrome-etch_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d2-r1c1",
@@ -1380,7 +1428,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r1c1_devil-dinosaur_black-clawed_10-10",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r1c1_devil-dinosaur_black-clawed_10-10.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r1c1_devil-dinosaur_black-clawed_10-10.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r1c1_devil-dinosaur_black-clawed_10-10.svg",
+    "missing": false
   },
   {
     "id": "d2-r1c2",
@@ -1412,7 +1461,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r1c2_devil-dinosaur_black-xfractor_04-10",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r1c2_devil-dinosaur_black-xfractor_04-10.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r1c2_devil-dinosaur_black-xfractor_04-10.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r1c2_devil-dinosaur_black-xfractor_04-10.svg",
+    "missing": false
   },
   {
     "id": "d2-r1c3",
@@ -1443,7 +1493,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r1c3_devil-dinosaur_orange-storm_16-25",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r1c3_devil-dinosaur_orange-storm_16-25.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r1c3_devil-dinosaur_orange-storm_16-25.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r1c3_devil-dinosaur_orange-storm_16-25.svg",
+    "missing": false
   },
   {
     "id": "d2-r1c4",
@@ -1474,7 +1525,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r1c4_devil-dinosaur_human-torch_33-39",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r1c4_devil-dinosaur_human-torch_33-39.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r1c4_devil-dinosaur_human-torch_33-39.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r1c4_devil-dinosaur_human-torch_33-39.svg",
+    "missing": false
   },
   {
     "id": "d2-r1c5",
@@ -1505,7 +1557,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r1c5_devil-dinosaur_gold-storm_46-50",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r1c5_devil-dinosaur_gold-storm_46-50.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r1c5_devil-dinosaur_gold-storm_46-50.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r1c5_devil-dinosaur_gold-storm_46-50.svg",
+    "missing": false
   },
   {
     "id": "d2-r1c6",
@@ -1536,7 +1589,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r1c6_devil-dinosaur_gold_40-50",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r1c6_devil-dinosaur_gold_40-50.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r1c6_devil-dinosaur_gold_40-50.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r1c6_devil-dinosaur_gold_40-50.svg",
+    "missing": false
   },
   {
     "id": "d2-r1c7",
@@ -1567,7 +1621,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r1c7_devil-dinosaur_spider-web-red-blue_16-62",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r1c7_devil-dinosaur_spider-web-red-blue_16-62.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r1c7_devil-dinosaur_spider-web-red-blue_16-62.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r1c7_devil-dinosaur_spider-web-red-blue_16-62.svg",
+    "missing": false
   },
   {
     "id": "d2-r2c1",
@@ -1596,7 +1651,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r2c1_devil-dinosaur_purple-storm_70-75",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r2c1_devil-dinosaur_purple-storm_70-75.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r2c1_devil-dinosaur_purple-storm_70-75.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r2c1_devil-dinosaur_purple-storm_70-75.svg",
+    "missing": false
   },
   {
     "id": "d2-r2c2",
@@ -1625,7 +1681,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r2c2_devil-dinosaur_purple-shimmer_69-75",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r2c2_devil-dinosaur_purple-shimmer_69-75.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r2c2_devil-dinosaur_purple-shimmer_69-75.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r2c2_devil-dinosaur_purple-shimmer_69-75.svg",
+    "missing": false
   },
   {
     "id": "d2-r2c3",
@@ -1654,7 +1711,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r2c3_devil-dinosaur_purple-raywave_22-75",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r2c3_devil-dinosaur_purple-raywave_22-75.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r2c3_devil-dinosaur_purple-raywave_22-75.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r2c3_devil-dinosaur_purple-raywave_22-75.svg",
+    "missing": false
   },
   {
     "id": "d2-r2c4",
@@ -1685,7 +1743,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r2c4_devil-dinosaur_dazzler-rhythm-22_22-80",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r2c4_devil-dinosaur_dazzler-rhythm-22_22-80.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r2c4_devil-dinosaur_dazzler-rhythm-22_22-80.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r2c4_devil-dinosaur_dazzler-rhythm-22_22-80.svg",
+    "missing": false
   },
   {
     "id": "d2-r2c5",
@@ -1716,7 +1775,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r2c5_devil-dinosaur_dazzler-rhythm-52_52-80",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r2c5_devil-dinosaur_dazzler-rhythm-52_52-80.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r2c5_devil-dinosaur_dazzler-rhythm-52_52-80.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r2c5_devil-dinosaur_dazzler-rhythm-52_52-80.svg",
+    "missing": false
   },
   {
     "id": "d2-r2c6",
@@ -1745,7 +1805,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r2c6_devil-dinosaur_green-raywave_76-99",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r2c6_devil-dinosaur_green-raywave_76-99.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r2c6_devil-dinosaur_green-raywave_76-99.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r2c6_devil-dinosaur_green-raywave_76-99.svg",
+    "missing": false
   },
   {
     "id": "d2-r2c7",
@@ -1774,7 +1835,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r2c7_devil-dinosaur_green-xfractor_85-99",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r2c7_devil-dinosaur_green-xfractor_85-99.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r2c7_devil-dinosaur_green-xfractor_85-99.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r2c7_devil-dinosaur_green-xfractor_85-99.svg",
+    "missing": false
   },
   {
     "id": "d2-r3c1",
@@ -1805,7 +1867,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r3c1_devil-dinosaur_hulk-green-lazer_80-99",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r3c1_devil-dinosaur_hulk-green-lazer_80-99.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r3c1_devil-dinosaur_hulk-green-lazer_80-99.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r3c1_devil-dinosaur_hulk-green-lazer_80-99.svg",
+    "missing": false
   },
   {
     "id": "d2-r3c2",
@@ -1834,7 +1897,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r3c2_devil-dinosaur_green-storm_48-99",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r3c2_devil-dinosaur_green-storm_48-99.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r3c2_devil-dinosaur_green-storm_48-99.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r3c2_devil-dinosaur_green-storm_48-99.svg",
+    "missing": false
   },
   {
     "id": "d2-r3c3",
@@ -1863,7 +1927,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r3c3_devil-dinosaur_blue_055-150",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r3c3_devil-dinosaur_blue_055-150.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r3c3_devil-dinosaur_blue_055-150.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r3c3_devil-dinosaur_blue_055-150.svg",
+    "missing": false
   },
   {
     "id": "d2-r3c4",
@@ -1892,7 +1957,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r3c4_devil-dinosaur_aqua_172-199",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r3c4_devil-dinosaur_aqua_172-199.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r3c4_devil-dinosaur_aqua_172-199.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r3c4_devil-dinosaur_aqua_172-199.svg",
+    "missing": false
   },
   {
     "id": "d2-r3c5",
@@ -1921,7 +1987,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r3c5_devil-dinosaur_yellow-136_136-275",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r3c5_devil-dinosaur_yellow-136_136-275.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r3c5_devil-dinosaur_yellow-136_136-275.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r3c5_devil-dinosaur_yellow-136_136-275.svg",
+    "missing": false
   },
   {
     "id": "d2-r3c6",
@@ -1950,7 +2017,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r3c6_devil-dinosaur_yellow-046_046-275",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r3c6_devil-dinosaur_yellow-046_046-275.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r3c6_devil-dinosaur_yellow-046_046-275.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r3c6_devil-dinosaur_yellow-046_046-275.svg",
+    "missing": false
   },
   {
     "id": "d2-r3c7",
@@ -1979,7 +2047,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r3c7_devil-dinosaur_yellow-203_203-275",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r3c7_devil-dinosaur_yellow-203_203-275.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r3c7_devil-dinosaur_yellow-203_203-275.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r3c7_devil-dinosaur_yellow-203_203-275.svg",
+    "missing": false
   },
   {
     "id": "d2-r4c1",
@@ -2010,7 +2079,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r4c1_devil-dinosaur_spider-web_367-399",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r4c1_devil-dinosaur_spider-web_367-399.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r4c1_devil-dinosaur_spider-web_367-399.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r4c1_devil-dinosaur_spider-web_367-399.svg",
+    "missing": false
   },
   {
     "id": "d2-r4c2",
@@ -2039,7 +2109,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r4c2_devil-dinosaur_storm-lightning_unnumbered",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r4c2_devil-dinosaur_storm-lightning_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r4c2_devil-dinosaur_storm-lightning_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r4c2_devil-dinosaur_storm-lightning_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d2-r4c3",
@@ -2068,7 +2139,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r4c3_devil-dinosaur_raywave_unnumbered",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r4c3_devil-dinosaur_raywave_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r4c3_devil-dinosaur_raywave_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r4c3_devil-dinosaur_raywave_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d2-r4c4",
@@ -2097,7 +2169,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r4c4_devil-dinosaur_xfractor_unnumbered",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r4c4_devil-dinosaur_xfractor_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r4c4_devil-dinosaur_xfractor_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r4c4_devil-dinosaur_xfractor_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d2-r4c5",
@@ -2126,7 +2199,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r4c5_devil-dinosaur_refractor_unnumbered",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r4c5_devil-dinosaur_refractor_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r4c5_devil-dinosaur_refractor_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r4c5_devil-dinosaur_refractor_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d2-r4c6",
@@ -2155,11 +2229,12 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r4c6_devil-dinosaur_base_unnumbered",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r4c6_devil-dinosaur_base_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r4c6_devil-dinosaur_base_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r4c6_devil-dinosaur_base_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d2-r5c1",
-    "display": 2,
+    "display": 6,
     "row": 5,
     "col": 1,
     "slot": "R5-C1",
@@ -2187,11 +2262,12 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r5c1_devil-dinosaur_pet-avengers_unnumbered",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r5c1_devil-dinosaur_pet-avengers_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r5c1_devil-dinosaur_pet-avengers_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r5c1_devil-dinosaur_pet-avengers_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d2-r5c2",
-    "display": 2,
+    "display": 6,
     "row": 5,
     "col": 2,
     "slot": "R5-C2",
@@ -2219,11 +2295,12 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r5c2_devil-dinosaur_marvel-snap_unnumbered",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r5c2_devil-dinosaur_marvel-snap_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r5c2_devil-dinosaur_marvel-snap_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r5c2_devil-dinosaur_marvel-snap_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d2-r5c3",
-    "display": 2,
+    "display": 6,
     "row": 5,
     "col": 3,
     "slot": "R5-C3",
@@ -2250,7 +2327,8 @@ window.VAULT_CARDS = [
     "folder": "display-2-devil-dinosaur",
     "baseFilename": "d2_r5c3_devil-dinosaur_green-sapphire_79-99",
     "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_r5c3_devil-dinosaur_green-sapphire_79-99.jpg",
-    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r5c3_devil-dinosaur_green-sapphire_79-99.svg"
+    "placeholderSvg": "assets/cards/display-2-devil-dinosaur/d2_r5c3_devil-dinosaur_green-sapphire_79-99.svg",
+    "missing": false
   },
   {
     "id": "d3-r1c1",
@@ -2284,7 +2362,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r1c1_ghost-rider_facsimile-auto-black-wave_10-10",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r1c1_ghost-rider_facsimile-auto-black-wave_10-10.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r1c1_ghost-rider_facsimile-auto-black-wave_10-10.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r1c1_ghost-rider_facsimile-auto-black-wave_10-10.svg",
+    "missing": false
   },
   {
     "id": "d3-r1c2",
@@ -2316,7 +2395,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r1c2_captain-america_auto-steve-epting-purple_16-75",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r1c2_captain-america_auto-steve-epting-purple_16-75.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r1c2_captain-america_auto-steve-epting-purple_16-75.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r1c2_captain-america_auto-steve-epting-purple_16-75.svg",
+    "missing": false
   },
   {
     "id": "d3-r1c3",
@@ -2348,7 +2428,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r1c3_doctor-doom_auto-ryan-brown-orange_14-25",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r1c3_doctor-doom_auto-ryan-brown-orange_14-25.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r1c3_doctor-doom_auto-ryan-brown-orange_14-25.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r1c3_doctor-doom_auto-ryan-brown-orange_14-25.svg",
+    "missing": false
   },
   {
     "id": "d3-r1c4",
@@ -2379,7 +2460,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r1c4_tigra_auto-mike-mayhew-purple_30-75",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r1c4_tigra_auto-mike-mayhew-purple_30-75.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r1c4_tigra_auto-mike-mayhew-purple_30-75.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r1c4_tigra_auto-mike-mayhew-purple_30-75.svg",
+    "missing": false
   },
   {
     "id": "d3-r1c5",
@@ -2410,7 +2492,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r1c5_peter-parker_auto-steve-mcniven-purple_07-75",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r1c5_peter-parker_auto-steve-mcniven-purple_07-75.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r1c5_peter-parker_auto-steve-mcniven-purple_07-75.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r1c5_peter-parker_auto-steve-mcniven-purple_07-75.svg",
+    "missing": false
   },
   {
     "id": "d3-r1c6",
@@ -2442,7 +2525,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r1c6_shang-chi_auto-jim-cheung-green_48-99",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r1c6_shang-chi_auto-jim-cheung-green_48-99.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r1c6_shang-chi_auto-jim-cheung-green_48-99.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r1c6_shang-chi_auto-jim-cheung-green_48-99.svg",
+    "missing": false
   },
   {
     "id": "d3-r1c7",
@@ -2474,7 +2558,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r1c7_daredevil_auto-adi-granov_unnumbered",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r1c7_daredevil_auto-adi-granov_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r1c7_daredevil_auto-adi-granov_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r1c7_daredevil_auto-adi-granov_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d3-r2c1",
@@ -2507,7 +2592,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r2c1_daredevil-and-bullseye_auto-whilce-portacio-black_04-10",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r2c1_daredevil-and-bullseye_auto-whilce-portacio-black_04-10.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r2c1_daredevil-and-bullseye_auto-whilce-portacio-black_04-10.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r2c1_daredevil-and-bullseye_auto-whilce-portacio-black_04-10.svg",
+    "missing": false
   },
   {
     "id": "d3-r2c2",
@@ -2540,7 +2626,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r2c2_gambit_red-xfractor_2-5",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r2c2_gambit_red-xfractor_2-5.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r2c2_gambit_red-xfractor_2-5.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r2c2_gambit_red-xfractor_2-5.svg",
+    "missing": false
   },
   {
     "id": "d3-r2c3",
@@ -2573,7 +2660,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r2c3_goblin-queen_red-storm_4-5",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r2c3_goblin-queen_red-storm_4-5.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r2c3_goblin-queen_red-storm_4-5.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r2c3_goblin-queen_red-storm_4-5.svg",
+    "missing": false
   },
   {
     "id": "d3-r2c4",
@@ -2605,7 +2693,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r2c4_captain-britain_black-raywave_06-10",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r2c4_captain-britain_black-raywave_06-10.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r2c4_captain-britain_black-raywave_06-10.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r2c4_captain-britain_black-raywave_06-10.svg",
+    "missing": false
   },
   {
     "id": "d3-r2c5",
@@ -2638,7 +2727,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r2c5_dazzler_black-storm_05-10",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r2c5_dazzler_black-storm_05-10.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r2c5_dazzler_black-storm_05-10.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r2c5_dazzler_black-storm_05-10.svg",
+    "missing": false
   },
   {
     "id": "d3-r2c6",
@@ -2671,7 +2761,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r2c6_ms-marvel_black-xfractor_09-10",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r2c6_ms-marvel_black-xfractor_09-10.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r2c6_ms-marvel_black-xfractor_09-10.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r2c6_ms-marvel_black-xfractor_09-10.svg",
+    "missing": false
   },
   {
     "id": "d3-r2c7",
@@ -2703,7 +2794,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r2c7_nimrod_black_05-10",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r2c7_nimrod_black_05-10.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r2c7_nimrod_black_05-10.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r2c7_nimrod_black_05-10.svg",
+    "missing": false
   },
   {
     "id": "d3-r3c1",
@@ -2735,7 +2827,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r3c1_storm_orange-storm_05-25",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r3c1_storm_orange-storm_05-25.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r3c1_storm_orange-storm_05-25.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r3c1_storm_orange-storm_05-25.svg",
+    "missing": false
   },
   {
     "id": "d3-r3c2",
@@ -2767,7 +2860,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r3c2_black-knight_orange-storm_05-25",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r3c2_black-knight_orange-storm_05-25.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r3c2_black-knight_orange-storm_05-25.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r3c2_black-knight_orange-storm_05-25.svg",
+    "missing": false
   },
   {
     "id": "d3-r3c3",
@@ -2799,7 +2893,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r3c3_nova_orange_17-25",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r3c3_nova_orange_17-25.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r3c3_nova_orange_17-25.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r3c3_nova_orange_17-25.svg",
+    "missing": false
   },
   {
     "id": "d3-r3c4",
@@ -2830,7 +2925,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r3c4_valeria-richards_orange-raywave_06-25",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r3c4_valeria-richards_orange-raywave_06-25.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r3c4_valeria-richards_orange-raywave_06-25.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r3c4_valeria-richards_orange-raywave_06-25.svg",
+    "missing": false
   },
   {
     "id": "d3-r3c5",
@@ -2861,7 +2957,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r3c5_m-o-d-o-k_orange-raywave_17-25",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r3c5_m-o-d-o-k_orange-raywave_17-25.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r3c5_m-o-d-o-k_orange-raywave_17-25.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r3c5_m-o-d-o-k_orange-raywave_17-25.svg",
+    "missing": false
   },
   {
     "id": "d3-r3c6",
@@ -2893,7 +2990,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r3c6_psylocke_human-torch_05-39",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r3c6_psylocke_human-torch_05-39.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r3c6_psylocke_human-torch_05-39.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r3c6_psylocke_human-torch_05-39.svg",
+    "missing": false
   },
   {
     "id": "d3-r3c7",
@@ -2925,7 +3023,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r3c7_loki_human-torch_01-39",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r3c7_loki_human-torch_01-39.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r3c7_loki_human-torch_01-39.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r3c7_loki_human-torch_01-39.svg",
+    "missing": false
   },
   {
     "id": "d3-r4c1",
@@ -2956,7 +3055,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r4c1_moon-knight_gold-raywave_49-50",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r4c1_moon-knight_gold-raywave_49-50.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r4c1_moon-knight_gold-raywave_49-50.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r4c1_moon-knight_gold-raywave_49-50.svg",
+    "missing": false
   },
   {
     "id": "d3-r4c2",
@@ -2987,7 +3087,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r4c2_nova_gold-wave_43-50",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r4c2_nova_gold-wave_43-50.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r4c2_nova_gold-wave_43-50.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r4c2_nova_gold-wave_43-50.svg",
+    "missing": false
   },
   {
     "id": "d3-r4c3",
@@ -3019,7 +3120,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r4c3_wolverine_gold-storm_38-50",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r4c3_wolverine_gold-storm_38-50.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r4c3_wolverine_gold-storm_38-50.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r4c3_wolverine_gold-storm_38-50.svg",
+    "missing": false
   },
   {
     "id": "d3-r4c4",
@@ -3050,7 +3152,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r4c4_baron-zemo_gold-xfractor_16-50",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r4c4_baron-zemo_gold-xfractor_16-50.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r4c4_baron-zemo_gold-xfractor_16-50.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r4c4_baron-zemo_gold-xfractor_16-50.svg",
+    "missing": false
   },
   {
     "id": "d3-r4c5",
@@ -3081,7 +3184,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r4c5_forge_gold-raywave_42-50",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r4c5_forge_gold-raywave_42-50.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r4c5_forge_gold-raywave_42-50.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r4c5_forge_gold-raywave_42-50.svg",
+    "missing": false
   },
   {
     "id": "d3-r4c6",
@@ -3112,7 +3216,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r4c6_black-cat_marvel-logofractor_56-61",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r4c6_black-cat_marvel-logofractor_56-61.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r4c6_black-cat_marvel-logofractor_56-61.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r4c6_black-cat_marvel-logofractor_56-61.svg",
+    "missing": false
   },
   {
     "id": "d3-r4c7",
@@ -3144,7 +3249,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r4c7_ultimate-wolverine_spider-web-red-blue_19-62",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r4c7_ultimate-wolverine_spider-web-red-blue_19-62.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r4c7_ultimate-wolverine_spider-web-red-blue_19-62.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r4c7_ultimate-wolverine_spider-web-red-blue_19-62.svg",
+    "missing": false
   },
   {
     "id": "d3-r5c1",
@@ -3175,7 +3281,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r5c1_moon-knight_spider-web-red-blue_57-62",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r5c1_moon-knight_spider-web-red-blue_57-62.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r5c1_moon-knight_spider-web-red-blue_57-62.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r5c1_moon-knight_spider-web-red-blue_57-62.svg",
+    "missing": false
   },
   {
     "id": "d3-r5c2",
@@ -3206,7 +3313,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r5c2_jubilee_spider-web-red-blue_17-62",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r5c2_jubilee_spider-web-red-blue_17-62.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r5c2_jubilee_spider-web-red-blue_17-62.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r5c2_jubilee_spider-web-red-blue_17-62.svg",
+    "missing": false
   },
   {
     "id": "d3-r5c3",
@@ -3237,7 +3345,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r5c3_glob_spider-web-red-blue_04-62",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r5c3_glob_spider-web-red-blue_04-62.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r5c3_glob_spider-web-red-blue_04-62.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r5c3_glob_spider-web-red-blue_04-62.svg",
+    "missing": false
   },
   {
     "id": "d3-r5c4",
@@ -3268,7 +3377,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r5c4_black-cat_spider-web-red-blue_57-62",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r5c4_black-cat_spider-web-red-blue_57-62.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r5c4_black-cat_spider-web-red-blue_57-62.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r5c4_black-cat_spider-web-red-blue_57-62.svg",
+    "missing": false
   },
   {
     "id": "d3-r5c5",
@@ -3297,7 +3407,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r5c5_black-cat_purple-xfractor_72-75",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r5c5_black-cat_purple-xfractor_72-75.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r5c5_black-cat_purple-xfractor_72-75.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r5c5_black-cat_purple-xfractor_72-75.svg",
+    "missing": false
   },
   {
     "id": "d3-r5c6",
@@ -3326,7 +3437,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r5c6_human-torch_purple-xfractor_49-75",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r5c6_human-torch_purple-xfractor_49-75.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r5c6_human-torch_purple-xfractor_49-75.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r5c6_human-torch_purple-xfractor_49-75.svg",
+    "missing": false
   },
   {
     "id": "d3-r5c7",
@@ -3355,7 +3467,8 @@ window.VAULT_CARDS = [
     "folder": "display-3-chrome-hits",
     "baseFilename": "d3_r5c7_cosmic-ghost-rider_purple-shimmer_38-75",
     "recommendedPath": "assets/cards/display-3-chrome-hits/d3_r5c7_cosmic-ghost-rider_purple-shimmer_38-75.jpg",
-    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r5c7_cosmic-ghost-rider_purple-shimmer_38-75.svg"
+    "placeholderSvg": "assets/cards/display-3-chrome-hits/d3_r5c7_cosmic-ghost-rider_purple-shimmer_38-75.svg",
+    "missing": false
   },
   {
     "id": "d4-top01",
@@ -3387,7 +3500,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_top01_x-men-31_cc01_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_top01_x-men-31_cc01_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top01_x-men-31_cc01_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top01_x-men-31_cc01_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-top02",
@@ -3419,7 +3533,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_top02_fantastic-four-72_cc02_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_top02_fantastic-four-72_cc02_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top02_fantastic-four-72_cc02_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top02_fantastic-four-72_cc02_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-top03",
@@ -3451,7 +3566,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_top03_iron-man-300_cc03_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_top03_iron-man-300_cc03_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top03_iron-man-300_cc03_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top03_iron-man-300_cc03_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-top04",
@@ -3483,7 +3599,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_top04_the-x-men-39_cc04_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_top04_the-x-men-39_cc04_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top04_the-x-men-39_cc04_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top04_the-x-men-39_cc04_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-top05",
@@ -3515,7 +3632,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_top05_spider-man-36_cc05_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_top05_spider-man-36_cc05_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top05_spider-man-36_cc05_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top05_spider-man-36_cc05_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-top06",
@@ -3547,7 +3665,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_top06_avengers-16_cc06_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_top06_avengers-16_cc06_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top06_avengers-16_cc06_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top06_avengers-16_cc06_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-top07",
@@ -3579,7 +3698,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_top07_uncanny-x-men-200_cc07_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_top07_uncanny-x-men-200_cc07_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top07_uncanny-x-men-200_cc07_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top07_uncanny-x-men-200_cc07_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-top08",
@@ -3611,7 +3731,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_top08_captain-america-110_cc09_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_top08_captain-america-110_cc09_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top08_captain-america-110_cc09_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top08_captain-america-110_cc09_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-top09",
@@ -3643,7 +3764,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_top09_defenders-67_cc08_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_top09_defenders-67_cc08_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top09_defenders-67_cc08_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_top09_defenders-67_cc08_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-r1c1",
@@ -3672,7 +3794,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r1c1_silver-surfer_aqua_100-199",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r1c1_silver-surfer_aqua_100-199.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r1c1_silver-surfer_aqua_100-199.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r1c1_silver-surfer_aqua_100-199.svg",
+    "missing": false
   },
   {
     "id": "d4-r1c2",
@@ -3701,7 +3824,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r1c2_dazzler_aqua_164-199",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r1c2_dazzler_aqua_164-199.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r1c2_dazzler_aqua_164-199.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r1c2_dazzler_aqua_164-199.svg",
+    "missing": false
   },
   {
     "id": "d4-r1c3",
@@ -3730,7 +3854,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r1c3_ghost-rider_aqua_029-199",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r1c3_ghost-rider_aqua_029-199.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r1c3_ghost-rider_aqua_029-199.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r1c3_ghost-rider_aqua_029-199.svg",
+    "missing": false
   },
   {
     "id": "d4-r1c4",
@@ -3759,7 +3884,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r1c4_thor_pink_188-250",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r1c4_thor_pink_188-250.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r1c4_thor_pink_188-250.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r1c4_thor_pink_188-250.svg",
+    "missing": false
   },
   {
     "id": "d4-r1c5",
@@ -3788,7 +3914,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r1c5_daredevil_pink_219-250",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r1c5_daredevil_pink_219-250.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r1c5_daredevil_pink_219-250.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r1c5_daredevil_pink_219-250.svg",
+    "missing": false
   },
   {
     "id": "d4-r1c6",
@@ -3817,7 +3944,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r1c6_black-cat_yellow_030-275",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r1c6_black-cat_yellow_030-275.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r1c6_black-cat_yellow_030-275.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r1c6_black-cat_yellow_030-275.svg",
+    "missing": false
   },
   {
     "id": "d4-r2c1",
@@ -3848,7 +3976,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r2c1_shang-chi_hulk-green-lazer_25-99",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r2c1_shang-chi_hulk-green-lazer_25-99.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r2c1_shang-chi_hulk-green-lazer_25-99.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r2c1_shang-chi_hulk-green-lazer_25-99.svg",
+    "missing": false
   },
   {
     "id": "d4-r2c2",
@@ -3877,7 +4006,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r2c2_ultimate-wolverine_green-raywave_58-99",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r2c2_ultimate-wolverine_green-raywave_58-99.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r2c2_ultimate-wolverine_green-raywave_58-99.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r2c2_ultimate-wolverine_green-raywave_58-99.svg",
+    "missing": false
   },
   {
     "id": "d4-r2c3",
@@ -3906,7 +4036,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r2c3_beta-ray-bill_green-raywave_30-99",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r2c3_beta-ray-bill_green-raywave_30-99.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r2c3_beta-ray-bill_green-raywave_30-99.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r2c3_beta-ray-bill_green-raywave_30-99.svg",
+    "missing": false
   },
   {
     "id": "d4-r2c4",
@@ -3935,7 +4066,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r2c4_dazzler_green-raywave_94-99",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r2c4_dazzler_green-raywave_94-99.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r2c4_dazzler_green-raywave_94-99.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r2c4_dazzler_green-raywave_94-99.svg",
+    "missing": false
   },
   {
     "id": "d4-r2c5",
@@ -3964,7 +4096,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r2c5_nova_blue_011-150",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r2c5_nova_blue_011-150.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r2c5_nova_blue_011-150.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r2c5_nova_blue_011-150.svg",
+    "missing": false
   },
   {
     "id": "d4-r2c6",
@@ -3993,7 +4126,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r2c6_moon-knight_blue_018-150",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r2c6_moon-knight_blue_018-150.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r2c6_moon-knight_blue_018-150.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r2c6_moon-knight_blue_018-150.svg",
+    "missing": false
   },
   {
     "id": "d4-r3c1",
@@ -4022,7 +4156,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r3c1_sentry_purple-raywave_12-75",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r3c1_sentry_purple-raywave_12-75.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r3c1_sentry_purple-raywave_12-75.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r3c1_sentry_purple-raywave_12-75.svg",
+    "missing": false
   },
   {
     "id": "d4-r3c2",
@@ -4051,7 +4186,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r3c2_spider-ham_purple-shimmer_55-75",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r3c2_spider-ham_purple-shimmer_55-75.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r3c2_spider-ham_purple-shimmer_55-75.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r3c2_spider-ham_purple-shimmer_55-75.svg",
+    "missing": false
   },
   {
     "id": "d4-r3c3",
@@ -4080,7 +4216,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r3c3_hallows-eve_purple-raywave_47-75",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r3c3_hallows-eve_purple-raywave_47-75.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r3c3_hallows-eve_purple-raywave_47-75.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r3c3_hallows-eve_purple-raywave_47-75.svg",
+    "missing": false
   },
   {
     "id": "d4-r3c4",
@@ -4111,7 +4248,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r3c4_moonstar_purple-raywave_01-75",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r3c4_moonstar_purple-raywave_01-75.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r3c4_moonstar_purple-raywave_01-75.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r3c4_moonstar_purple-raywave_01-75.svg",
+    "missing": false
   },
   {
     "id": "d4-r3c5",
@@ -4140,7 +4278,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r3c5_maestro_purple-raywave_40-75",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r3c5_maestro_purple-raywave_40-75.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r3c5_maestro_purple-raywave_40-75.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r3c5_maestro_purple-raywave_40-75.svg",
+    "missing": false
   },
   {
     "id": "d4-r3c6",
@@ -4169,7 +4308,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r3c6_doctor-octopus_purple-shimmer_13-75",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r3c6_doctor-octopus_purple-shimmer_13-75.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r3c6_doctor-octopus_purple-shimmer_13-75.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r3c6_doctor-octopus_purple-shimmer_13-75.svg",
+    "missing": false
   },
   {
     "id": "d4-r4c1",
@@ -4201,7 +4341,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r4c1_echo_future-stars-gold_05-50",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r4c1_echo_future-stars-gold_05-50.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r4c1_echo_future-stars-gold_05-50.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r4c1_echo_future-stars-gold_05-50.svg",
+    "missing": false
   },
   {
     "id": "d4-r4c2",
@@ -4233,7 +4374,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r4c2_darkhawk_topps-originals_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r4c2_darkhawk_topps-originals_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r4c2_darkhawk_topps-originals_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r4c2_darkhawk_topps-originals_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-r4c3",
@@ -4265,7 +4407,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r4c3_emma-frost_varied-visage_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r4c3_emma-frost_varied-visage_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r4c3_emma-frost_varied-visage_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r4c3_emma-frost_varied-visage_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-r4c4",
@@ -4298,7 +4441,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r4c4_dazzler_marvel-icons-black_06-10",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r4c4_dazzler_marvel-icons-black_06-10.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r4c4_dazzler_marvel-icons-black_06-10.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r4c4_dazzler_marvel-icons-black_06-10.svg",
+    "missing": false
   },
   {
     "id": "d4-r4c5",
@@ -4329,7 +4473,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r4c5_moon-knight_marvel-icons_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r4c5_moon-knight_marvel-icons_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r4c5_moon-knight_marvel-icons_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r4c5_moon-knight_marvel-icons_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-r4c6",
@@ -4360,7 +4505,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r4c6_daredevil_marvel-icons_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r4c6_daredevil_marvel-icons_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r4c6_daredevil_marvel-icons_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r4c6_daredevil_marvel-icons_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-r4c7",
@@ -4391,7 +4537,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r4c7_wolverine_marvel-icons_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r4c7_wolverine_marvel-icons_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r4c7_wolverine_marvel-icons_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r4c7_wolverine_marvel-icons_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-r5c1",
@@ -4422,7 +4569,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r5c1_venom_fanfare_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r5c1_venom_fanfare_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r5c1_venom_fanfare_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r5c1_venom_fanfare_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-r5c2",
@@ -4453,7 +4601,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r5c2_scarlet-witch_fanfare_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r5c2_scarlet-witch_fanfare_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r5c2_scarlet-witch_fanfare_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r5c2_scarlet-witch_fanfare_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-r5c3",
@@ -4484,7 +4633,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r5c3_thor_fanfare_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r5c3_thor_fanfare_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r5c3_thor_fanfare_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r5c3_thor_fanfare_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-r5c4",
@@ -4516,7 +4666,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r5c4_wolverine_fanfare-gold_40-50",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r5c4_wolverine_fanfare-gold_40-50.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r5c4_wolverine_fanfare-gold_40-50.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r5c4_wolverine_fanfare-gold_40-50.svg",
+    "missing": false
   },
   {
     "id": "d4-r5c5",
@@ -4547,7 +4698,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r5c5_daredevil_fanfare_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r5c5_daredevil_fanfare_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r5c5_daredevil_fanfare_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r5c5_daredevil_fanfare_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d4-r5c6",
@@ -4578,7 +4730,8 @@ window.VAULT_CARDS = [
     "folder": "display-4-chrome-inserts",
     "baseFilename": "d4_r5c6_moon-knight_fanfare_unnumbered",
     "recommendedPath": "assets/cards/display-4-chrome-inserts/d4_r5c6_moon-knight_fanfare_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r5c6_moon-knight_fanfare_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-4-chrome-inserts/d4_r5c6_moon-knight_fanfare_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d5-r1c1",
@@ -4609,7 +4762,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r1c1_medusa_green-chrome_50-99",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r1c1_medusa_green-chrome_50-99.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c1_medusa_green-chrome_50-99.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c1_medusa_green-chrome_50-99.svg",
+    "missing": false
   },
   {
     "id": "d5-r1c2",
@@ -4640,7 +4794,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r1c2_throg_green-chrome_11-99",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r1c2_throg_green-chrome_11-99.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c2_throg_green-chrome_11-99.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c2_throg_green-chrome_11-99.svg",
+    "missing": false
   },
   {
     "id": "d5-r1c3",
@@ -4672,7 +4827,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r1c3_dazzler_green-diamante_51-99",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r1c3_dazzler_green-diamante_51-99.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c3_dazzler_green-diamante_51-99.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c3_dazzler_green-diamante_51-99.svg",
+    "missing": false
   },
   {
     "id": "d5-r1c4",
@@ -4703,7 +4859,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r1c4_spider-punk_blue-chrome_022-150",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r1c4_spider-punk_blue-chrome_022-150.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c4_spider-punk_blue-chrome_022-150.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c4_spider-punk_blue-chrome_022-150.svg",
+    "missing": false
   },
   {
     "id": "d5-r1c5",
@@ -4734,7 +4891,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r1c5_scarlet-witch_yellow-chrome_037-275",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r1c5_scarlet-witch_yellow-chrome_037-275.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c5_scarlet-witch_yellow-chrome_037-275.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c5_scarlet-witch_yellow-chrome_037-275.svg",
+    "missing": false
   },
   {
     "id": "d5-r1c6",
@@ -4765,7 +4923,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r1c6_daredevil_yellow-chrome_070-275",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r1c6_daredevil_yellow-chrome_070-275.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c6_daredevil_yellow-chrome_070-275.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c6_daredevil_yellow-chrome_070-275.svg",
+    "missing": false
   },
   {
     "id": "d5-r1c7",
@@ -4796,7 +4955,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r1c7_star-lord_yellow-chrome_057-275",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r1c7_star-lord_yellow-chrome_057-275.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c7_star-lord_yellow-chrome_057-275.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c7_star-lord_yellow-chrome_057-275.svg",
+    "missing": false
   },
   {
     "id": "d5-r1c8",
@@ -4827,7 +4987,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r1c8_spider-ham_yellow-chrome_248-275",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r1c8_spider-ham_yellow-chrome_248-275.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c8_spider-ham_yellow-chrome_248-275.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r1c8_spider-ham_yellow-chrome_248-275.svg",
+    "missing": false
   },
   {
     "id": "d5-r2c1",
@@ -4858,7 +5019,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r2c1_silver-sable_purple-shimmer_52-75",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r2c1_silver-sable_purple-shimmer_52-75.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c1_silver-sable_purple-shimmer_52-75.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c1_silver-sable_purple-shimmer_52-75.svg",
+    "missing": false
   },
   {
     "id": "d5-r2c2",
@@ -4890,7 +5052,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r2c2_apocalypse_jubilee-fireworks_35-89",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r2c2_apocalypse_jubilee-fireworks_35-89.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c2_apocalypse_jubilee-fireworks_35-89.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c2_apocalypse_jubilee-fireworks_35-89.svg",
+    "missing": false
   },
   {
     "id": "d5-r2c3",
@@ -4921,7 +5084,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r2c3_daredevil_green-chrome_40-99",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r2c3_daredevil_green-chrome_40-99.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c3_daredevil_green-chrome_40-99.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c3_daredevil_green-chrome_40-99.svg",
+    "missing": false
   },
   {
     "id": "d5-r2c4",
@@ -4953,7 +5117,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r2c4_thor_green-sparkle_53-99",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r2c4_thor_green-sparkle_53-99.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c4_thor_green-sparkle_53-99.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c4_thor_green-sparkle_53-99.svg",
+    "missing": false
   },
   {
     "id": "d5-r2c5",
@@ -4985,7 +5150,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r2c5_nova_green-sparkle_32-99",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r2c5_nova_green-sparkle_32-99.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c5_nova_green-sparkle_32-99.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c5_nova_green-sparkle_32-99.svg",
+    "missing": false
   },
   {
     "id": "d5-r2c6",
@@ -5017,7 +5183,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r2c6_jack-of-hearts_green-sparkle_68-99",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r2c6_jack-of-hearts_green-sparkle_68-99.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c6_jack-of-hearts_green-sparkle_68-99.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c6_jack-of-hearts_green-sparkle_68-99.svg",
+    "missing": false
   },
   {
     "id": "d5-r2c7",
@@ -5049,7 +5216,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r2c7_captain-britain_green-diamante_30-99",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r2c7_captain-britain_green-diamante_30-99.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c7_captain-britain_green-diamante_30-99.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c7_captain-britain_green-diamante_30-99.svg",
+    "missing": false
   },
   {
     "id": "d5-r2c8",
@@ -5080,7 +5248,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r2c8_moon-knight_green-chrome_85-99",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r2c8_moon-knight_green-chrome_85-99.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c8_moon-knight_green-chrome_85-99.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r2c8_moon-knight_green-chrome_85-99.svg",
+    "missing": false
   },
   {
     "id": "d5-r3c1",
@@ -5112,7 +5281,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r3c1_black-cat_guardians-galaxy_27-69",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r3c1_black-cat_guardians-galaxy_27-69.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c1_black-cat_guardians-galaxy_27-69.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c1_black-cat_guardians-galaxy_27-69.svg",
+    "missing": false
   },
   {
     "id": "d5-r3c2",
@@ -5144,7 +5314,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r3c2_ka-zar_purple-sparkle_23-75",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r3c2_ka-zar_purple-sparkle_23-75.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c2_ka-zar_purple-sparkle_23-75.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c2_ka-zar_purple-sparkle_23-75.svg",
+    "missing": false
   },
   {
     "id": "d5-r3c3",
@@ -5175,7 +5346,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r3c3_tigra_purple-chrome_14-75",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r3c3_tigra_purple-chrome_14-75.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c3_tigra_purple-chrome_14-75.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c3_tigra_purple-chrome_14-75.svg",
+    "missing": false
   },
   {
     "id": "d5-r3c4",
@@ -5206,7 +5378,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r3c4_mighty-thor_purple-chrome_52-75",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r3c4_mighty-thor_purple-chrome_52-75.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c4_mighty-thor_purple-chrome_52-75.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c4_mighty-thor_purple-chrome_52-75.svg",
+    "missing": false
   },
   {
     "id": "d5-r3c5",
@@ -5237,7 +5410,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r3c5_beta-ray-bill_purple-chrome_48-75",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r3c5_beta-ray-bill_purple-chrome_48-75.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c5_beta-ray-bill_purple-chrome_48-75.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c5_beta-ray-bill_purple-chrome_48-75.svg",
+    "missing": false
   },
   {
     "id": "d5-r3c6",
@@ -5268,7 +5442,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r3c6_machine-man_purple-chrome_70-75",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r3c6_machine-man_purple-chrome_70-75.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c6_machine-man_purple-chrome_70-75.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c6_machine-man_purple-chrome_70-75.svg",
+    "missing": false
   },
   {
     "id": "d5-r3c7",
@@ -5299,7 +5474,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r3c7_gladiator_purple-chrome_50-75",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r3c7_gladiator_purple-chrome_50-75.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c7_gladiator_purple-chrome_50-75.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c7_gladiator_purple-chrome_50-75.svg",
+    "missing": false
   },
   {
     "id": "d5-r3c8",
@@ -5331,7 +5507,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r3c8_luna-snow_purple-diamante_10-75",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r3c8_luna-snow_purple-diamante_10-75.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c8_luna-snow_purple-diamante_10-75.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r3c8_luna-snow_purple-diamante_10-75.svg",
+    "missing": false
   },
   {
     "id": "d5-r4c1",
@@ -5365,7 +5542,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r4c1_silver-samurai_black-sparkle_04-10",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r4c1_silver-samurai_black-sparkle_04-10.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c1_silver-samurai_black-sparkle_04-10.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c1_silver-samurai_black-sparkle_04-10.svg",
+    "missing": false
   },
   {
     "id": "d5-r4c2",
@@ -5398,7 +5576,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r4c2_moon-knight_orange-diamante_04-25",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r4c2_moon-knight_orange-diamante_04-25.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c2_moon-knight_orange-diamante_04-25.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c2_moon-knight_orange-diamante_04-25.svg",
+    "missing": false
   },
   {
     "id": "d5-r4c3",
@@ -5431,7 +5610,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r4c3_nightcrawler_orange-sparkle_14-25",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r4c3_nightcrawler_orange-sparkle_14-25.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c3_nightcrawler_orange-sparkle_14-25.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c3_nightcrawler_orange-sparkle_14-25.svg",
+    "missing": false
   },
   {
     "id": "d5-r4c4",
@@ -5463,7 +5643,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r4c4_thor_gold-chrome_22-50",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r4c4_thor_gold-chrome_22-50.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c4_thor_gold-chrome_22-50.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c4_thor_gold-chrome_22-50.svg",
+    "missing": false
   },
   {
     "id": "d5-r4c5",
@@ -5495,7 +5676,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r4c5_spider-man-noir_gold-chrome_30-50",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r4c5_spider-man-noir_gold-chrome_30-50.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c5_spider-man-noir_gold-chrome_30-50.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c5_spider-man-noir_gold-chrome_30-50.svg",
+    "missing": false
   },
   {
     "id": "d5-r4c6",
@@ -5528,7 +5710,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r4c6_prowler_gold-diamante_41-50",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r4c6_prowler_gold-diamante_41-50.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c6_prowler_gold-diamante_41-50.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c6_prowler_gold-diamante_41-50.svg",
+    "missing": false
   },
   {
     "id": "d5-r4c7",
@@ -5560,7 +5743,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r4c7_ghost-spider_purple-diamante_20-75",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r4c7_ghost-spider_purple-diamante_20-75.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c7_ghost-spider_purple-diamante_20-75.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c7_ghost-spider_purple-diamante_20-75.svg",
+    "missing": false
   },
   {
     "id": "d5-r4c8",
@@ -5593,7 +5777,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r4c8_x-23_neon-heroines_unnumbered",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r4c8_x-23_neon-heroines_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c8_x-23_neon-heroines_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r4c8_x-23_neon-heroines_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d5-r5c1",
@@ -5626,7 +5811,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r5c1_scarlet-witch_manga-madness-gold_10-50",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r5c1_scarlet-witch_manga-madness-gold_10-50.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r5c1_scarlet-witch_manga-madness-gold_10-50.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r5c1_scarlet-witch_manga-madness-gold_10-50.svg",
+    "missing": false
   },
   {
     "id": "d5-r5c2",
@@ -5658,7 +5844,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r5c2_wolverine_manga-madness_unnumbered",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r5c2_wolverine_manga-madness_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r5c2_wolverine_manga-madness_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r5c2_wolverine_manga-madness_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d5-r5c3",
@@ -5690,7 +5877,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r5c3_carnage_manga-madness_unnumbered",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r5c3_carnage_manga-madness_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r5c3_carnage_manga-madness_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r5c3_carnage_manga-madness_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d5-r5c4",
@@ -5722,7 +5910,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r5c4_venom_manga-madness_unnumbered",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r5c4_venom_manga-madness_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r5c4_venom_manga-madness_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r5c4_venom_manga-madness_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d5-r5c5",
@@ -5754,7 +5943,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r5c5_silk_manga-madness_unnumbered",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r5c5_silk_manga-madness_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r5c5_silk_manga-madness_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r5c5_silk_manga-madness_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d5-r5c6",
@@ -5786,7 +5976,8 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r5c6_ghost-spider_manga-madness_unnumbered",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r5c6_ghost-spider_manga-madness_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r5c6_ghost-spider_manga-madness_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r5c6_ghost-spider_manga-madness_unnumbered.svg",
+    "missing": false
   },
   {
     "id": "d5-r5c7",
@@ -5819,6 +6010,1372 @@ window.VAULT_CARDS = [
     "folder": "display-5-neon-marvel",
     "baseFilename": "d5_r5c7_thor-and-nova_one-up_unnumbered",
     "recommendedPath": "assets/cards/display-5-neon-marvel/d5_r5c7_thor-and-nova_one-up_unnumbered.jpg",
-    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r5c7_thor-and-nova_one-up_unnumbered.svg"
+    "placeholderSvg": "assets/cards/display-5-neon-marvel/d5_r5c7_thor-and-nova_one-up_unnumbered.svg",
+    "missing": false
+  },
+  {
+    "id": "d1-miss-clawed-superfractor",
+    "display": 1,
+    "row": 99,
+    "col": 1,
+    "slot": "MISS-01",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Variation",
+    "parallel": "Clawed Chrome \u2014 SuperFractor",
+    "serial": "/1",
+    "printRun": 1,
+    "format": "Hobby Exclusive",
+    "odds": "1:3,467 Hobby",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "1/1 Grail",
+      "Die-Cut"
+    ],
+    "theme": "gold",
+    "pattern": "clawed",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss01_moon-girl_clawed-superfractor_1",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss01_moon-girl_clawed-superfractor_1.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-superfractor",
+    "display": 1,
+    "row": 99,
+    "col": 2,
+    "slot": "MISS-02",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "SuperFractor",
+    "serial": "/1",
+    "printRun": 1,
+    "format": "All Formats",
+    "odds": "1:7,356 Hobby / 1:26,875 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "1/1 Grail"
+    ],
+    "theme": "gold",
+    "pattern": "wave",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss02_moon-girl_superfractor_1",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss02_moon-girl_superfractor_1.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-red-clawed",
+    "display": 1,
+    "row": 99,
+    "col": 3,
+    "slot": "MISS-03",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Variation",
+    "parallel": "Clawed Chrome \u2014 Red Wolverine Adamantium",
+    "serial": "/5",
+    "printRun": 5,
+    "format": "Hobby Exclusive",
+    "odds": "1:694 Hobby",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "Die-Cut",
+      "/5 Hit"
+    ],
+    "theme": "red",
+    "pattern": "clawed",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss03_moon-girl_red-clawed_5",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss03_moon-girl_red-clawed_5.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-red-raywave",
+    "display": 1,
+    "row": 99,
+    "col": 4,
+    "slot": "MISS-04",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Red RayWave Refractor",
+    "serial": "/5",
+    "printRun": 5,
+    "format": "Blaster Exclusive",
+    "odds": "1:3,055 Blaster",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/5 Hit"
+    ],
+    "theme": "red",
+    "pattern": "raywave",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss04_moon-girl_red-raywave_5",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss04_moon-girl_red-raywave_5.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-red-storm",
+    "display": 1,
+    "row": 99,
+    "col": 5,
+    "slot": "MISS-05",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Storm's Red Lightning Refractor",
+    "serial": "/5",
+    "printRun": 5,
+    "format": "Hobby Exclusive",
+    "odds": "1:694 Hobby",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/5 Hit"
+    ],
+    "theme": "red",
+    "pattern": "lightning",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss05_moon-girl_red-storm_5",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss05_moon-girl_red-storm_5.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-red-wave",
+    "display": 1,
+    "row": 99,
+    "col": 6,
+    "slot": "MISS-06",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Red Wave Refractor",
+    "serial": "/5",
+    "printRun": 5,
+    "format": "All Formats",
+    "odds": "1:1,475 Hobby / 1:5,309 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/5 Hit"
+    ],
+    "theme": "red",
+    "pattern": "wave",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss06_moon-girl_red-wave_5",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss06_moon-girl_red-wave_5.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-red",
+    "display": 1,
+    "row": 99,
+    "col": 7,
+    "slot": "MISS-07",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Red Refractor",
+    "serial": "/5",
+    "printRun": 5,
+    "format": "All Formats",
+    "odds": "1:1,475 Hobby / 1:5,309 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/5 Hit"
+    ],
+    "theme": "red",
+    "pattern": "smooth",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss07_moon-girl_red_5",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss07_moon-girl_red_5.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-black-raywave",
+    "display": 1,
+    "row": 99,
+    "col": 8,
+    "slot": "MISS-08",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Black RayWave Refractor",
+    "serial": "/10",
+    "printRun": 10,
+    "format": "Blaster Exclusive",
+    "odds": "1:1,527 Blaster",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/10 Hit"
+    ],
+    "theme": "black",
+    "pattern": "raywave",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss08_moon-girl_black-raywave_10",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss08_moon-girl_black-raywave_10.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-black-storm",
+    "display": 1,
+    "row": 99,
+    "col": 9,
+    "slot": "MISS-09",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Storm's Black Lightning Refractor",
+    "serial": "/10",
+    "printRun": 10,
+    "format": "Hobby Exclusive",
+    "odds": "1:347 Hobby",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/10 Hit"
+    ],
+    "theme": "black",
+    "pattern": "lightning",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss09_moon-girl_black-storm_10",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss09_moon-girl_black-storm_10.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-black-xfractor",
+    "display": 1,
+    "row": 99,
+    "col": 10,
+    "slot": "MISS-10",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Black X-Fractor",
+    "serial": "/10",
+    "printRun": 10,
+    "format": "Mega Box Exclusive",
+    "odds": "1:451 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/10 Hit"
+    ],
+    "theme": "black",
+    "pattern": "xfractor",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss10_moon-girl_black-xfractor_10",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss10_moon-girl_black-xfractor_10.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-black-wave",
+    "display": 1,
+    "row": 99,
+    "col": 11,
+    "slot": "MISS-11",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Black Wave Refractor",
+    "serial": "/10",
+    "printRun": 10,
+    "format": "All Formats",
+    "odds": "1:738 Hobby / 1:2,647 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/10 Hit"
+    ],
+    "theme": "black",
+    "pattern": "wave",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss11_moon-girl_black-wave_10",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss11_moon-girl_black-wave_10.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-black",
+    "display": 1,
+    "row": 99,
+    "col": 12,
+    "slot": "MISS-12",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Black Refractor",
+    "serial": "/10",
+    "printRun": 10,
+    "format": "All Formats",
+    "odds": "1:738 Hobby / 1:2,647 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/10 Hit"
+    ],
+    "theme": "black",
+    "pattern": "smooth",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss12_moon-girl_black_10",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss12_moon-girl_black_10.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-orange-xfractor",
+    "display": 1,
+    "row": 99,
+    "col": 13,
+    "slot": "MISS-13",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Orange X-Fractor",
+    "serial": "/25",
+    "printRun": 25,
+    "format": "Mega Box Exclusive",
+    "odds": "1:181 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Low Numbered"
+    ],
+    "theme": "orange",
+    "pattern": "xfractor",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss13_moon-girl_orange-xfractor_25",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss13_moon-girl_orange-xfractor_25.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-orange",
+    "display": 1,
+    "row": 99,
+    "col": 14,
+    "slot": "MISS-14",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Orange Refractor",
+    "serial": "/25",
+    "printRun": 25,
+    "format": "All Formats",
+    "odds": "1:295 Hobby / 1:1,060 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Low Numbered"
+    ],
+    "theme": "orange",
+    "pattern": "smooth",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss14_moon-girl_orange_25",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss14_moon-girl_orange_25.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-cap-star",
+    "display": 1,
+    "row": 99,
+    "col": 15,
+    "slot": "MISS-15",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Captain America's Star Refractor",
+    "serial": "/41",
+    "printRun": 41,
+    "format": "All Formats (1941 Nod)",
+    "odds": "1:180 Hobby / 1:646 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Character Foil"
+    ],
+    "theme": "blue",
+    "pattern": "sparkle",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss15_moon-girl_cap-star_41",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss15_moon-girl_cap-star_41.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-gold-wave",
+    "display": 1,
+    "row": 99,
+    "col": 16,
+    "slot": "MISS-16",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Gold Wave Refractor",
+    "serial": "/50",
+    "printRun": 50,
+    "format": "All Formats",
+    "odds": "1:148 Hobby / 1:530 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Gold /50"
+    ],
+    "theme": "gold",
+    "pattern": "wave",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss16_moon-girl_gold-wave_50",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss16_moon-girl_gold-wave_50.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-gold",
+    "display": 1,
+    "row": 99,
+    "col": 17,
+    "slot": "MISS-17",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Gold Refractor",
+    "serial": "/50",
+    "printRun": 50,
+    "format": "All Formats",
+    "odds": "1:148 Hobby / 1:530 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Gold /50"
+    ],
+    "theme": "gold",
+    "pattern": "smooth",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss17_moon-girl_gold_50",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss17_moon-girl_gold_50.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d1-miss-spider-web-red-blue",
+    "display": 1,
+    "row": 99,
+    "col": 18,
+    "slot": "MISS-18",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#138",
+    "character": "Moon Girl",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Spider-Web Red & Blue Refractor",
+    "serial": "/62",
+    "printRun": 62,
+    "format": "All Formats (1962 Nod)",
+    "odds": "1:119 Hobby / 1:428 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Character Foil"
+    ],
+    "theme": "redblue-web",
+    "pattern": "web",
+    "orientation": "portrait",
+    "folder": "display-1-moon-girl",
+    "baseFilename": "d1_miss18_moon-girl_spider-web-red-blue_62",
+    "recommendedPath": "assets/cards/display-1-moon-girl/d1_miss18_moon-girl_spider-web-red-blue_62.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-clawed-superfractor",
+    "display": 2,
+    "row": 99,
+    "col": 1,
+    "slot": "MISS-01",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Variation",
+    "parallel": "Clawed Chrome \u2014 SuperFractor",
+    "serial": "/1",
+    "printRun": 1,
+    "format": "Hobby Exclusive",
+    "odds": "1:3,467 Hobby",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "1/1 Grail",
+      "Die-Cut"
+    ],
+    "theme": "gold",
+    "pattern": "clawed",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss01_devil-dinosaur_clawed-superfractor_1",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss01_devil-dinosaur_clawed-superfractor_1.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-superfractor",
+    "display": 2,
+    "row": 99,
+    "col": 2,
+    "slot": "MISS-02",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "SuperFractor",
+    "serial": "/1",
+    "printRun": 1,
+    "format": "All Formats",
+    "odds": "1:7,356 Hobby / 1:26,875 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "1/1 Grail"
+    ],
+    "theme": "gold",
+    "pattern": "wave",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss02_devil-dinosaur_superfractor_1",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss02_devil-dinosaur_superfractor_1.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-red-clawed",
+    "display": 2,
+    "row": 99,
+    "col": 3,
+    "slot": "MISS-03",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Variation",
+    "parallel": "Clawed Chrome \u2014 Red Wolverine Adamantium",
+    "serial": "/5",
+    "printRun": 5,
+    "format": "Hobby Exclusive",
+    "odds": "1:694 Hobby",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "Die-Cut",
+      "/5 Hit"
+    ],
+    "theme": "red",
+    "pattern": "clawed",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss03_devil-dinosaur_red-clawed_5",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss03_devil-dinosaur_red-clawed_5.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-red-raywave",
+    "display": 2,
+    "row": 99,
+    "col": 4,
+    "slot": "MISS-04",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Red RayWave Refractor",
+    "serial": "/5",
+    "printRun": 5,
+    "format": "Blaster Exclusive",
+    "odds": "1:3,055 Blaster",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/5 Hit"
+    ],
+    "theme": "red",
+    "pattern": "raywave",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss04_devil-dinosaur_red-raywave_5",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss04_devil-dinosaur_red-raywave_5.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-red-storm",
+    "display": 2,
+    "row": 99,
+    "col": 5,
+    "slot": "MISS-05",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Storm's Red Lightning Refractor",
+    "serial": "/5",
+    "printRun": 5,
+    "format": "Hobby Exclusive",
+    "odds": "1:694 Hobby",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/5 Hit"
+    ],
+    "theme": "red",
+    "pattern": "lightning",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss05_devil-dinosaur_red-storm_5",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss05_devil-dinosaur_red-storm_5.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-red-xfractor",
+    "display": 2,
+    "row": 99,
+    "col": 6,
+    "slot": "MISS-06",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Red X-Fractor",
+    "serial": "/5",
+    "printRun": 5,
+    "format": "Mega Box Exclusive",
+    "odds": "1:901 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/5 Hit"
+    ],
+    "theme": "red",
+    "pattern": "xfractor",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss06_devil-dinosaur_red-xfractor_5",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss06_devil-dinosaur_red-xfractor_5.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-red-wave",
+    "display": 2,
+    "row": 99,
+    "col": 7,
+    "slot": "MISS-07",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Red Wave Refractor",
+    "serial": "/5",
+    "printRun": 5,
+    "format": "All Formats",
+    "odds": "1:1,475 Hobby / 1:5,309 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/5 Hit"
+    ],
+    "theme": "red",
+    "pattern": "wave",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss07_devil-dinosaur_red-wave_5",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss07_devil-dinosaur_red-wave_5.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-red",
+    "display": 2,
+    "row": 99,
+    "col": 8,
+    "slot": "MISS-08",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Red Refractor",
+    "serial": "/5",
+    "printRun": 5,
+    "format": "All Formats",
+    "odds": "1:1,475 Hobby / 1:5,309 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/5 Hit"
+    ],
+    "theme": "red",
+    "pattern": "smooth",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss08_devil-dinosaur_red_5",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss08_devil-dinosaur_red_5.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-black-raywave",
+    "display": 2,
+    "row": 99,
+    "col": 9,
+    "slot": "MISS-09",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Black RayWave Refractor",
+    "serial": "/10",
+    "printRun": 10,
+    "format": "Blaster Exclusive",
+    "odds": "1:1,527 Blaster",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/10 Hit"
+    ],
+    "theme": "black",
+    "pattern": "raywave",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss09_devil-dinosaur_black-raywave_10",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss09_devil-dinosaur_black-raywave_10.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-black-storm",
+    "display": 2,
+    "row": 99,
+    "col": 10,
+    "slot": "MISS-10",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Storm's Black Lightning Refractor",
+    "serial": "/10",
+    "printRun": 10,
+    "format": "Hobby Exclusive",
+    "odds": "1:347 Hobby",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/10 Hit"
+    ],
+    "theme": "black",
+    "pattern": "lightning",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss10_devil-dinosaur_black-storm_10",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss10_devil-dinosaur_black-storm_10.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-black-wave",
+    "display": 2,
+    "row": 99,
+    "col": 11,
+    "slot": "MISS-11",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Black Wave Refractor",
+    "serial": "/10",
+    "printRun": 10,
+    "format": "All Formats",
+    "odds": "1:738 Hobby / 1:2,647 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/10 Hit"
+    ],
+    "theme": "black",
+    "pattern": "wave",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss11_devil-dinosaur_black-wave_10",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss11_devil-dinosaur_black-wave_10.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-black",
+    "display": 2,
+    "row": 99,
+    "col": 12,
+    "slot": "MISS-12",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Black Refractor",
+    "serial": "/10",
+    "printRun": 10,
+    "format": "All Formats",
+    "odds": "1:738 Hobby / 1:2,647 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Ultra Rare",
+      "/10 Hit"
+    ],
+    "theme": "black",
+    "pattern": "smooth",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss12_devil-dinosaur_black_10",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss12_devil-dinosaur_black_10.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-chrome-clawed",
+    "display": 2,
+    "row": 99,
+    "col": 13,
+    "slot": "MISS-13",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Variation",
+    "parallel": "Clawed Chrome Refractor",
+    "serial": "/20",
+    "printRun": 20,
+    "format": "Hobby Exclusive",
+    "odds": "1:174 Hobby",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Short Print",
+      "Die-Cut"
+    ],
+    "theme": "silver",
+    "pattern": "clawed",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss13_devil-dinosaur_chrome-clawed_20",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss13_devil-dinosaur_chrome-clawed_20.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-orange-raywave",
+    "display": 2,
+    "row": 99,
+    "col": 14,
+    "slot": "MISS-14",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Orange RayWave Refractor",
+    "serial": "/25",
+    "printRun": 25,
+    "format": "Blaster Exclusive",
+    "odds": "1:611 Blaster",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Low Numbered"
+    ],
+    "theme": "orange",
+    "pattern": "raywave",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss14_devil-dinosaur_orange-raywave_25",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss14_devil-dinosaur_orange-raywave_25.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-orange-xfractor",
+    "display": 2,
+    "row": 99,
+    "col": 15,
+    "slot": "MISS-15",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Orange X-Fractor",
+    "serial": "/25",
+    "printRun": 25,
+    "format": "Mega Box Exclusive",
+    "odds": "1:181 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Low Numbered"
+    ],
+    "theme": "orange",
+    "pattern": "xfractor",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss15_devil-dinosaur_orange-xfractor_25",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss15_devil-dinosaur_orange-xfractor_25.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-orange-wave",
+    "display": 2,
+    "row": 99,
+    "col": 16,
+    "slot": "MISS-16",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Orange Wave Refractor",
+    "serial": "/25",
+    "printRun": 25,
+    "format": "All Formats",
+    "odds": "1:295 Hobby / 1:1,060 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Low Numbered"
+    ],
+    "theme": "orange",
+    "pattern": "wave",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss16_devil-dinosaur_orange-wave_25",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss16_devil-dinosaur_orange-wave_25.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-orange",
+    "display": 2,
+    "row": 99,
+    "col": 17,
+    "slot": "MISS-17",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Orange Refractor",
+    "serial": "/25",
+    "printRun": 25,
+    "format": "All Formats",
+    "odds": "1:295 Hobby / 1:1,060 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Low Numbered"
+    ],
+    "theme": "orange",
+    "pattern": "smooth",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss17_devil-dinosaur_orange_25",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss17_devil-dinosaur_orange_25.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-cap-star",
+    "display": 2,
+    "row": 99,
+    "col": 18,
+    "slot": "MISS-18",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Captain America's Star Refractor",
+    "serial": "/41",
+    "printRun": 41,
+    "format": "All Formats (1941 Nod)",
+    "odds": "1:180 Hobby / 1:646 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Character Foil"
+    ],
+    "theme": "blue",
+    "pattern": "sparkle",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss18_devil-dinosaur_cap-star_41",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss18_devil-dinosaur_cap-star_41.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-gold-raywave",
+    "display": 2,
+    "row": 99,
+    "col": 19,
+    "slot": "MISS-19",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Gold RayWave Refractor",
+    "serial": "/50",
+    "printRun": 50,
+    "format": "Blaster Exclusive",
+    "odds": "1:306 Blaster",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Gold /50"
+    ],
+    "theme": "gold",
+    "pattern": "raywave",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss19_devil-dinosaur_gold-raywave_50",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss19_devil-dinosaur_gold-raywave_50.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-gold-xfractor",
+    "display": 2,
+    "row": 99,
+    "col": 20,
+    "slot": "MISS-20",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Gold X-Fractor",
+    "serial": "/50",
+    "printRun": 50,
+    "format": "Mega Box Exclusive",
+    "odds": "1:91 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Gold /50"
+    ],
+    "theme": "gold",
+    "pattern": "xfractor",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss20_devil-dinosaur_gold-xfractor_50",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss20_devil-dinosaur_gold-xfractor_50.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-gold-wave",
+    "display": 2,
+    "row": 99,
+    "col": 21,
+    "slot": "MISS-21",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Gold Wave Refractor",
+    "serial": "/50",
+    "printRun": 50,
+    "format": "All Formats",
+    "odds": "1:148 Hobby / 1:530 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Gold /50"
+    ],
+    "theme": "gold",
+    "pattern": "wave",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss21_devil-dinosaur_gold-wave_50",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss21_devil-dinosaur_gold-wave_50.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-marvel-logofractor",
+    "display": 2,
+    "row": 99,
+    "col": 22,
+    "slot": "MISS-22",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Marvel Logofractor",
+    "serial": "/61",
+    "printRun": 61,
+    "format": "Hobby Exclusive (1961 Nod)",
+    "odds": "1:57 Hobby",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [
+      "Logofractor"
+    ],
+    "theme": "gold-red",
+    "pattern": "logo",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss22_devil-dinosaur_marvel-logofractor_61",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss22_devil-dinosaur_marvel-logofractor_61.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-purple-xfractor",
+    "display": 2,
+    "row": 99,
+    "col": 23,
+    "slot": "MISS-23",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Purple X-Fractor",
+    "serial": "/75",
+    "printRun": 75,
+    "format": "Mega Box Exclusive",
+    "odds": "1:61 Mega",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [],
+    "theme": "purple",
+    "pattern": "xfractor",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss23_devil-dinosaur_purple-xfractor_75",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss23_devil-dinosaur_purple-xfractor_75.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
+  },
+  {
+    "id": "d2-miss-pink",
+    "display": 2,
+    "row": 99,
+    "col": 24,
+    "slot": "MISS-24",
+    "owner": "Hope",
+    "set": "2026 Topps Chrome Marvel",
+    "cardNum": "#110",
+    "character": "Devil Dinosaur",
+    "artist": null,
+    "subset": "Base Parallel",
+    "parallel": "Pink Refractor",
+    "serial": "/250",
+    "printRun": 250,
+    "format": "All Formats",
+    "odds": "1:30 Hobby",
+    "valLow": 0,
+    "valHigh": 0,
+    "grade": null,
+    "tags": [],
+    "theme": "pink",
+    "pattern": "smooth",
+    "orientation": "portrait",
+    "folder": "display-2-devil-dinosaur",
+    "baseFilename": "d2_miss24_devil-dinosaur_pink_250",
+    "recommendedPath": "assets/cards/display-2-devil-dinosaur/d2_miss24_devil-dinosaur_pink_250.jpg",
+    "placeholderSvg": "assets/cards/missing-card-icon.svg",
+    "missing": true
   }
 ];

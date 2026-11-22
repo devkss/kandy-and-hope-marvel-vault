@@ -7,6 +7,7 @@
 
   const GH_STORAGE_KEY = 'kh_vault_gh_config_v1';
   const RECENT_UPLOADS_KEY = 'kh_vault_recent_uploads_v1';
+  const STATUS_STORAGE_KEY = 'kh_vault_card_status_v1';
 
   function loadGHConfig() {
     try {
@@ -30,10 +31,20 @@
     try { localStorage.setItem(RECENT_UPLOADS_KEY, JSON.stringify(map)); } catch (_) {}
   }
 
+  function loadLocalStatusOverrides() {
+    try { return JSON.parse(localStorage.getItem(STATUS_STORAGE_KEY) || '{}'); } catch (_) { return {}; }
+  }
+
+  function saveLocalStatusOverrides(map) {
+    try { localStorage.setItem(STATUS_STORAGE_KEY, JSON.stringify(map)); } catch (_) {}
+  }
+
   const state = {
     activeTab: 'hope',
     valMode: 'mid',
-    sectionSort: { 1: 'rarity', 2: 'rarity', 3: 'rarity', 4: 'rarity', 5: 'rarity' },
+    sectionSort: { 1: 'rarity', 2: 'rarity', 3: 'rarity', 4: 'rarity', 5: 'rarity', 6: 'rarity' },
+    sectionStatusFilter: { 1: 'all', 2: 'all' }, // all | owned | missing
+    statusOverrides: loadLocalStatusOverrides(), // cardId -> { missing, serial, valLow, valHigh, updatedAt }
     sessionPhotos: {},
     realPhotoLoaded: {},
     recentUploads: loadRecentUploads(),
@@ -53,17 +64,71 @@
   };
 
   // ==========================================================================
-  // HELPERS & SMART SORTING (PULL RARITY / VALUE / NAME)
+  // EFFECTIVE CARD ACCESSORS (MERGING BASE DATA + STATUS OVERRIDES)
   // ==========================================================================
+  function getCardOverride(c) {
+    return state.statusOverrides[c.id] || null;
+  }
+
+  function isCardMissing(c) {
+    const ov = getCardOverride(c);
+    if (ov && typeof ov.missing === 'boolean') return ov.missing;
+    return Boolean(c.missing);
+  }
+
+  function getCardSerial(c) {
+    const ov = getCardOverride(c);
+    if (ov && typeof ov.serial === 'string' && ov.serial.trim() !== '') return ov.serial.trim();
+    if (isCardMissing(c)) return c.printRun ? `/${c.printRun}` : 'Unnumbered';
+    return c.serial;
+  }
+
+  function getCardValBounds(c) {
+    if (isCardMissing(c)) return { low: 0, high: 0 };
+    const ov = getCardOverride(c);
+    if (ov && typeof ov.valLow === 'number' && typeof ov.valHigh === 'number') {
+      return { low: ov.valLow, high: ov.valHigh };
+    }
+    return { low: c.valLow || 0, high: c.valHigh || 0 };
+  }
+
   const fmtGBP = (n) => '£' + Math.round(n).toLocaleString('en-GB');
   const fmtKB = (bytes) => bytes < 1024 * 1024 ? `${Math.round(bytes / 1024)} KB` : `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+
   const cardVal = (c, mode = state.valMode) => {
-    if (mode === 'low') return c.valLow;
-    if (mode === 'high') return c.valHigh;
-    return Math.round((c.valLow + c.valHigh) / 2);
+    const { low, high } = getCardValBounds(c);
+    if (mode === 'low') return low;
+    if (mode === 'high') return high;
+    return Math.round((low + high) / 2);
   };
   const sumVals = (list, mode = state.valMode) => list.reduce((acc, c) => acc + cardVal(c, mode), 0);
 
+  // Pull live js/collection-status.json on boot so status updates saved to GitHub sync across devices
+  async function loadRemoteStatusOverrides() {
+    try {
+      const res = await fetch(`js/collection-status.json?v=${Date.now()}`, { cache: 'no-store' });
+      if (!res.ok) return;
+      const remote = await res.json();
+      if (!remote || typeof remote !== 'object') return;
+      const merged = { ...remote };
+      Object.keys(state.statusOverrides).forEach(id => {
+        const loc = state.statusOverrides[id];
+        const rem = remote[id];
+        if (!rem || (loc.updatedAt || 0) >= (rem.updatedAt || 0)) {
+          merged[id] = loc;
+        }
+      });
+      state.statusOverrides = merged;
+      saveLocalStatusOverrides(merged);
+      renderActiveTab();
+    } catch (_) {
+      // Offline / file:// open — safely keep localStorage overrides
+    }
+  }
+
+  // ==========================================================================
+  // SMART SORTING (PULL RARITY / VALUE / NAME)
+  // ==========================================================================
   function parseSerialNum(serial) {
     if (!serial || String(serial).toLowerCase() === 'unnumbered') return 999999;
     const m = String(serial).match(/^(\d+)\s*\//);
@@ -81,22 +146,20 @@
     if (sub.includes('neon variation') || par.includes('etch')) return 1030;
     if (tags.includes('insert') || ['marvel icons', 'fanfare', 'future stars', 'manga madness', 'neon insert'].includes(sub)) return 1040;
     if (sub === 'base' || par === 'base card') return 1060;
-    return 1050; // Unnumbered base parallels (RayWave, Storm, X-Fractor, Refractor)
+    return 1050;
   }
 
-  // Exact finish sub-order within the same 'Numbered to' (same colour) tier:
+  // Exact sub-order within the same 'Numbered to' (same colour):
   // RayWave -> Storm -> X-Fractor -> Shimmer -> Lazer -> Wave -> Base
   function getFinishRank(c) {
     const par = (c.parallel || '').toLowerCase();
     const sub = (c.subset || '').toLowerCase();
 
-    // Special non-base hits sharing a print run (Clawed /10, Autos /10, Insert /50)
     if (par.includes('clawed')) return 0.1;
     if (sub.includes('facsimile autograph')) return 0.2;
     if (sub.includes('artist autograph')) return 0.3;
     if (['marvel icons', 'future stars', 'fanfare', 'manga madness'].includes(sub)) return 0.4;
 
-    // Requested parallel order within same print run:
     if (par.includes('raywave') || par.includes('ray wave')) return 1;
     if (par.includes('storm') || par.includes('lightning')) return 2;
     if (par.includes('x-fractor') || par.includes('xfractor')) return 3;
@@ -104,14 +167,11 @@
     if (par.includes('lazer') || par.includes('laser')) return 5;
     if (par.includes('wave')) return 6;
 
-    // Neon-specific textured foils before plain Chrome/Base foil
     if (par.includes('sparkle')) return 6.2;
     if (par.includes('diamante')) return 6.4;
 
-    // Sapphire parallel at /99 placed after standard Chrome Green rainbow
     if (par.includes('sapphire') || sub.includes('sapphire')) return 8;
 
-    // Plain Base / Solid Refractor / Chrome Foil
     if (par === 'base card') return 7.5;
     return 7;
   }
@@ -123,7 +183,6 @@
     const finishDiff = getFinishRank(a) - getFinishRank(b);
     if (finishDiff !== 0) return finishDiff;
 
-    // Keep unnumbered insert subsets grouped cleanly (e.g., Classic Covers CC-01..09, Marvel Icons, Fanfare)
     if (a.printRun == null && b.printRun == null) {
       if (a.subset !== b.subset) return (a.subset || '').localeCompare(b.subset || '');
       if (a.subset === 'Classic Comic Book Covers') {
@@ -131,7 +190,7 @@
       }
     }
 
-    const serDiff = parseSerialNum(a.serial) - parseSerialNum(b.serial);
+    const serDiff = parseSerialNum(getCardSerial(a)) - parseSerialNum(getCardSerial(b));
     if (serDiff !== 0) return serDiff;
 
     return (a.character || '').localeCompare(b.character || '');
@@ -159,7 +218,7 @@
     showToast._timer = setTimeout(() => t.classList.remove('show'), 3000);
   }
 
-  // Convert any image Blob/File into an optimised crisp web JPEG (max 1200px long edge)
+  // Convert any image Blob/File into an optimised crisp web JPEG
   function processImageBlob(blob, optimise = true) {
     return new Promise((resolve, reject) => {
       const url = URL.createObjectURL(blob);
@@ -207,6 +266,13 @@
     });
   }
 
+  function utf8ToBase64(str) {
+    const bytes = new TextEncoder().encode(str);
+    let bin = '';
+    bytes.forEach(b => { bin += String.fromCharCode(b); });
+    return btoa(bin);
+  }
+
   // Upload/Overwrite a file directly in GitHub via REST Contents API
   async function uploadToGitHub(repoFilePath, base64Content, commitMessage) {
     const { owner, repo, branch, token } = state.gh;
@@ -248,6 +314,11 @@
       throw new Error(errBody.message || `GitHub upload failed (${putRes.status})`);
     }
     return await putRes.json();
+  }
+
+  async function saveStatusOverridesToGitHub(commitMsg) {
+    const jsonText = JSON.stringify(state.statusOverrides, null, 2) + '\n';
+    return await uploadToGitHub('js/collection-status.json', utf8ToBase64(jsonText), commitMsg);
   }
 
   // Save Blob locally with exact required filename
@@ -365,25 +436,30 @@
     });
   }
 
-  // Update Hero KPI Stats
+  // Update Hero KPI Stats (based on Owned cards + live missing tracker count)
   function renderHeroStats() {
-    const hopeCards = CARDS.filter(c => c.owner === 'Hope');
-    const kandyCards = CARDS.filter(c => c.owner === 'Kandy');
-    const ace10 = CARDS.filter(c => c.grade && c.grade.includes('10')).length;
-    const ace9 = CARDS.filter(c => c.grade && c.grade.includes('9')).length;
-    const ultraRare = CARDS.filter(c => (c.printRun && c.printRun <= 10) || c.tags.includes('Case Hit')).length;
+    const ownedCards = CARDS.filter(c => !isCardMissing(c));
+    const missingCards = CARDS.filter(c => isCardMissing(c));
+    const hopeOwned = ownedCards.filter(c => c.owner === 'Hope');
+    const kandyOwned = ownedCards.filter(c => c.owner === 'Kandy');
+    const ace10 = ownedCards.filter(c => c.grade && c.grade.includes('10')).length;
+    const ace9 = ownedCards.filter(c => c.grade && c.grade.includes('9')).length;
+    const ultraRare = ownedCards.filter(c => (c.printRun && c.printRun <= 10) || c.tags.includes('Case Hit')).length;
 
-    const grandLow = sumVals(CARDS, 'low');
-    const grandHigh = sumVals(CARDS, 'high');
-    const grandCur = sumVals(CARDS, state.valMode);
+    const grandLow = sumVals(ownedCards, 'low');
+    const grandHigh = sumVals(ownedCards, 'high');
+    const grandCur = sumVals(ownedCards, state.valMode);
 
-    document.getElementById('stat-total-cards').textContent = CARDS.length;
-    document.getElementById('stat-total-sub').textContent = `${hopeCards.length} Hope · ${kandyCards.length} Kandy`;
+    document.getElementById('stat-total-cards').textContent = ownedCards.length;
+    document.getElementById('stat-total-sub').textContent = `${hopeOwned.length} Hope · ${kandyOwned.length} Kandy (+${missingCards.length} tracked)`;
     document.getElementById('stat-slabs').textContent = ace10 + ace9;
     document.getElementById('stat-slabs-sub').textContent = `${ace10}× ACE 10 · ${ace9}× ACE 9`;
     document.getElementById('stat-ultra').textContent = ultraRare;
     document.getElementById('stat-value').textContent = fmtGBP(grandCur);
     document.getElementById('stat-value-range').textContent = `Range: ${fmtGBP(grandLow)} – ${fmtGBP(grandHigh)}`;
+
+    const hopeTabBtn = document.getElementById('tab-btn-hope');
+    if (hopeTabBtn) hopeTabBtn.textContent = `🌈 Hope's Rainbow Room (${hopeOwned.length})`;
 
     document.querySelectorAll('.val-toggle button').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.mode === state.valMode);
@@ -403,12 +479,14 @@
     const base = `assets/cards/${card.folder}/${card.baseFilename}`;
     const ts = state.recentUploads[card.recommendedPath];
     const qs = ts ? `?v=${ts}` : '';
+    const fallbackUrl = isCardMissing(card) ? 'assets/cards/missing-card-icon.svg' : card.placeholderSvg;
+
     const candidates = [
       { url: `${base}.jpg${qs}`, isReal: true },
       { url: `${base}.jpeg`, isReal: true },
       { url: `${base}.png`, isReal: true },
       { url: `${base}.webp`, isReal: true },
-      { url: card.placeholderSvg, isReal: false }
+      { url: fallbackUrl, isReal: false }
     ];
     let idx = 0;
     function loadNext() {
@@ -426,36 +504,49 @@
   }
 
   function updatePhotoCounter() {
-    const realCount = Object.values(state.realPhotoLoaded).filter(Boolean).length;
+    const ownedIds = new Set(CARDS.filter(c => !isCardMissing(c)).map(c => c.id));
+    const realCount = Object.entries(state.realPhotoLoaded).filter(([id, ok]) => ok && ownedIds.has(id)).length;
     const badge = document.getElementById('photo-progress-badge');
-    if (badge) badge.textContent = `${realCount} / ${CARDS.length} Real Photos Loaded`;
+    if (badge) badge.textContent = `${realCount} / ${ownedIds.size} Real Photos Loaded`;
   }
 
   // Create a Uniform-Height, Bottom-Aligned 3D Holographic Card Tile
   function createCardTile(card) {
+    const missing = isCardMissing(card);
+    const serial = getCardSerial(card);
+    const val = cardVal(card);
+
     const tile = document.createElement('div');
-    tile.className = 'card-tile' + (card.orientation === 'landscape' ? ' landscape' : '');
+    tile.className = 'card-tile' +
+      (card.orientation === 'landscape' ? ' landscape' : '') +
+      (missing ? ' is-missing' : '');
     tile.dataset.cardId = card.id;
 
-    const isSlab = Boolean(card.grade);
+    const isSlab = !missing && Boolean(card.grade);
     const slabTier = isSlab ? (card.grade.includes('10') ? 'ace-10' : 'ace-9') : '';
     const slabClass = isSlab ? `is-slab ${slabTier}` : '';
-    const aceBadgeHTML = isSlab ? `
-      <span class="ace-floating-badge ${slabTier}">
-        <span>ACE</span>
-        <span class="grade-num">${card.grade.includes('10') ? '10' : '9'}</span>
-      </span>` : '';
 
-    const specialEmoji = card.tags.includes('Alpha #1') ? '🥇 ' :
+    const cornerBadgeHTML = missing
+      ? '<span class="missing-badge">MISSING</span>'
+      : (isSlab ? `
+          <span class="ace-floating-badge ${slabTier}">
+            <span>ACE</span>
+            <span class="grade-num">${card.grade.includes('10') ? '10' : '9'}</span>
+          </span>` : '');
+
+    const specialEmoji = missing ? '' :
+                         card.tags.includes('Alpha #1') ? '🥇 ' :
                          card.tags.includes('Bookend') ? '👑 ' :
                          card.tags.includes('Case Hit') ? '⚡ ' :
                          card.tags.includes('Autograph') ? '✍️ ' : '';
+
+    const serialDisplay = serial === 'Unnumbered' ? card.cardNum : serial;
 
     tile.innerHTML = `
       <div class="card-stage">
         <div class="card-3d ${slabClass}">
           <div class="card-img-wrap">
-            ${aceBadgeHTML}
+            ${cornerBadgeHTML}
             <span class="real-photo-dot">✓ Photo</span>
             <img alt="${card.character} - ${card.parallel}" loading="lazy"/>
             <div class="holo-glare"></div>
@@ -466,8 +557,8 @@
         <div class="card-char" title="${card.character}">${specialEmoji}${card.character}</div>
         <div class="card-par" title="${card.parallel}">${card.parallel}</div>
         <div class="card-meta-row">
-          <span class="serial-chip">${card.serial === 'Unnumbered' ? card.cardNum : card.serial}</span>
-          <span class="price-chip">${fmtGBP(cardVal(card))}</span>
+          <span class="serial-chip ${missing ? 'serial-missing' : ''}">${serialDisplay}</span>
+          <span class="price-chip ${missing ? 'price-zero' : ''}">${fmtGBP(val)}</span>
         </div>
       </div>
     `;
@@ -496,32 +587,58 @@
     return tile;
   }
 
-  // Render Display Section (Gallery View Default + Per-Section Sort Controls)
+  // Render Display Section (Gallery View Default + Per-Section Sort + Rainbow Complete Tracker + Set/Char Rows)
   function renderDisplaySection(container, displayId) {
     const meta = DISPLAYS.find(d => d.id === displayId);
     const sortMode = state.sectionSort[displayId] || 'rarity';
-    const dCards = sortCards(CARDS.filter(c => c.display === displayId), sortMode);
+    const allSectionCards = CARDS.filter(c => c.display === displayId);
+    const ownedSectionCards = allSectionCards.filter(c => !isCardMissing(c));
+    const missingSectionCards = allSectionCards.filter(c => isCardMissing(c));
+
+    const statusFilter = state.sectionStatusFilter[displayId] || 'all';
+    let visibleCards = allSectionCards;
+    if (statusFilter === 'owned') visibleCards = ownedSectionCards;
+    else if (statusFilter === 'missing') visibleCards = missingSectionCards;
+
+    const sortedCards = sortCards(visibleCards, sortMode);
 
     const sec = document.createElement('section');
     sec.className = 'display-section';
 
-    const low = sumVals(dCards, 'low');
-    const high = sumVals(dCards, 'high');
-    const cur = sumVals(dCards, state.valMode);
+    const low = sumVals(ownedSectionCards, 'low');
+    const high = sumVals(ownedSectionCards, 'high');
+    const cur = sumVals(ownedSectionCards, state.valMode);
 
+    const isRainbowDisplay = displayId === 1 || displayId === 2;
     let rainbowBar = '';
-    if (displayId === 1 || displayId === 2) {
-      const uniqueParallels = new Set(dCards.filter(c => c.set === '2026 Topps Chrome Marvel').map(c => c.parallel)).size;
-      const pct = Math.min(100, Math.round((uniqueParallels / 42) * 100));
+    if (isRainbowDisplay) {
+      const allUnique = new Set(allSectionCards.map(c => c.parallel)).size;
+      const ownedUnique = new Set(ownedSectionCards.map(c => c.parallel)).size;
+      const missingUnique = Math.max(0, allUnique - ownedUnique);
+      const pct = Math.min(100, Math.round((ownedUnique / Math.max(1, allUnique)) * 100));
       rainbowBar = `
         <div class="rainbow-bar-box">
           <div class="rainbow-bar-top">
-            <span>🌈 ${meta.shortTitle} Progress — ${uniqueParallels} of 42 Unique Chrome Parallels Collected!</span>
+            <span>🌈 ${meta.shortTitle} Progress — ${ownedUnique} of ${allUnique} Unique 2026 Chrome Parallels Collected (${missingUnique} Missing)</span>
             <span>${pct}% Complete</span>
           </div>
           <div class="rainbow-track"><div class="rainbow-fill" style="width:${pct}%"></div></div>
         </div>`;
     }
+
+    const statusFilterHTML = isRainbowDisplay ? `
+      <div class="sort-controls">
+        <span class="sort-label">Show:</span>
+        <div class="segmented">
+          <button class="${statusFilter === 'all' ? 'active' : ''}" data-sfilter="all">All (${allSectionCards.length})</button>
+          <button class="${statusFilter === 'owned' ? 'active' : ''}" data-sfilter="owned">Owned (${ownedSectionCards.length})</button>
+          <button class="${statusFilter === 'missing' ? 'active' : ''}" data-sfilter="missing">Missing (${missingSectionCards.length})</button>
+        </div>
+      </div>` : '';
+
+    const countBadgeText = isRainbowDisplay
+      ? `${ownedSectionCards.length} Owned · ${missingSectionCards.length} Missing`
+      : `${ownedSectionCards.length} Cards`;
 
     sec.innerHTML = `
       <div class="display-header">
@@ -530,19 +647,22 @@
           <p>${meta.subtitle}</p>
         </div>
         <div class="display-badges">
-          <span class="pill ${meta.owner === 'Hope' ? 'pill-pink' : 'pill-cyan'}">${dCards.length} Cards</span>
+          <span class="pill ${meta.owner === 'Hope' ? 'pill-pink' : 'pill-cyan'}">${countBadgeText}</span>
           <span class="pill pill-gold">Est. ${fmtGBP(cur)} (${fmtGBP(low)}–${fmtGBP(high)})</span>
         </div>
       </div>
       ${rainbowBar}
       <div class="view-bar">
         <span style="font-size:0.84rem;color:var(--text-muted);font-weight:600;">💡 ${meta.extraNote}</span>
-        <div class="sort-controls">
-          <span class="sort-label">Sort by:</span>
-          <div class="segmented">
-            <button class="${sortMode === 'rarity' ? 'active' : ''}" data-sort="rarity">🎯 Pull Rarity</button>
-            <button class="${sortMode === 'value' ? 'active' : ''}" data-sort="value">💷 Value</button>
-            <button class="${sortMode === 'name' ? 'active' : ''}" data-sort="name">🔤 Name</button>
+        <div class="section-toolbar">
+          ${statusFilterHTML}
+          <div class="sort-controls">
+            <span class="sort-label">Sort by:</span>
+            <div class="segmented">
+              <button class="${sortMode === 'rarity' ? 'active' : ''}" data-sort="rarity">🎯 Pull Rarity</button>
+              <button class="${sortMode === 'value' ? 'active' : ''}" data-sort="value">💷 Value</button>
+              <button class="${sortMode === 'name' ? 'active' : ''}" data-sort="name">🔤 Name</button>
+            </div>
           </div>
         </div>
       </div>
@@ -556,23 +676,88 @@
       });
     });
 
+    sec.querySelectorAll('.segmented button[data-sfilter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.sectionStatusFilter[displayId] = btn.dataset.sfilter;
+        renderActiveTab();
+      });
+    });
+
     const body = sec.querySelector('.display-body');
-    const grid = document.createElement('div');
-    grid.className = 'cards-grid';
-    dCards.forEach(c => grid.appendChild(createCardTile(c)));
-    body.appendChild(grid);
+
+    // Special layout for Display 6 ("Neon/Sapphire Others"): One row per Set per Character
+    if (meta.groupedBySetAndChar) {
+      const setOrder = ['2026 Topps Chrome Marvel Sapphire', '2026 Topps Neon Marvel'];
+      const charOrder = ['Moon Girl', 'Devil Dinosaur'];
+      const groupsMap = new Map();
+
+      sortedCards.forEach(c => {
+        const key = `${c.set}|||${c.character}`;
+        if (!groupsMap.has(key)) groupsMap.set(key, { set: c.set, character: c.character, cards: [] });
+        groupsMap.get(key).cards.push(c);
+      });
+
+      const orderedGroups = [...groupsMap.values()].sort((a, b) => {
+        const sa = setOrder.indexOf(a.set);
+        const sb = setOrder.indexOf(b.set);
+        if (sa !== sb) return (sa === -1 ? 99 : sa) - (sb === -1 ? 99 : sb);
+        const ca = charOrder.indexOf(a.character);
+        const cb = charOrder.indexOf(b.character);
+        if (ca !== cb) return (ca === -1 ? 99 : ca) - (cb === -1 ? 99 : cb);
+        return a.character.localeCompare(b.character);
+      });
+
+      orderedGroups.forEach(grp => {
+        const grpWrap = document.createElement('div');
+        grpWrap.className = 'set-char-group';
+        const isSapphire = grp.set.toLowerCase().includes('sapphire');
+        const grpCur = sumVals(grp.cards, state.valMode);
+        grpWrap.innerHTML = `
+          <div class="set-char-header">
+            <div class="set-char-title">
+              <span class="pill ${isSapphire ? 'pill-cyan' : 'pill-pink'}">${grp.set}</span>
+              <span>${grp.character}</span>
+            </div>
+            <div class="display-badges">
+              <span class="pill">${grp.cards.length} Card${grp.cards.length === 1 ? '' : 's'}</span>
+              <span class="pill pill-gold">Est. ${fmtGBP(grpCur)}</span>
+            </div>
+          </div>
+          <div class="cards-grid"></div>
+        `;
+        const grid = grpWrap.querySelector('.cards-grid');
+        sortCards(grp.cards, sortMode).forEach(c => grid.appendChild(createCardTile(c)));
+        body.appendChild(grpWrap);
+      });
+    } else {
+      const grid = document.createElement('div');
+      grid.className = 'cards-grid';
+      if (!sortedCards.length) {
+        grid.innerHTML = '<div style="padding:24px;color:var(--text-muted);font-weight:700;">No cards in this filter view.</div>';
+      } else {
+        sortedCards.forEach(c => grid.appendChild(createCardTile(c)));
+      }
+      body.appendChild(grid);
+    }
 
     container.appendChild(sec);
   }
 
-  // Render All-180 Explorer Tab
+  // Render All-Cards Explorer Tab
   function renderExplorer() {
     const f = state.filters;
     let list = CARDS.filter(c => {
+      const missing = isCardMissing(c);
+      if (f.quickTag === 'missing') {
+        if (!missing) return false;
+      } else {
+        // Default views show Owned cards unless specifically filtering Missing Rainbow Cards
+        if (missing) return false;
+      }
       if (f.owner !== 'all' && c.owner !== f.owner) return false;
       if (f.display !== 'all' && String(c.display) !== f.display) return false;
       if (f.set !== 'all' && c.set !== f.set) return false;
-      if (f.quickTag !== 'all') {
+      if (f.quickTag !== 'all' && f.quickTag !== 'missing') {
         if (f.quickTag === 'ace' && !c.grade) return false;
         else if (f.quickTag === 'low10' && !(c.printRun && c.printRun <= 10)) return false;
         else if (f.quickTag === 'auto' && !c.tags.includes('Autograph')) return false;
@@ -581,16 +766,19 @@
       }
       if (f.search.trim()) {
         const q = f.search.trim().toLowerCase();
-        const hay = `${c.character} ${c.parallel} ${c.set} ${c.serial} ${c.artist || ''} ${c.subset} ${c.baseFilename}`.toLowerCase();
+        const hay = `${c.character} ${c.parallel} ${c.set} ${getCardSerial(c)} ${c.artist || ''} ${c.subset} ${c.baseFilename}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
 
     list = sortCards(list, f.sort);
+    const totalOwned = CARDS.filter(c => !isCardMissing(c)).length;
 
     document.getElementById('explorer-summary').textContent =
-      `Showing ${list.length} of ${CARDS.length} cards · Filtered Est. Value: ${fmtGBP(sumVals(list))}`;
+      f.quickTag === 'missing'
+        ? `Showing ${list.length} Missing Rainbow Slots · Target Value: £0 (not yet owned)`
+        : `Showing ${list.length} of ${totalOwned} owned cards · Filtered Est. Value: ${fmtGBP(sumVals(list))}`;
 
     const grid = document.getElementById('explorer-grid');
     grid.innerHTML = '';
@@ -632,12 +820,14 @@
       </tr>
     `).join('');
 
+    const ownedAll = CARDS.filter(c => !isCardMissing(c));
     const valBody = document.getElementById('valuation-tbody');
     valBody.innerHTML = DISPLAYS.map(d => {
-      const dc = CARDS.filter(c => c.display === d.id);
+      const dc = ownedAll.filter(c => c.display === d.id);
+      const missingCount = CARDS.filter(c => c.display === d.id && isCardMissing(c)).length;
       return `
         <tr>
-          <td><strong>Display ${d.id}: ${d.shortTitle}</strong></td>
+          <td><strong>${d.shortTitle}</strong>${missingCount ? ` <span style="color:var(--text-muted);font-size:0.78rem;">(${missingCount} missing)</span>` : ''}</td>
           <td><span class="pill ${d.owner === 'Hope' ? 'pill-pink' : 'pill-cyan'}">${d.owner}</span></td>
           <td>${dc.length}</td>
           <td style="font-family:'JetBrains Mono',monospace;">${fmtGBP(sumVals(dc, 'low'))}</td>
@@ -648,10 +838,10 @@
     }).join('') + `
       <tr style="background:var(--surface-soft);font-weight:900;">
         <td colspan="2">COMBINED VAULT TOTAL (HOPE + KANDY)</td>
-        <td>${CARDS.length}</td>
-        <td style="font-family:'JetBrains Mono',monospace;">${fmtGBP(sumVals(CARDS, 'low'))}</td>
-        <td style="font-family:'JetBrains Mono',monospace;color:var(--pink);">${fmtGBP(sumVals(CARDS, 'mid'))}</td>
-        <td style="font-family:'JetBrains Mono',monospace;">${fmtGBP(sumVals(CARDS, 'high'))}</td>
+        <td>${ownedAll.length}</td>
+        <td style="font-family:'JetBrains Mono',monospace;">${fmtGBP(sumVals(ownedAll, 'low'))}</td>
+        <td style="font-family:'JetBrains Mono',monospace;color:var(--pink);">${fmtGBP(sumVals(ownedAll, 'mid'))}</td>
+        <td style="font-family:'JetBrains Mono',monospace;">${fmtGBP(sumVals(ownedAll, 'high'))}</td>
       </tr>
     `;
 
@@ -674,19 +864,25 @@
     const q = state.guideSearch.trim().toLowerCase();
     const list = CARDS.filter(c => {
       if (state.guideFilter !== 'all' && String(c.display) !== state.guideFilter) return false;
-      if (q && !`${c.character} ${c.parallel} ${c.serial} ${c.recommendedPath}`.toLowerCase().includes(q)) return false;
+      if (q && !`${c.character} ${c.parallel} ${getCardSerial(c)} ${c.recommendedPath}`.toLowerCase().includes(q)) return false;
       return true;
     });
 
     tbody.innerHTML = list.map(c => {
       const hasReal = Boolean(state.realPhotoLoaded[c.id]);
+      const missing = isCardMissing(c);
+      const statusBadge = missing
+        ? '<span class="pill" style="background:rgba(225,29,72,0.16);color:#e11d48;">🔍 Missing Slot</span>'
+        : (hasReal
+            ? '<span class="pill" style="background:rgba(16,185,129,0.2);color:#059669;">✅ Real Photo</span>'
+            : '<span class="pill">🎨 Placeholder SVG</span>');
       return `
         <tr>
-          <td><strong>D${c.display} · ${c.slot}</strong></td>
+          <td><strong>${c.display === 6 ? 'Other' : 'D' + c.display} · ${c.slot}</strong></td>
           <td>${c.character}</td>
-          <td>${c.parallel} <span style="color:var(--text-muted);">(${c.serial})</span></td>
+          <td>${c.parallel} <span style="color:var(--text-muted);">(${getCardSerial(c)})</span></td>
           <td><code class="fname">${c.recommendedPath}</code></td>
-          <td>${hasReal ? '<span class="pill" style="background:rgba(16,185,129,0.2);color:#059669;">✅ Real Photo</span>' : '<span class="pill">🎨 Placeholder SVG</span>'}</td>
+          <td>${statusBadge}</td>
           <td>
             <div style="display:flex;gap:6px;">
               <button class="btn btn-primary" style="padding:5px 10px;font-size:0.74rem;" data-open-card="${c.id}">📸 Swap</button>
@@ -713,9 +909,67 @@
   }
 
   // ==========================================================================
-  // CARD INSPECTOR MODAL + STAGED PHOTO STUDIO
+  // CARD INSPECTOR MODAL + STATUS TOGGLE + STAGED PHOTO STUDIO
   // ==========================================================================
   let currentModalCard = null;
+  let pendingModalMissingState = false;
+
+  function renderModalDetails(card) {
+    const missing = isCardMissing(card);
+    const serial = getCardSerial(card);
+    const { low, high } = getCardValBounds(card);
+    const valText = missing
+      ? '£0 (Missing from collection)'
+      : (low === high ? fmtGBP(low) : `${fmtGBP(low)} – ${fmtGBP(high)} (Mid ${fmtGBP(cardVal(card, 'mid'))})`);
+
+    const details = [
+      ['Collection Status', missing ? '🔍 Missing (Chasing)' : '✅ Owned in Collection'],
+      ['Serial Number', serial],
+      ['Print Run', card.printRun ? `/${card.printRun}` : 'Unnumbered'],
+      ['Format / Exclusivity', card.format],
+      ['Pull Odds', card.odds],
+      ['Est. Value (GBP)', valText],
+      ['Grade / Condition', missing ? 'Not yet acquired' : (card.grade || 'Raw · One-Touch Magnetic Case')],
+      ['Subset / Notes', card.artist || card.subset]
+    ];
+    document.getElementById('modal-details').innerHTML = details.map(([k, v]) => `
+      <div class="detail-item"><span>${k}</span><strong>${v}</strong></div>
+    `).join('');
+  }
+
+  function syncModalStatusUI(card, draftMissing, showEditor = false) {
+    pendingModalMissingState = draftMissing;
+    const box = document.getElementById('modal-status-studio');
+    const pill = document.getElementById('modal-status-pill');
+    const toggleBtn = document.getElementById('modal-toggle-status-btn');
+    const fields = document.getElementById('status-edit-fields');
+    const saveRow = document.getElementById('status-save-row');
+    const markOwnedWrap = document.getElementById('opt-mark-owned-wrap');
+
+    box.classList.toggle('is-missing', draftMissing);
+    box.classList.toggle('is-owned', !draftMissing);
+
+    if (draftMissing) {
+      pill.className = 'status-pill-missing';
+      pill.textContent = '🔍 Missing from Collection';
+      toggleBtn.textContent = '🎉 Mark as Collected!';
+      toggleBtn.className = 'btn btn-success';
+      toggleBtn.style.padding = '6px 13px';
+      toggleBtn.style.fontSize = '0.78rem';
+      if (markOwnedWrap) markOwnedWrap.style.display = 'inline-flex';
+    } else {
+      pill.className = 'status-pill-owned';
+      pill.textContent = '✅ Owned in Collection';
+      toggleBtn.textContent = '↩️ Mark as Missing';
+      toggleBtn.className = 'btn btn-soft';
+      toggleBtn.style.padding = '6px 13px';
+      toggleBtn.style.fontSize = '0.78rem';
+      if (markOwnedWrap) markOwnedWrap.style.display = 'none';
+    }
+
+    fields.classList.toggle('visible', showEditor && !draftMissing);
+    saveRow.classList.toggle('visible', showEditor);
+  }
 
   function clearStagedCardPhoto(restoreImg = false) {
     if (state.stagedCardPhoto && state.stagedCardPhoto.previewUrl) {
@@ -775,23 +1029,22 @@
     const img = document.getElementById('modal-img');
     attachSmartImage(img, card, null);
 
+    const dispMeta = DISPLAYS.find(d => d.id === card.display);
     document.getElementById('modal-title').textContent = card.character;
     document.getElementById('modal-subtitle').textContent = `${card.set} · ${card.cardNum} · ${card.parallel}`;
-    document.getElementById('modal-owner-badge').textContent = `${card.owner}'s Vault · Display ${card.display} (${card.slot})`;
+    document.getElementById('modal-owner-badge').textContent =
+      `${card.owner}'s Vault · ${dispMeta ? dispMeta.shortTitle : 'Display ' + card.display} (${card.slot})`;
 
-    const details = [
-      ['Serial Number', card.serial],
-      ['Print Run', card.printRun ? `/${card.printRun}` : 'Unnumbered'],
-      ['Format / Exclusivity', card.format],
-      ['Pull Odds', card.odds],
-      ['Est. Value (GBP)', `${fmtGBP(card.valLow)} – ${fmtGBP(card.valHigh)} (Mid ${fmtGBP(cardVal(card, 'mid'))})`],
-      ['Grade / Condition', card.grade || 'Raw · One-Touch Magnetic Case'],
-      ['Subset', card.subset],
-      ['Artist / Notes', card.artist || (card.tags.length ? card.tags.join(', ') : 'Display Collection')]
-    ];
-    document.getElementById('modal-details').innerHTML = details.map(([k, v]) => `
-      <div class="detail-item"><span>${k}</span><strong>${v}</strong></div>
-    `).join('');
+    renderModalDetails(card);
+
+    // Pre-fill status editor inputs
+    const missing = isCardMissing(card);
+    document.getElementById('status-serial-input').value = getCardSerial(card);
+    document.getElementById('status-value-input').value = cardVal(card, 'mid');
+    const statusMsg = document.getElementById('modal-status-msg');
+    statusMsg.textContent = '';
+    statusMsg.className = 'upload-status';
+    syncModalStatusUI(card, missing, false);
 
     document.getElementById('modal-filepath').textContent = card.recommendedPath;
     modal.classList.add('open');
@@ -800,6 +1053,34 @@
   function closeCardModal() {
     clearStagedCardPhoto(false);
     document.getElementById('card-modal').classList.remove('open');
+  }
+
+  function applyPendingCardStatus(card) {
+    const nowMissing = pendingModalMissingState;
+    if (nowMissing) {
+      state.statusOverrides[card.id] = {
+        missing: true,
+        serial: card.printRun ? `/${card.printRun}` : 'Unnumbered',
+        valLow: 0,
+        valHigh: 0,
+        updatedAt: Date.now()
+      };
+    } else {
+      const serialInput = (document.getElementById('status-serial-input').value || '').trim();
+      const valNum = Math.max(0, parseInt(document.getElementById('status-value-input').value || '0', 10) || 0);
+      const finalSerial = serialInput || (card.printRun ? `/${card.printRun}` : 'Unnumbered');
+      state.statusOverrides[card.id] = {
+        missing: false,
+        serial: finalSerial,
+        valLow: valNum,
+        valHigh: valNum,
+        updatedAt: Date.now()
+      };
+    }
+    saveLocalStatusOverrides(state.statusOverrides);
+    renderModalDetails(card);
+    attachSmartImage(document.getElementById('modal-img'), card, null);
+    renderActiveTab();
   }
 
   // ==========================================================================
@@ -865,8 +1146,9 @@
     if (state.activeTab === 'hope') {
       const wrap = document.getElementById('hope-displays-wrap');
       wrap.innerHTML = '';
-      renderDisplaySection(wrap, 1);
-      renderDisplaySection(wrap, 2);
+      renderDisplaySection(wrap, 1); // Moon Girl Complete 2026 Chrome Rainbow
+      renderDisplaySection(wrap, 2); // Devil Dinosaur Complete 2026 Chrome Rainbow
+      renderDisplaySection(wrap, 6); // Neon/Sapphire Others (Row per Set per Character)
     } else if (state.activeTab === 'chrome') {
       const wrap = document.getElementById('chrome-displays-wrap');
       wrap.innerHTML = '';
@@ -928,11 +1210,19 @@
 
   // CSV Download
   function downloadCSV() {
-    const header = ['Display','Slot','Owner','Set','CardNum','Character','Parallel','Serial','Grade','EstLowGBP','EstHighGBP','Folder','ExactFilenameToSave'];
-    const rows = CARDS.map(c => [
-      `Display ${c.display}`, c.slot, c.owner, c.set, c.cardNum, c.character, c.parallel,
-      c.serial, c.grade || 'Raw', c.valLow, c.valHigh, `assets/cards/${c.folder}/`, `${c.baseFilename}.jpg`
-    ]);
+    const header = ['Section','Slot','Status','Owner','Set','CardNum','Character','Parallel','Serial','Grade','EstLowGBP','EstHighGBP','Folder','ExactFilenameToSave'];
+    const rows = CARDS.map(c => {
+      const { low, high } = getCardValBounds(c);
+      const dispMeta = DISPLAYS.find(d => d.id === c.display);
+      return [
+        dispMeta ? dispMeta.shortTitle : `Display ${c.display}`,
+        c.slot,
+        isCardMissing(c) ? 'Missing' : 'Owned',
+        c.owner, c.set, c.cardNum, c.character, c.parallel,
+        getCardSerial(c), c.grade || 'Raw', low, high,
+        `assets/cards/${c.folder}/`, `${c.baseFilename}.jpg`
+      ];
+    });
     const csvText = [header, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
     const blob = new Blob([csvText], { type: 'text/csv;charset=utf-8;' });
     const a = document.createElement('a');
@@ -1035,7 +1325,7 @@
         state.gh = { owner, repo, branch, token };
         saveGHConfig(state.gh);
         updateGHButtonState();
-        st.textContent = `✅ Connected to ${owner}/${repo} (${branch})! You can now save photos directly to GitHub.`;
+        st.textContent = `✅ Connected to ${owner}/${repo} (${branch})! You can now save photos & status directly to GitHub.`;
         st.className = 'upload-status ok';
         showToast('✅ GitHub Direct Upload connected!');
         setTimeout(() => closeGHModal(), 1100);
@@ -1056,7 +1346,65 @@
       showToast('GitHub token disconnected.');
     });
 
-    // Card Modal controls
+    // Card Modal: Status Toggle & Save controls
+    document.getElementById('modal-toggle-status-btn').addEventListener('click', () => {
+      if (!currentModalCard) return;
+      const nextMissing = !pendingModalMissingState;
+      syncModalStatusUI(currentModalCard, nextMissing, true);
+      const msg = document.getElementById('modal-status-msg');
+      msg.textContent = nextMissing
+        ? 'Click Save below to mark this card as Missing (£0).'
+        : 'Enter the card serial # & estimated value (optional), then click Save!';
+      msg.className = 'upload-status';
+    });
+
+    document.getElementById('status-save-local-btn').addEventListener('click', () => {
+      if (!currentModalCard) return;
+      applyPendingCardStatus(currentModalCard);
+      const nowMissing = isCardMissing(currentModalCard);
+      syncModalStatusUI(currentModalCard, nowMissing, false);
+      const msg = document.getElementById('modal-status-msg');
+      msg.textContent = nowMissing
+        ? '💾 Saved locally as Missing.'
+        : '🎉 Marked as Collected & saved locally!';
+      msg.className = 'upload-status ok';
+      showToast(nowMissing ? 'Marked as Missing' : `🎉 ${currentModalCard.character} (${currentModalCard.parallel}) marked as Collected!`);
+      if (!nowMissing) burstConfetti();
+    });
+
+    document.getElementById('status-save-gh-btn').addEventListener('click', async () => {
+      if (!currentModalCard) return;
+      if (!state.gh.token) {
+        openGHModal('Paste your GitHub token once to sync collection status to GitHub!');
+        return;
+      }
+      applyPendingCardStatus(currentModalCard);
+      const nowMissing = isCardMissing(currentModalCard);
+      const btn = document.getElementById('status-save-gh-btn');
+      const msg = document.getElementById('modal-status-msg');
+      btn.disabled = true;
+      btn.textContent = '⏳ Syncing...';
+      msg.textContent = 'Saving js/collection-status.json to GitHub...';
+      msg.className = 'upload-status';
+      try {
+        await saveStatusOverridesToGitHub(
+          `Update card status (${nowMissing ? 'Missing' : 'Collected'}): ${currentModalCard.character} ${currentModalCard.parallel}`
+        );
+        syncModalStatusUI(currentModalCard, nowMissing, false);
+        msg.textContent = '✅ Status saved to GitHub! Live site updates for Hope in ~45 seconds.';
+        msg.className = 'upload-status ok';
+        showToast(nowMissing ? '☁️ Saved as Missing on GitHub' : `☁️ Marked ${currentModalCard.parallel} as Collected on GitHub!`);
+        if (!nowMissing) burstConfetti();
+      } catch (err) {
+        msg.textContent = `❌ GitHub sync failed (saved locally instead): ${err.message}`;
+        msg.className = 'upload-status err';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '☁️ Save Status to GitHub';
+      }
+    });
+
+    // Card Modal close & copy
     document.getElementById('modal-close-btn').addEventListener('click', closeCardModal);
     document.getElementById('card-modal').addEventListener('click', (e) => { if (e.target.id === 'card-modal') closeCardModal(); });
     document.addEventListener('keydown', (e) => {
@@ -1156,6 +1504,8 @@
 
       const btn = document.getElementById('modal-save-gh-btn');
       const statusEl = document.getElementById('modal-upload-status');
+      const shouldAlsoMarkOwned = isCardMissing(currentModalCard) && document.getElementById('opt-mark-owned').checked;
+
       btn.disabled = true;
       btn.textContent = '⏳ Uploading to GitHub...';
       statusEl.textContent = `Committing ${currentModalCard.recommendedPath} to GitHub...`;
@@ -1165,8 +1515,17 @@
         await uploadToGitHub(
           currentModalCard.recommendedPath,
           state.stagedCardPhoto.outBase64,
-          `Update card photo: ${currentModalCard.character} (${currentModalCard.slot} ${currentModalCard.serial})`
+          `Update card photo: ${currentModalCard.character} (${currentModalCard.slot} ${getCardSerial(currentModalCard)})`
         );
+
+        if (shouldAlsoMarkOwned) {
+          pendingModalMissingState = false;
+          applyPendingCardStatus(currentModalCard);
+          await saveStatusOverridesToGitHub(
+            `Mark collected with new photo: ${currentModalCard.character} ${currentModalCard.parallel}`
+          );
+          syncModalStatusUI(currentModalCard, false, false);
+        }
 
         const keepUrl = URL.createObjectURL(state.stagedCardPhoto.outBlob);
         state.sessionPhotos[currentModalCard.id] = keepUrl;
@@ -1178,7 +1537,9 @@
         renderActiveTab();
         updatePhotoCounter();
 
-        statusEl.textContent = '✅ Saved to GitHub! Your live site updates automatically in ~45 seconds.';
+        statusEl.textContent = shouldAlsoMarkOwned
+          ? '✅ Photo saved & card marked as Collected on GitHub!'
+          : '✅ Saved to GitHub! Your live site updates automatically in ~45 seconds.';
         statusEl.className = 'upload-status ok';
         showToast(`☁️ Saved ${currentModalCard.character} to GitHub!`);
         burstConfetti();
@@ -1204,9 +1565,16 @@
       if (!currentModalCard || !state.stagedCardPhoto) return;
       const exactFilename = `${currentModalCard.baseFilename}.jpg`;
       const statusEl = document.getElementById('modal-upload-status');
+      const shouldAlsoMarkOwned = isCardMissing(currentModalCard) && document.getElementById('opt-mark-owned').checked;
       try {
         const res = await saveBlobLocally(state.stagedCardPhoto.outBlob, exactFilename);
         if (res === 'cancelled') return;
+
+        if (shouldAlsoMarkOwned) {
+          pendingModalMissingState = false;
+          applyPendingCardStatus(currentModalCard);
+          syncModalStatusUI(currentModalCard, false, false);
+        }
 
         const keepUrl = URL.createObjectURL(state.stagedCardPhoto.outBlob);
         state.sessionPhotos[currentModalCard.id] = keepUrl;
@@ -1225,5 +1593,6 @@
     });
 
     renderActiveTab();
+    loadRemoteStatusOverrides();
   });
 })();

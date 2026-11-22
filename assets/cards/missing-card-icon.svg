@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 350" width="250" height="350">
+  <defs>
+    <linearGradient id="mbg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#171d32"/>
+      <stop offset="50%" stop-color="#1e2640"/>
+      <stop offset="100%" stop-color="#111629"/>
+    </linearGradient>
+    <radialGradient id="mglow" cx="50%" cy="46%" r="48%">
+      <stop offset="0%" stop-color="rgba(139,92,246,0.22)"/>
+      <stop offset="100%" stop-color="rgba(139,92,246,0)"/>
+    </radialGradient>
+  </defs>
+  <rect width="250" height="350" rx="16" fill="url(#mbg)"/>
+  <rect width="250" height="350" rx="16" fill="url(#mglow)"/>
+  <rect x="14" y="14" width="222" height="322" rx="12" fill="none" stroke="#475569" stroke-width="2.5" stroke-dasharray="10 7" opacity="0.8"/>
+  <rect x="26" y="26" width="198" height="298" rx="8" fill="none" stroke="#334155" stroke-width="1" opacity="0.55"/>
+  <!-- Minimalist Blank Card + Sparkle Silhouette Icon -->
+  <g transform="translate(125,164)">
+    <circle r="54" fill="rgba(15,23,42,0.55)" stroke="#64748b" stroke-width="2" stroke-dasharray="6 5"/>
+    <!-- Tilted back card outline -->
+    <rect x="-22" y="-30" width="44" height="60" rx="6" fill="none" stroke="#475569" stroke-width="2.2" transform="rotate(-8)"/>
+    <!-- Front blank card silhouette -->
+    <rect x="-22" y="-30" width="44" height="60" rx="6" fill="#1e293b" stroke="#94a3b8" stroke-width="2.6"/>
+    <!-- Inner frame line -->
+    <rect x="-15" y="-22" width="30" height="34" rx="3" fill="rgba(148,163,184,0.12)" stroke="#64748b" stroke-width="1.4"/>
+    <!-- Centered subtle plus icon (representing slot waiting to be filled) -->
+    <line x1="0" y1="-11" x2="0" y2="1" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/>
+    <line x1="-6" y1="-5" x2="6" y2="-5" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/>
+    <!-- Bottom caption bars on mini card icon -->
+    <line x1="-13" y1="20" x2="13" y2="20" stroke="#64748b" stroke-width="2.6" stroke-linecap="round"/>
+  </g>
+</svg>
