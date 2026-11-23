@@ -9,6 +9,9 @@
   const RECENT_UPLOADS_KEY = 'kh_vault_recent_uploads_v1';
   const STATUS_STORAGE_KEY = 'kh_vault_card_status_v1';
 
+  const CHROME_INSERT_DISPLAYS = DISPLAYS.filter(d => d.isChromeInsert);
+  const CHROME_INSERT_IDS = new Set(CHROME_INSERT_DISPLAYS.map(d => d.id));
+
   function loadGHConfig() {
     try {
       const raw = localStorage.getItem(GH_STORAGE_KEY);
@@ -42,9 +45,11 @@
   const state = {
     activeTab: 'hope',
     valMode: 'mid',
-    sectionSort: { 1: 'rarity', 2: 'rarity', 3: 'rarity', 4: 'rarity', 5: 'rarity', 6: 'rarity' },
-    sectionStatusFilter: { 1: 'all', 2: 'all' }, // all | owned | missing
-    statusOverrides: loadLocalStatusOverrides(), // cardId -> { missing, serial, valLow, valHigh, updatedAt }
+    sectionSort: {},          // displayId -> 'rarity' | 'value' | 'name'
+    sectionStatusFilter: {},  // displayId -> 'all' | 'owned' | 'missing'
+    expandedInserts: {},      // displayId -> true/false (all collapsed by default!)
+    chromeInsertFilter: 'all',// 'all' | 'with-owned'
+    statusOverrides: loadLocalStatusOverrides(),
     sessionPhotos: {},
     realPhotoLoaded: {},
     recentUploads: loadRecentUploads(),
@@ -60,7 +65,8 @@
       quickTag: 'all'
     },
     guideFilter: 'all',
-    guideSearch: ''
+    guideSearch: '',
+    guideHideMissing: true
   };
 
   // ==========================================================================
@@ -122,7 +128,7 @@
       saveLocalStatusOverrides(merged);
       renderActiveTab();
     } catch (_) {
-      // Offline / file:// open — safely keep localStorage overrides
+      // Offline / file:// open — keep localStorage overrides
     }
   }
 
@@ -135,6 +141,10 @@
     return m ? parseInt(m[1], 10) : 999999;
   }
 
+  function compareNaturalCardNum(aNum, bNum) {
+    return String(aNum || '').localeCompare(String(bNum || ''), undefined, { numeric: true, sensitivity: 'base' });
+  }
+
   function getRarityTier(c) {
     if (c.printRun !== null && c.printRun !== undefined) return c.printRun;
     const sub = (c.subset || '').toLowerCase();
@@ -144,7 +154,7 @@
     if (tags.includes('case hit')) return 1010;
     if (sub.includes('classic comic')) return 1020;
     if (sub.includes('neon variation') || par.includes('etch')) return 1030;
-    if (tags.includes('insert') || ['marvel icons', 'fanfare', 'future stars', 'manga madness', 'neon insert'].includes(sub)) return 1040;
+    if (tags.includes('insert') || CHROME_INSERT_IDS.has(c.display)) return 1040;
     if (sub === 'base' || par === 'base card') return 1060;
     return 1050;
   }
@@ -158,7 +168,7 @@
     if (par.includes('clawed')) return 0.1;
     if (sub.includes('facsimile autograph')) return 0.2;
     if (sub.includes('artist autograph')) return 0.3;
-    if (['marvel icons', 'future stars', 'fanfare', 'manga madness'].includes(sub)) return 0.4;
+    if (CHROME_INSERT_IDS.has(c.display) || ['marvel icons', 'future stars', 'fanfare', 'manga madness'].includes(sub)) return 0.4;
 
     if (par.includes('raywave') || par.includes('ray wave')) return 1;
     if (par.includes('storm') || par.includes('lightning')) return 2;
@@ -183,11 +193,17 @@
     const finishDiff = getFinishRank(a) - getFinishRank(b);
     if (finishDiff !== 0) return finishDiff;
 
+    if (a.display === b.display && CHROME_INSERT_IDS.has(a.display)) {
+      const ownedDiff = (isCardMissing(a) ? 1 : 0) - (isCardMissing(b) ? 1 : 0);
+      if (ownedDiff !== 0) return ownedDiff;
+      const numDiff = compareNaturalCardNum(a.cardNum, b.cardNum);
+      if (numDiff !== 0) return numDiff;
+    }
+
     if (a.printRun == null && b.printRun == null) {
       if (a.subset !== b.subset) return (a.subset || '').localeCompare(b.subset || '');
-      if (a.subset === 'Classic Comic Book Covers') {
-        return (a.cardNum || '').localeCompare(b.cardNum || '');
-      }
+      const numDiff = compareNaturalCardNum(a.cardNum, b.cardNum);
+      if (numDiff !== 0) return numDiff;
     }
 
     const serDiff = parseSerialNum(getCardSerial(a)) - parseSerialNum(getCardSerial(b));
@@ -436,12 +452,13 @@
     });
   }
 
-  // Update Hero KPI Stats (based on Owned cards + live missing tracker count)
+  // Update Hero KPI Stats & Tab Counts dynamically
   function renderHeroStats() {
     const ownedCards = CARDS.filter(c => !isCardMissing(c));
     const missingCards = CARDS.filter(c => isCardMissing(c));
     const hopeOwned = ownedCards.filter(c => c.owner === 'Hope');
     const kandyOwned = ownedCards.filter(c => c.owner === 'Kandy');
+    const kandyChromeOwned = kandyOwned.filter(c => c.display === 3 || CHROME_INSERT_IDS.has(c.display));
     const ace10 = ownedCards.filter(c => c.grade && c.grade.includes('10')).length;
     const ace9 = ownedCards.filter(c => c.grade && c.grade.includes('9')).length;
     const ultraRare = ownedCards.filter(c => (c.printRun && c.printRun <= 10) || c.tags.includes('Case Hit')).length;
@@ -460,6 +477,9 @@
 
     const hopeTabBtn = document.getElementById('tab-btn-hope');
     if (hopeTabBtn) hopeTabBtn.textContent = `🌈 Hope's Rainbow Room (${hopeOwned.length})`;
+
+    const chromeTabBtn = document.getElementById('tab-btn-chrome');
+    if (chromeTabBtn) chromeTabBtn.textContent = `🏆 Kandy's Chrome Vault (${kandyChromeOwned.length})`;
 
     document.querySelectorAll('.val-toggle button').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.mode === state.valMode);
@@ -541,6 +561,9 @@
                          card.tags.includes('Autograph') ? '✍️ ' : '';
 
     const serialDisplay = serial === 'Unnumbered' ? card.cardNum : serial;
+    const subtitleLine = (card.artist && !card.parallel.includes(card.artist) && card.character !== card.artist)
+      ? `${card.parallel} · ${card.artist}`
+      : card.parallel;
 
     tile.innerHTML = `
       <div class="card-stage">
@@ -555,7 +578,7 @@
       </div>
       <div class="card-caption">
         <div class="card-char" title="${card.character}">${specialEmoji}${card.character}</div>
-        <div class="card-par" title="${card.parallel}">${card.parallel}</div>
+        <div class="card-par" title="${subtitleLine}">${subtitleLine}</div>
         <div class="card-meta-row">
           <span class="serial-chip ${missing ? 'serial-missing' : ''}">${serialDisplay}</span>
           <span class="price-chip ${missing ? 'price-zero' : ''}">${fmtGBP(val)}</span>
@@ -587,7 +610,7 @@
     return tile;
   }
 
-  // Render Display Section (Gallery View Default + Per-Section Sort + Rainbow Complete Tracker + Set/Char Rows)
+  // Render Standard Display Section (Hope Displays 1, 2, 6 + Kandy Base Numbered 3 + Kandy Neon 5)
   function renderDisplaySection(container, displayId) {
     const meta = DISPLAYS.find(d => d.id === displayId);
     const sortMode = state.sectionSort[displayId] || 'rarity';
@@ -685,7 +708,6 @@
 
     const body = sec.querySelector('.display-body');
 
-    // Special layout for Display 6 ("Neon/Sapphire Others"): One row per Set per Character
     if (meta.groupedBySetAndChar) {
       const setOrder = ['2026 Topps Chrome Marvel Sapphire', '2026 Topps Neon Marvel'];
       const charOrder = ['Moon Girl', 'Devil Dinosaur'];
@@ -743,6 +765,188 @@
     container.appendChild(sec);
   }
 
+  // ==========================================================================
+  // KANDY'S COLLAPSIBLE CHROME INSERT SECTIONS (LAZY-RENDERED ACCORDIONS)
+  // ==========================================================================
+  function populateAccordionBody(bodyEl, meta) {
+    const displayId = meta.id;
+    const allSectionCards = CARDS.filter(c => c.display === displayId);
+    const ownedSectionCards = allSectionCards.filter(c => !isCardMissing(c));
+    const missingSectionCards = allSectionCards.filter(c => isCardMissing(c));
+    const sortMode = state.sectionSort[displayId] || 'rarity';
+    const statusFilter = state.sectionStatusFilter[displayId] || 'all';
+
+    let visibleCards = allSectionCards;
+    if (statusFilter === 'owned') visibleCards = ownedSectionCards;
+    else if (statusFilter === 'missing') visibleCards = missingSectionCards;
+
+    const sortedCards = sortCards(visibleCards, sortMode);
+    const pct = Math.min(100, Math.round((ownedSectionCards.length / Math.max(1, allSectionCards.length)) * 100));
+
+    bodyEl.innerHTML = `
+      <div class="rainbow-bar-box" style="margin-top:12px;margin-bottom:16px;">
+        <div class="rainbow-bar-top">
+          <span>✨ ${meta.title} Progress — ${ownedSectionCards.length} of ${allSectionCards.length} Cards Collected (${missingSectionCards.length} Missing)</span>
+          <span>${pct}% Complete</span>
+        </div>
+        <div class="rainbow-track"><div class="rainbow-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="view-bar">
+        <span style="font-size:0.82rem;color:var(--text-muted);font-weight:600;">💡 ${meta.extraNote}</span>
+        <div class="section-toolbar">
+          <div class="sort-controls">
+            <span class="sort-label">Show:</span>
+            <div class="segmented">
+              <button class="${statusFilter === 'all' ? 'active' : ''}" data-sfilter="all">All (${allSectionCards.length})</button>
+              <button class="${statusFilter === 'owned' ? 'active' : ''}" data-sfilter="owned">Owned (${ownedSectionCards.length})</button>
+              <button class="${statusFilter === 'missing' ? 'active' : ''}" data-sfilter="missing">Missing (${missingSectionCards.length})</button>
+            </div>
+          </div>
+          <div class="sort-controls">
+            <span class="sort-label">Sort by:</span>
+            <div class="segmented">
+              <button class="${sortMode === 'rarity' ? 'active' : ''}" data-sort="rarity">🎯 Pull Rarity</button>
+              <button class="${sortMode === 'value' ? 'active' : ''}" data-sort="value">💷 Value</button>
+              <button class="${sortMode === 'name' ? 'active' : ''}" data-sort="name">🔤 Name</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cards-grid"></div>
+    `;
+
+    bodyEl.querySelectorAll('.segmented button[data-sort]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.sectionSort[displayId] = btn.dataset.sort;
+        populateAccordionBody(bodyEl, meta);
+      });
+    });
+
+    bodyEl.querySelectorAll('.segmented button[data-sfilter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.sectionStatusFilter[displayId] = btn.dataset.sfilter;
+        populateAccordionBody(bodyEl, meta);
+      });
+    });
+
+    const grid = bodyEl.querySelector('.cards-grid');
+    if (!sortedCards.length) {
+      grid.innerHTML = '<div style="padding:20px;color:var(--text-muted);font-weight:700;">No cards match this filter in this insert set.</div>';
+    } else {
+      sortedCards.forEach(c => grid.appendChild(createCardTile(c)));
+    }
+  }
+
+  function renderKandyChromeVault(container) {
+    container.innerHTML = '';
+
+    // 1. Top Section: Base Character Cards (Numbered Only)
+    renderDisplaySection(container, 3);
+
+    // 2. Insert Sets Master Header & Controls
+    const allInsertCards = CARDS.filter(c => CHROME_INSERT_IDS.has(c.display));
+    const ownedInsertCards = allInsertCards.filter(c => !isCardMissing(c));
+    const sectionsWithOwned = CHROME_INSERT_DISPLAYS.filter(d =>
+      CARDS.some(c => c.display === d.id && !isCardMissing(c))
+    );
+    const insertsValCur = sumVals(ownedInsertCards, state.valMode);
+
+    const visibleInsertDisplays = state.chromeInsertFilter === 'with-owned'
+      ? sectionsWithOwned
+      : CHROME_INSERT_DISPLAYS;
+
+    const masterBar = document.createElement('div');
+    masterBar.className = 'inserts-master-bar';
+    masterBar.innerHTML = `
+      <div class="inserts-master-title">
+        <h2>📚 2026 Topps Chrome Marvel Insert Sets (${CHROME_INSERT_DISPLAYS.length} Sections)</h2>
+        <p>${ownedInsertCards.length} of ${allInsertCards.length} checklist cards collected across ${sectionsWithOwned.length} active sets · Est. Inserts Value: <strong>${fmtGBP(insertsValCur)}</strong></p>
+      </div>
+      <div class="inserts-master-actions">
+        <div class="segmented">
+          <button class="${state.chromeInsertFilter === 'all' ? 'active' : ''}" data-ifilter="all">All Sets (${CHROME_INSERT_DISPLAYS.length})</button>
+          <button class="${state.chromeInsertFilter === 'with-owned' ? 'active' : ''}" data-ifilter="with-owned">With Owned (${sectionsWithOwned.length})</button>
+        </div>
+        <button id="expand-all-inserts-btn" class="btn btn-soft" style="padding:7px 13px;font-size:0.8rem;">⊞ Expand All</button>
+        <button id="collapse-all-inserts-btn" class="btn btn-soft" style="padding:7px 13px;font-size:0.8rem;">⊟ Collapse All</button>
+      </div>
+    `;
+
+    masterBar.querySelectorAll('button[data-ifilter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.chromeInsertFilter = btn.dataset.ifilter;
+        renderKandyChromeVault(container);
+      });
+    });
+
+    masterBar.querySelector('#expand-all-inserts-btn').addEventListener('click', () => {
+      visibleInsertDisplays.forEach(d => { state.expandedInserts[d.id] = true; });
+      renderKandyChromeVault(container);
+    });
+
+    masterBar.querySelector('#collapse-all-inserts-btn').addEventListener('click', () => {
+      CHROME_INSERT_DISPLAYS.forEach(d => { state.expandedInserts[d.id] = false; });
+      renderKandyChromeVault(container);
+    });
+
+    container.appendChild(masterBar);
+
+    // 3. Render Each Collapsible Insert Section
+    visibleInsertDisplays.forEach(meta => {
+      const secCards = CARDS.filter(c => c.display === meta.id);
+      const ownedCards = secCards.filter(c => !isCardMissing(c));
+      const curVal = sumVals(ownedCards, state.valMode);
+      const pct = Math.min(100, Math.round((ownedCards.length / Math.max(1, secCards.length)) * 100));
+      const isOpen = Boolean(state.expandedInserts[meta.id]);
+
+      const acc = document.createElement('section');
+      acc.className = 'insert-accordion' +
+        (ownedCards.length > 0 ? ' has-owned' : '') +
+        (isOpen ? ' is-open' : '');
+
+      acc.innerHTML = `
+        <button type="button" class="accordion-trigger" aria-expanded="${isOpen ? 'true' : 'false'}">
+          <div class="accordion-left">
+            <span class="accordion-chevron" aria-hidden="true">▸</span>
+            <div class="accordion-heading">
+              <span class="accordion-title">${meta.title}</span>
+              <span class="accordion-sub">${meta.subtitle}</span>
+            </div>
+          </div>
+          <div class="accordion-right">
+            <div class="mini-progress-wrap" title="${pct}% complete">
+              <div class="mini-progress-track"><div class="mini-progress-fill" style="width:${pct}%"></div></div>
+              <span class="mini-progress-pct">${pct}%</span>
+            </div>
+            <span class="pill ${ownedCards.length > 0 ? 'pill-owned-hit' : 'pill-zero'}">${ownedCards.length} / ${secCards.length} Owned</span>
+            <span class="pill ${curVal > 0 ? 'pill-gold' : 'pill-zero'}">${fmtGBP(curVal)}</span>
+          </div>
+        </button>
+        <div class="accordion-body"></div>
+      `;
+
+      const trigger = acc.querySelector('.accordion-trigger');
+      const bodyEl = acc.querySelector('.accordion-body');
+
+      // Lazy-render cards ONLY if already expanded
+      if (isOpen) {
+        populateAccordionBody(bodyEl, meta);
+      }
+
+      trigger.addEventListener('click', () => {
+        const nowOpen = !state.expandedInserts[meta.id];
+        state.expandedInserts[meta.id] = nowOpen;
+        acc.classList.toggle('is-open', nowOpen);
+        trigger.setAttribute('aria-expanded', nowOpen ? 'true' : 'false');
+        if (nowOpen && !bodyEl.hasChildNodes()) {
+          populateAccordionBody(bodyEl, meta);
+        }
+      });
+
+      container.appendChild(acc);
+    });
+  }
+
   // Render All-Cards Explorer Tab
   function renderExplorer() {
     const f = state.filters;
@@ -751,11 +955,16 @@
       if (f.quickTag === 'missing') {
         if (!missing) return false;
       } else {
-        // Default views show Owned cards unless specifically filtering Missing Rainbow Cards
         if (missing) return false;
       }
       if (f.owner !== 'all' && c.owner !== f.owner) return false;
-      if (f.display !== 'all' && String(c.display) !== f.display) return false;
+      if (f.display !== 'all') {
+        if (f.display === 'chrome-inserts') {
+          if (!CHROME_INSERT_IDS.has(c.display)) return false;
+        } else if (String(c.display) !== f.display) {
+          return false;
+        }
+      }
       if (f.set !== 'all' && c.set !== f.set) return false;
       if (f.quickTag !== 'all' && f.quickTag !== 'missing') {
         if (f.quickTag === 'ace' && !c.grade) return false;
@@ -766,7 +975,7 @@
       }
       if (f.search.trim()) {
         const q = f.search.trim().toLowerCase();
-        const hay = `${c.character} ${c.parallel} ${c.set} ${getCardSerial(c)} ${c.artist || ''} ${c.subset} ${c.baseFilename}`.toLowerCase();
+        const hay = `${c.character} ${c.parallel} ${c.set} ${c.cardNum} ${getCardSerial(c)} ${c.artist || ''} ${c.subset} ${c.baseFilename}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -777,7 +986,7 @@
 
     document.getElementById('explorer-summary').textContent =
       f.quickTag === 'missing'
-        ? `Showing ${list.length} Missing Rainbow Slots · Target Value: £0 (not yet owned)`
+        ? `Showing ${list.length} Missing Checklist Slots · Target Value: £0 (not yet owned)`
         : `Showing ${list.length} of ${totalOwned} owned cards · Filtered Est. Value: ${fmtGBP(sumVals(list))}`;
 
     const grid = document.getElementById('explorer-grid');
@@ -821,14 +1030,23 @@
     `).join('');
 
     const ownedAll = CARDS.filter(c => !isCardMissing(c));
+    const summaryRows = [
+      { label: 'Hope: Moon Girl Rainbow', owner: 'Hope', filter: c => c.display === 1 },
+      { label: 'Hope: Devil Dinosaur Rainbow', owner: 'Hope', filter: c => c.display === 2 },
+      { label: 'Hope: Neon/Sapphire Others', owner: 'Hope', filter: c => c.display === 6 },
+      { label: "Kandy: Chrome Base (Numbered Only)", owner: 'Kandy', filter: c => c.display === 3 },
+      { label: `Kandy: Chrome Insert Sets (${CHROME_INSERT_DISPLAYS.length} Sets)`, owner: 'Kandy', filter: c => CHROME_INSERT_IDS.has(c.display) },
+      { label: "Kandy: Neon Marvel Vault", owner: 'Kandy', filter: c => c.display === 5 },
+    ];
+
     const valBody = document.getElementById('valuation-tbody');
-    valBody.innerHTML = DISPLAYS.map(d => {
-      const dc = ownedAll.filter(c => c.display === d.id);
-      const missingCount = CARDS.filter(c => c.display === d.id && isCardMissing(c)).length;
+    valBody.innerHTML = summaryRows.map(row => {
+      const dc = ownedAll.filter(row.filter);
+      const missingCount = CARDS.filter(c => row.filter(c) && isCardMissing(c)).length;
       return `
         <tr>
-          <td><strong>${d.shortTitle}</strong>${missingCount ? ` <span style="color:var(--text-muted);font-size:0.78rem;">(${missingCount} missing)</span>` : ''}</td>
-          <td><span class="pill ${d.owner === 'Hope' ? 'pill-pink' : 'pill-cyan'}">${d.owner}</span></td>
+          <td><strong>${row.label}</strong>${missingCount ? ` <span style="color:var(--text-muted);font-size:0.78rem;">(${missingCount} missing)</span>` : ''}</td>
+          <td><span class="pill ${row.owner === 'Hope' ? 'pill-pink' : 'pill-cyan'}">${row.owner}</span></td>
           <td>${dc.length}</td>
           <td style="font-family:'JetBrains Mono',monospace;">${fmtGBP(sumVals(dc, 'low'))}</td>
           <td style="font-family:'JetBrains Mono',monospace;font-weight:800;">${fmtGBP(sumVals(dc, 'mid'))}</td>
@@ -863,14 +1081,25 @@
     const tbody = document.getElementById('guide-tbody');
     const q = state.guideSearch.trim().toLowerCase();
     const list = CARDS.filter(c => {
-      if (state.guideFilter !== 'all' && String(c.display) !== state.guideFilter) return false;
-      if (q && !`${c.character} ${c.parallel} ${getCardSerial(c)} ${c.recommendedPath}`.toLowerCase().includes(q)) return false;
+      if (state.guideHideMissing && isCardMissing(c)) return false;
+      if (state.guideFilter !== 'all') {
+        if (state.guideFilter === 'chrome-inserts') {
+          if (!CHROME_INSERT_IDS.has(c.display)) return false;
+        } else if (String(c.display) !== state.guideFilter) {
+          return false;
+        }
+      }
+      if (q && !`${c.character} ${c.parallel} ${c.subset} ${c.cardNum} ${getCardSerial(c)} ${c.recommendedPath}`.toLowerCase().includes(q)) return false;
       return true;
     });
 
     tbody.innerHTML = list.map(c => {
       const hasReal = Boolean(state.realPhotoLoaded[c.id]);
       const missing = isCardMissing(c);
+      const dispMeta = DISPLAYS.find(d => d.id === c.display);
+      const locLabel = CHROME_INSERT_IDS.has(c.display)
+        ? `${dispMeta ? dispMeta.shortTitle : 'Insert'} · ${c.cardNum}`
+        : `${c.display === 6 ? 'Other' : 'D' + c.display} · ${c.slot}`;
       const statusBadge = missing
         ? '<span class="pill" style="background:rgba(225,29,72,0.16);color:#e11d48;">🔍 Missing Slot</span>'
         : (hasReal
@@ -878,7 +1107,7 @@
             : '<span class="pill">🎨 Placeholder SVG</span>');
       return `
         <tr>
-          <td><strong>${c.display === 6 ? 'Other' : 'D' + c.display} · ${c.slot}</strong></td>
+          <td><strong>${locLabel}</strong></td>
           <td>${c.character}</td>
           <td>${c.parallel} <span style="color:var(--text-muted);">(${getCardSerial(c)})</span></td>
           <td><code class="fname">${c.recommendedPath}</code></td>
@@ -930,7 +1159,7 @@
       ['Pull Odds', card.odds],
       ['Est. Value (GBP)', valText],
       ['Grade / Condition', missing ? 'Not yet acquired' : (card.grade || 'Raw · One-Touch Magnetic Case')],
-      ['Subset / Notes', card.artist || card.subset]
+      ['Subset / Artist', card.artist ? `${card.subset} · ${card.artist}` : card.subset]
     ];
     document.getElementById('modal-details').innerHTML = details.map(([k, v]) => `
       <div class="detail-item"><span>${k}</span><strong>${v}</strong></div>
@@ -1033,11 +1262,10 @@
     document.getElementById('modal-title').textContent = card.character;
     document.getElementById('modal-subtitle').textContent = `${card.set} · ${card.cardNum} · ${card.parallel}`;
     document.getElementById('modal-owner-badge').textContent =
-      `${card.owner}'s Vault · ${dispMeta ? dispMeta.shortTitle : 'Display ' + card.display} (${card.slot})`;
+      `${card.owner}'s Vault · ${dispMeta ? dispMeta.shortTitle : 'Display ' + card.display} (${card.cardNum})`;
 
     renderModalDetails(card);
 
-    // Pre-fill status editor inputs
     const missing = isCardMissing(card);
     document.getElementById('status-serial-input').value = getCardSerial(card);
     document.getElementById('status-value-input').value = cardVal(card, 'mid');
@@ -1146,14 +1374,12 @@
     if (state.activeTab === 'hope') {
       const wrap = document.getElementById('hope-displays-wrap');
       wrap.innerHTML = '';
-      renderDisplaySection(wrap, 1); // Moon Girl Complete 2026 Chrome Rainbow
-      renderDisplaySection(wrap, 2); // Devil Dinosaur Complete 2026 Chrome Rainbow
-      renderDisplaySection(wrap, 6); // Neon/Sapphire Others (Row per Set per Character)
+      renderDisplaySection(wrap, 1);
+      renderDisplaySection(wrap, 2);
+      renderDisplaySection(wrap, 6);
     } else if (state.activeTab === 'chrome') {
       const wrap = document.getElementById('chrome-displays-wrap');
-      wrap.innerHTML = '';
-      renderDisplaySection(wrap, 3);
-      renderDisplaySection(wrap, 4);
+      renderKandyChromeVault(wrap);
     } else if (state.activeTab === 'neon') {
       const wrap = document.getElementById('neon-displays-wrap');
       wrap.innerHTML = '';
@@ -1283,6 +1509,7 @@
     // Guide tab filters & CSV
     document.getElementById('guide-display-filter').addEventListener('change', e => { state.guideFilter = e.target.value; renderGuideTab(); });
     document.getElementById('guide-search').addEventListener('input', e => { state.guideSearch = e.target.value; renderGuideTab(); });
+    document.getElementById('guide-hide-missing').addEventListener('change', e => { state.guideHideMissing = e.target.checked; renderGuideTab(); });
     document.getElementById('download-csv-btn').addEventListener('click', downloadCSV);
 
     // GitHub Sync Modal controls
@@ -1391,9 +1618,9 @@
           `Update card status (${nowMissing ? 'Missing' : 'Collected'}): ${currentModalCard.character} ${currentModalCard.parallel}`
         );
         syncModalStatusUI(currentModalCard, nowMissing, false);
-        msg.textContent = '✅ Status saved to GitHub! Live site updates for Hope in ~45 seconds.';
+        msg.textContent = '✅ Status saved to GitHub! Live site updates in ~45 seconds.';
         msg.className = 'upload-status ok';
-        showToast(nowMissing ? '☁️ Saved as Missing on GitHub' : `☁️ Marked ${currentModalCard.parallel} as Collected on GitHub!`);
+        showToast(nowMissing ? '☁️ Saved as Missing on GitHub' : `☁️ Marked ${currentModalCard.character} as Collected on GitHub!`);
         if (!nowMissing) burstConfetti();
       } catch (err) {
         msg.textContent = `❌ GitHub sync failed (saved locally instead): ${err.message}`;
@@ -1515,7 +1742,7 @@
         await uploadToGitHub(
           currentModalCard.recommendedPath,
           state.stagedCardPhoto.outBase64,
-          `Update card photo: ${currentModalCard.character} (${currentModalCard.slot} ${getCardSerial(currentModalCard)})`
+          `Update card photo: ${currentModalCard.character} (${currentModalCard.cardNum} ${getCardSerial(currentModalCard)})`
         );
 
         if (shouldAlsoMarkOwned) {

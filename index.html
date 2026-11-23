@@ -91,7 +91,7 @@
     <!-- Navigation Tabs -->
     <nav class="nav-tabs" aria-label="Vault Sections">
       <button class="tab-btn tab-hope active" data-tab="hope" id="tab-btn-hope">🌈 Hope's Rainbow Room (66)</button>
-      <button class="tab-btn tab-chrome" data-tab="chrome">🏆 Kandy's Chrome Vault (75)</button>
+      <button class="tab-btn tab-chrome" data-tab="chrome" id="tab-btn-chrome">🏆 Kandy's Chrome Vault (75)</button>
       <button class="tab-btn tab-neon" data-tab="neon">⚡ Kandy's Neon Vault (39)</button>
       <button class="tab-btn" data-tab="explorer" id="tab-btn-explorer">🔎 Vault Explorer</button>
       <button class="tab-btn" data-tab="sets">📚 Sets, Checklists &amp; Odds</button>
@@ -136,8 +136,8 @@
               <option value="1">Hope: Moon Girl Chrome Rainbow</option>
               <option value="2">Hope: Devil Dinosaur Chrome Rainbow</option>
               <option value="6">Hope: Neon/Sapphire Others (6)</option>
-              <option value="3">Kandy: Chrome Slabs &amp; Autos (35)</option>
-              <option value="4">Kandy: Chrome Covers &amp; Inserts (40)</option>
+              <option value="3">Kandy: Chrome Base (Numbered Only)</option>
+              <option value="chrome-inserts">Kandy: Chrome Insert Sets (29 Sets)</option>
               <option value="5">Kandy: Neon Marvel (39)</option>
             </select>
             <select id="f-set">
@@ -156,7 +156,7 @@
 
           <div class="quick-tags">
             <button class="qtag active" data-qtag="all">✨ All Owned Cards</button>
-            <button class="qtag" data-qtag="missing">🔍 Missing Rainbow Cards</button>
+            <button class="qtag" data-qtag="missing">🔍 Missing Checklist Cards</button>
             <button class="qtag" data-qtag="ace">💎 ACE Graded Slabs (13)</button>
             <button class="qtag" data-qtag="low10">🔥 /5 &amp; /10 Ultra Rares</button>
             <button class="qtag" data-qtag="auto">✍️ Autographs (8)</button>
@@ -249,17 +249,21 @@
             </ol>
           </div>
 
-          <div class="filter-bar" style="grid-template-columns: 2fr 1fr;">
-            <input type="search" id="guide-search" placeholder="Filter filename guide by character, serial, or filename..." />
+          <div class="filter-bar" style="grid-template-columns: 2fr 1.2fr auto;">
+            <input type="search" id="guide-search" placeholder="Filter filename guide by character, insert set, serial, or filename..." />
             <select id="guide-display-filter">
-              <option value="all">All Sections (Owned + Missing Slots)</option>
+              <option value="all">All Sections</option>
               <option value="1">Hope: Moon Girl Chrome Rainbow</option>
               <option value="2">Hope: Devil Dinosaur Chrome Rainbow</option>
               <option value="6">Hope: Neon/Sapphire Others (6)</option>
-              <option value="3">Kandy: Chrome Slabs &amp; Autos (35)</option>
-              <option value="4">Kandy: Chrome Covers &amp; Inserts (40)</option>
+              <option value="3">Kandy: Chrome Base (Numbered Only)</option>
+              <option value="chrome-inserts">Kandy: Chrome Insert Sets (29 Sets)</option>
               <option value="5">Kandy: Neon Marvel (39)</option>
             </select>
+            <label class="guide-toggle-wrap">
+              <input type="checkbox" id="guide-hide-missing" checked />
+              Owned Only
+            </label>
           </div>
 
           <div class="table-wrap">
