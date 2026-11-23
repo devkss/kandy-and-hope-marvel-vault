@@ -42,12 +42,20 @@
     try { localStorage.setItem(STATUS_STORAGE_KEY, JSON.stringify(map)); } catch (_) {}
   }
 
+  // Default section status filters:
+  // - Hope's Moon Girl (1) & Devil Dinosaur (2): default to 'owned'
+  // - Kandy's collapsible Chrome Insert subsets (101..129): default to 'owned'
+  const defaultStatusFilters = { 1: 'owned', 2: 'owned' };
+  CHROME_INSERT_DISPLAYS.forEach(d => { defaultStatusFilters[d.id] = 'owned'; });
+
   const state = {
     activeTab: 'hope',
-    valMode: 'mid',
-    sectionSort: {},          // displayId -> 'rarity' | 'value' | 'name'
-    sectionStatusFilter: {},  // displayId -> 'all' | 'owned' | 'missing'
-    expandedInserts: {},      // displayId -> true/false (all collapsed by default!)
+    valMode: 'mid',           // 'low' | 'mid' | 'high' (used exclusively on Estimated Values tab)
+    valOwnerFilter: 'all',    // 'all' (Together - default) | 'Kandy' | 'Hope'
+    valSearch: '',
+    sectionSort: {},          // displayId -> 'rarity' | 'name' (Hope always locked to 'rarity')
+    sectionStatusFilter: defaultStatusFilters,
+    expandedInserts: {},      // displayId -> true/false (all collapsed by default)
     chromeInsertFilter: 'all',// 'all' | 'with-owned'
     statusOverrides: loadLocalStatusOverrides(),
     sessionPhotos: {},
@@ -133,7 +141,7 @@
   }
 
   // ==========================================================================
-  // SMART SORTING (PULL RARITY / VALUE / NAME)
+  // SMART SORTING (PULL RARITY / CHECKLIST POSITION / NAME / VALUE [VALUES TAB])
   // ==========================================================================
   function parseSerialNum(serial) {
     if (!serial || String(serial).toLowerCase() === 'unnumbered') return 999999;
@@ -193,13 +201,6 @@
     const finishDiff = getFinishRank(a) - getFinishRank(b);
     if (finishDiff !== 0) return finishDiff;
 
-    if (a.display === b.display && CHROME_INSERT_IDS.has(a.display)) {
-      const ownedDiff = (isCardMissing(a) ? 1 : 0) - (isCardMissing(b) ? 1 : 0);
-      if (ownedDiff !== 0) return ownedDiff;
-      const numDiff = compareNaturalCardNum(a.cardNum, b.cardNum);
-      if (numDiff !== 0) return numDiff;
-    }
-
     if (a.printRun == null && b.printRun == null) {
       if (a.subset !== b.subset) return (a.subset || '').localeCompare(b.subset || '');
       const numDiff = compareNaturalCardNum(a.cardNum, b.cardNum);
@@ -212,12 +213,18 @@
     return (a.character || '').localeCompare(b.character || '');
   }
 
+  function compareChecklistPosition(a, b) {
+    const numDiff = compareNaturalCardNum(a.cardNum, b.cardNum);
+    if (numDiff !== 0) return numDiff;
+    return comparePullRarity(a, b);
+  }
+
   function sortCards(list, sortMode) {
     const copy = [...list];
-    if (sortMode === 'val-desc' || sortMode === 'value') {
+    if (sortMode === 'checklist') {
+      copy.sort(compareChecklistPosition);
+    } else if (sortMode === 'val-desc' || sortMode === 'value') {
       copy.sort((a, b) => (cardVal(b) - cardVal(a)) || comparePullRarity(a, b));
-    } else if (sortMode === 'val-asc') {
-      copy.sort((a, b) => (cardVal(a) - cardVal(b)) || comparePullRarity(a, b));
     } else if (sortMode === 'alpha' || sortMode === 'name') {
       copy.sort((a, b) => (a.character || '').localeCompare(b.character || '') || comparePullRarity(a, b));
     } else {
@@ -452,28 +459,23 @@
     });
   }
 
-  // Update Hero KPI Stats & Tab Counts dynamically
+  // Update Hero KPI Stats & Tab Counts dynamically (ZERO money references!)
   function renderHeroStats() {
     const ownedCards = CARDS.filter(c => !isCardMissing(c));
     const missingCards = CARDS.filter(c => isCardMissing(c));
     const hopeOwned = ownedCards.filter(c => c.owner === 'Hope');
     const kandyOwned = ownedCards.filter(c => c.owner === 'Kandy');
     const kandyChromeOwned = kandyOwned.filter(c => c.display === 3 || CHROME_INSERT_IDS.has(c.display));
+    const kandyNeonOwned = kandyOwned.filter(c => c.display === 5);
     const ace10 = ownedCards.filter(c => c.grade && c.grade.includes('10')).length;
     const ace9 = ownedCards.filter(c => c.grade && c.grade.includes('9')).length;
     const ultraRare = ownedCards.filter(c => (c.printRun && c.printRun <= 10) || c.tags.includes('Case Hit')).length;
-
-    const grandLow = sumVals(ownedCards, 'low');
-    const grandHigh = sumVals(ownedCards, 'high');
-    const grandCur = sumVals(ownedCards, state.valMode);
 
     document.getElementById('stat-total-cards').textContent = ownedCards.length;
     document.getElementById('stat-total-sub').textContent = `${hopeOwned.length} Hope · ${kandyOwned.length} Kandy (+${missingCards.length} tracked)`;
     document.getElementById('stat-slabs').textContent = ace10 + ace9;
     document.getElementById('stat-slabs-sub').textContent = `${ace10}× ACE 10 · ${ace9}× ACE 9`;
     document.getElementById('stat-ultra').textContent = ultraRare;
-    document.getElementById('stat-value').textContent = fmtGBP(grandCur);
-    document.getElementById('stat-value-range').textContent = `Range: ${fmtGBP(grandLow)} – ${fmtGBP(grandHigh)}`;
 
     const hopeTabBtn = document.getElementById('tab-btn-hope');
     if (hopeTabBtn) hopeTabBtn.textContent = `🌈 Hope's Rainbow Room (${hopeOwned.length})`;
@@ -481,9 +483,8 @@
     const chromeTabBtn = document.getElementById('tab-btn-chrome');
     if (chromeTabBtn) chromeTabBtn.textContent = `🏆 Kandy's Chrome Vault (${kandyChromeOwned.length})`;
 
-    document.querySelectorAll('.val-toggle button').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.mode === state.valMode);
-    });
+    const neonTabBtn = document.getElementById('tab-btn-neon');
+    if (neonTabBtn) neonTabBtn.textContent = `⚡ Kandy's Neon Vault (${kandyNeonOwned.length})`;
   }
 
   // Smart Image Resolver per Card
@@ -530,11 +531,10 @@
     if (badge) badge.textContent = `${realCount} / ${ownedIds.size} Real Photos Loaded`;
   }
 
-  // Create a Uniform-Height, Bottom-Aligned 3D Holographic Card Tile
+  // Create a Uniform-Height, Bottom-Aligned 3D Holographic Card Tile (ZERO Money Values!)
   function createCardTile(card) {
     const missing = isCardMissing(card);
     const serial = getCardSerial(card);
-    const val = cardVal(card);
 
     const tile = document.createElement('div');
     tile.className = 'card-tile' +
@@ -560,7 +560,12 @@
                          card.tags.includes('Case Hit') ? '⚡ ' :
                          card.tags.includes('Autograph') ? '✍️ ' : '';
 
-    const serialDisplay = serial === 'Unnumbered' ? card.cardNum : serial;
+    const isNumbered = serial !== 'Unnumbered';
+    const serialDisplay = isNumbered ? serial : card.cardNum;
+    const rightMetaLabel = isNumbered
+      ? card.cardNum
+      : (missing ? 'Missing' : (card.subset === 'Base' ? 'Base' : 'Unnumbered'));
+
     const subtitleLine = (card.artist && !card.parallel.includes(card.artist) && card.character !== card.artist)
       ? `${card.parallel} · ${card.artist}`
       : card.parallel;
@@ -581,7 +586,7 @@
         <div class="card-par" title="${subtitleLine}">${subtitleLine}</div>
         <div class="card-meta-row">
           <span class="serial-chip ${missing ? 'serial-missing' : ''}">${serialDisplay}</span>
-          <span class="price-chip ${missing ? 'price-zero' : ''}">${fmtGBP(val)}</span>
+          <span class="card-code-chip" title="${rightMetaLabel}">${rightMetaLabel}</span>
         </div>
       </div>
     `;
@@ -606,19 +611,24 @@
       card3d.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
     });
 
-    tile.addEventListener('click', () => openCardModal(card));
+    tile.addEventListener('click', () => openCardModal(card, false));
     return tile;
   }
 
   // Render Standard Display Section (Hope Displays 1, 2, 6 + Kandy Base Numbered 3 + Kandy Neon 5)
   function renderDisplaySection(container, displayId) {
     const meta = DISPLAYS.find(d => d.id === displayId);
-    const sortMode = state.sectionSort[displayId] || 'rarity';
+    const isHopeSection = meta.owner === 'Hope';
+    // On Hope's section: locked strictly to Pull Rarity with no sort-by control!
+    const sortMode = isHopeSection ? 'rarity' : (state.sectionSort[displayId] || 'rarity');
+
     const allSectionCards = CARDS.filter(c => c.display === displayId);
     const ownedSectionCards = allSectionCards.filter(c => !isCardMissing(c));
     const missingSectionCards = allSectionCards.filter(c => isCardMissing(c));
 
-    const statusFilter = state.sectionStatusFilter[displayId] || 'all';
+    const isRainbowDisplay = displayId === 1 || displayId === 2;
+    const statusFilter = isRainbowDisplay ? (state.sectionStatusFilter[displayId] || 'owned') : 'all';
+
     let visibleCards = allSectionCards;
     if (statusFilter === 'owned') visibleCards = ownedSectionCards;
     else if (statusFilter === 'missing') visibleCards = missingSectionCards;
@@ -628,11 +638,6 @@
     const sec = document.createElement('section');
     sec.className = 'display-section';
 
-    const low = sumVals(ownedSectionCards, 'low');
-    const high = sumVals(ownedSectionCards, 'high');
-    const cur = sumVals(ownedSectionCards, state.valMode);
-
-    const isRainbowDisplay = displayId === 1 || displayId === 2;
     let rainbowBar = '';
     if (isRainbowDisplay) {
       const allUnique = new Set(allSectionCards.map(c => c.parallel)).size;
@@ -653,9 +658,19 @@
       <div class="sort-controls">
         <span class="sort-label">Show:</span>
         <div class="segmented">
-          <button class="${statusFilter === 'all' ? 'active' : ''}" data-sfilter="all">All (${allSectionCards.length})</button>
           <button class="${statusFilter === 'owned' ? 'active' : ''}" data-sfilter="owned">Owned (${ownedSectionCards.length})</button>
+          <button class="${statusFilter === 'all' ? 'active' : ''}" data-sfilter="all">All (${allSectionCards.length})</button>
           <button class="${statusFilter === 'missing' ? 'active' : ''}" data-sfilter="missing">Missing (${missingSectionCards.length})</button>
+        </div>
+      </div>` : '';
+
+    // Sort controls ONLY on Kandy's sections (Pull Rarity & Name — no Value, and removed on Hope's sections)
+    const sortControlHTML = !isHopeSection ? `
+      <div class="sort-controls">
+        <span class="sort-label">Sort by:</span>
+        <div class="segmented">
+          <button class="${sortMode === 'rarity' ? 'active' : ''}" data-sort="rarity">🎯 Pull Rarity</button>
+          <button class="${sortMode === 'name' ? 'active' : ''}" data-sort="name">🔤 Name</button>
         </div>
       </div>` : '';
 
@@ -671,7 +686,6 @@
         </div>
         <div class="display-badges">
           <span class="pill ${meta.owner === 'Hope' ? 'pill-pink' : 'pill-cyan'}">${countBadgeText}</span>
-          <span class="pill pill-gold">Est. ${fmtGBP(cur)} (${fmtGBP(low)}–${fmtGBP(high)})</span>
         </div>
       </div>
       ${rainbowBar}
@@ -679,14 +693,7 @@
         <span style="font-size:0.84rem;color:var(--text-muted);font-weight:600;">💡 ${meta.extraNote}</span>
         <div class="section-toolbar">
           ${statusFilterHTML}
-          <div class="sort-controls">
-            <span class="sort-label">Sort by:</span>
-            <div class="segmented">
-              <button class="${sortMode === 'rarity' ? 'active' : ''}" data-sort="rarity">🎯 Pull Rarity</button>
-              <button class="${sortMode === 'value' ? 'active' : ''}" data-sort="value">💷 Value</button>
-              <button class="${sortMode === 'name' ? 'active' : ''}" data-sort="name">🔤 Name</button>
-            </div>
-          </div>
+          ${sortControlHTML}
         </div>
       </div>
       <div class="display-body"></div>
@@ -733,7 +740,6 @@
         const grpWrap = document.createElement('div');
         grpWrap.className = 'set-char-group';
         const isSapphire = grp.set.toLowerCase().includes('sapphire');
-        const grpCur = sumVals(grp.cards, state.valMode);
         grpWrap.innerHTML = `
           <div class="set-char-header">
             <div class="set-char-title">
@@ -742,13 +748,12 @@
             </div>
             <div class="display-badges">
               <span class="pill">${grp.cards.length} Card${grp.cards.length === 1 ? '' : 's'}</span>
-              <span class="pill pill-gold">Est. ${fmtGBP(grpCur)}</span>
             </div>
           </div>
           <div class="cards-grid"></div>
         `;
         const grid = grpWrap.querySelector('.cards-grid');
-        sortCards(grp.cards, sortMode).forEach(c => grid.appendChild(createCardTile(c)));
+        sortCards(grp.cards, 'rarity').forEach(c => grid.appendChild(createCardTile(c)));
         body.appendChild(grpWrap);
       });
     } else {
@@ -766,7 +771,9 @@
   }
 
   // ==========================================================================
-  // KANDY'S COLLAPSIBLE CHROME INSERT SECTIONS (LAZY-RENDERED ACCORDIONS)
+  // KANDY'S COLLAPSIBLE CHROME INSERT SECTIONS
+  // - Default to Owned cards
+  // - When All is selected, show cards in their exact proper checklist positions!
   // ==========================================================================
   function populateAccordionBody(bodyEl, meta) {
     const displayId = meta.id;
@@ -774,14 +781,20 @@
     const ownedSectionCards = allSectionCards.filter(c => !isCardMissing(c));
     const missingSectionCards = allSectionCards.filter(c => isCardMissing(c));
     const sortMode = state.sectionSort[displayId] || 'rarity';
-    const statusFilter = state.sectionStatusFilter[displayId] || 'all';
+    const statusFilter = state.sectionStatusFilter[displayId] || 'owned';
 
-    let visibleCards = allSectionCards;
-    if (statusFilter === 'owned') visibleCards = ownedSectionCards;
+    let visibleCards = ownedSectionCards;
+    if (statusFilter === 'all') visibleCards = allSectionCards;
     else if (statusFilter === 'missing') visibleCards = missingSectionCards;
 
-    const sortedCards = sortCards(visibleCards, sortMode);
+    // When 'All' or 'Missing' is selected and default order is active -> exact checklist positions!
+    const effectiveSort = (sortMode === 'name')
+      ? 'name'
+      : (statusFilter === 'owned' ? 'rarity' : 'checklist');
+
+    const sortedCards = sortCards(visibleCards, effectiveSort);
     const pct = Math.min(100, Math.round((ownedSectionCards.length / Math.max(1, allSectionCards.length)) * 100));
+    const defaultSortLabel = statusFilter === 'owned' ? '🎯 Pull Rarity' : '📋 Checklist Order';
 
     bodyEl.innerHTML = `
       <div class="rainbow-bar-box" style="margin-top:12px;margin-bottom:16px;">
@@ -797,22 +810,21 @@
           <div class="sort-controls">
             <span class="sort-label">Show:</span>
             <div class="segmented">
-              <button class="${statusFilter === 'all' ? 'active' : ''}" data-sfilter="all">All (${allSectionCards.length})</button>
               <button class="${statusFilter === 'owned' ? 'active' : ''}" data-sfilter="owned">Owned (${ownedSectionCards.length})</button>
+              <button class="${statusFilter === 'all' ? 'active' : ''}" data-sfilter="all">All (${allSectionCards.length})</button>
               <button class="${statusFilter === 'missing' ? 'active' : ''}" data-sfilter="missing">Missing (${missingSectionCards.length})</button>
             </div>
           </div>
           <div class="sort-controls">
             <span class="sort-label">Sort by:</span>
             <div class="segmented">
-              <button class="${sortMode === 'rarity' ? 'active' : ''}" data-sort="rarity">🎯 Pull Rarity</button>
-              <button class="${sortMode === 'value' ? 'active' : ''}" data-sort="value">💷 Value</button>
+              <button class="${sortMode === 'rarity' ? 'active' : ''}" data-sort="rarity">${defaultSortLabel}</button>
               <button class="${sortMode === 'name' ? 'active' : ''}" data-sort="name">🔤 Name</button>
             </div>
           </div>
         </div>
       </div>
-      <div class="cards-grid"></div>
+      <div class="accordion-cards-host"></div>
     `;
 
     bodyEl.querySelectorAll('.segmented button[data-sort]').forEach(btn => {
@@ -829,11 +841,26 @@
       });
     });
 
-    const grid = bodyEl.querySelector('.cards-grid');
+    const host = bodyEl.querySelector('.accordion-cards-host');
     if (!sortedCards.length) {
-      grid.innerHTML = '<div style="padding:20px;color:var(--text-muted);font-weight:700;">No cards match this filter in this insert set.</div>';
+      if (statusFilter === 'owned') {
+        host.innerHTML = `
+          <div class="empty-owned-state">
+            <span>No cards collected in <strong>${meta.title}</strong> yet. Switch to <strong>All</strong> to browse the full ${allSectionCards.length}-card checklist in proper order.</span>
+            <button type="button" class="btn btn-primary" style="padding:7px 14px;font-size:0.8rem;" data-show-all-btn>📋 Show All ${allSectionCards.length} Cards</button>
+          </div>`;
+        host.querySelector('[data-show-all-btn]').addEventListener('click', () => {
+          state.sectionStatusFilter[displayId] = 'all';
+          populateAccordionBody(bodyEl, meta);
+        });
+      } else {
+        host.innerHTML = '<div style="padding:20px;color:var(--text-muted);font-weight:700;">No cards match this filter in this insert set.</div>';
+      }
     } else {
+      const grid = document.createElement('div');
+      grid.className = 'cards-grid';
       sortedCards.forEach(c => grid.appendChild(createCardTile(c)));
+      host.appendChild(grid);
     }
   }
 
@@ -843,13 +870,12 @@
     // 1. Top Section: Base Character Cards (Numbered Only)
     renderDisplaySection(container, 3);
 
-    // 2. Insert Sets Master Header & Controls
+    // 2. Insert Sets Master Header & Controls (Zero Money Values!)
     const allInsertCards = CARDS.filter(c => CHROME_INSERT_IDS.has(c.display));
     const ownedInsertCards = allInsertCards.filter(c => !isCardMissing(c));
     const sectionsWithOwned = CHROME_INSERT_DISPLAYS.filter(d =>
       CARDS.some(c => c.display === d.id && !isCardMissing(c))
     );
-    const insertsValCur = sumVals(ownedInsertCards, state.valMode);
 
     const visibleInsertDisplays = state.chromeInsertFilter === 'with-owned'
       ? sectionsWithOwned
@@ -860,7 +886,7 @@
     masterBar.innerHTML = `
       <div class="inserts-master-title">
         <h2>📚 2026 Topps Chrome Marvel Insert Sets (${CHROME_INSERT_DISPLAYS.length} Sections)</h2>
-        <p>${ownedInsertCards.length} of ${allInsertCards.length} checklist cards collected across ${sectionsWithOwned.length} active sets · Est. Inserts Value: <strong>${fmtGBP(insertsValCur)}</strong></p>
+        <p>${ownedInsertCards.length} of ${allInsertCards.length} checklist cards collected across ${sectionsWithOwned.length} active sets</p>
       </div>
       <div class="inserts-master-actions">
         <div class="segmented">
@@ -891,11 +917,10 @@
 
     container.appendChild(masterBar);
 
-    // 3. Render Each Collapsible Insert Section
+    // 3. Render Each Collapsible Insert Section (Zero Money Values!)
     visibleInsertDisplays.forEach(meta => {
       const secCards = CARDS.filter(c => c.display === meta.id);
       const ownedCards = secCards.filter(c => !isCardMissing(c));
-      const curVal = sumVals(ownedCards, state.valMode);
       const pct = Math.min(100, Math.round((ownedCards.length / Math.max(1, secCards.length)) * 100));
       const isOpen = Boolean(state.expandedInserts[meta.id]);
 
@@ -919,7 +944,6 @@
               <span class="mini-progress-pct">${pct}%</span>
             </div>
             <span class="pill ${ownedCards.length > 0 ? 'pill-owned-hit' : 'pill-zero'}">${ownedCards.length} / ${secCards.length} Owned</span>
-            <span class="pill ${curVal > 0 ? 'pill-gold' : 'pill-zero'}">${fmtGBP(curVal)}</span>
           </div>
         </button>
         <div class="accordion-body"></div>
@@ -928,7 +952,6 @@
       const trigger = acc.querySelector('.accordion-trigger');
       const bodyEl = acc.querySelector('.accordion-body');
 
-      // Lazy-render cards ONLY if already expanded
       if (isOpen) {
         populateAccordionBody(bodyEl, meta);
       }
@@ -947,7 +970,7 @@
     });
   }
 
-  // Render All-Cards Explorer Tab
+  // Render All-Cards Explorer Tab (Zero Money Values!)
   function renderExplorer() {
     const f = state.filters;
     let list = CARDS.filter(c => {
@@ -986,8 +1009,8 @@
 
     document.getElementById('explorer-summary').textContent =
       f.quickTag === 'missing'
-        ? `Showing ${list.length} Missing Checklist Slots · Target Value: £0 (not yet owned)`
-        : `Showing ${list.length} of ${totalOwned} owned cards · Filtered Est. Value: ${fmtGBP(sumVals(list))}`;
+        ? `Showing ${list.length} Missing Checklist Slots`
+        : `Showing ${list.length} of ${totalOwned} owned cards`;
 
     const grid = document.getElementById('explorer-grid');
     grid.innerHTML = '';
@@ -998,7 +1021,7 @@
     list.forEach(c => grid.appendChild(createCardTile(c)));
   }
 
-  // Render Sets, Odds, Valuations & Chase Tracker Tab
+  // Render Sets, Checklists, Pull Odds & Chase Tracker Tab (Zero Money Values!)
   function renderSetsTab() {
     const setsWrap = document.getElementById('sets-cards-wrap');
     setsWrap.innerHTML = SETS.map(s => `
@@ -1029,40 +1052,6 @@
       </tr>
     `).join('');
 
-    const ownedAll = CARDS.filter(c => !isCardMissing(c));
-    const summaryRows = [
-      { label: 'Hope: Moon Girl Rainbow', owner: 'Hope', filter: c => c.display === 1 },
-      { label: 'Hope: Devil Dinosaur Rainbow', owner: 'Hope', filter: c => c.display === 2 },
-      { label: 'Hope: Neon/Sapphire Others', owner: 'Hope', filter: c => c.display === 6 },
-      { label: "Kandy: Chrome Base (Numbered Only)", owner: 'Kandy', filter: c => c.display === 3 },
-      { label: `Kandy: Chrome Insert Sets (${CHROME_INSERT_DISPLAYS.length} Sets)`, owner: 'Kandy', filter: c => CHROME_INSERT_IDS.has(c.display) },
-      { label: "Kandy: Neon Marvel Vault", owner: 'Kandy', filter: c => c.display === 5 },
-    ];
-
-    const valBody = document.getElementById('valuation-tbody');
-    valBody.innerHTML = summaryRows.map(row => {
-      const dc = ownedAll.filter(row.filter);
-      const missingCount = CARDS.filter(c => row.filter(c) && isCardMissing(c)).length;
-      return `
-        <tr>
-          <td><strong>${row.label}</strong>${missingCount ? ` <span style="color:var(--text-muted);font-size:0.78rem;">(${missingCount} missing)</span>` : ''}</td>
-          <td><span class="pill ${row.owner === 'Hope' ? 'pill-pink' : 'pill-cyan'}">${row.owner}</span></td>
-          <td>${dc.length}</td>
-          <td style="font-family:'JetBrains Mono',monospace;">${fmtGBP(sumVals(dc, 'low'))}</td>
-          <td style="font-family:'JetBrains Mono',monospace;font-weight:800;">${fmtGBP(sumVals(dc, 'mid'))}</td>
-          <td style="font-family:'JetBrains Mono',monospace;">${fmtGBP(sumVals(dc, 'high'))}</td>
-        </tr>
-      `;
-    }).join('') + `
-      <tr style="background:var(--surface-soft);font-weight:900;">
-        <td colspan="2">COMBINED VAULT TOTAL (HOPE + KANDY)</td>
-        <td>${ownedAll.length}</td>
-        <td style="font-family:'JetBrains Mono',monospace;">${fmtGBP(sumVals(ownedAll, 'low'))}</td>
-        <td style="font-family:'JetBrains Mono',monospace;color:var(--pink);">${fmtGBP(sumVals(ownedAll, 'mid'))}</td>
-        <td style="font-family:'JetBrains Mono',monospace;">${fmtGBP(sumVals(ownedAll, 'high'))}</td>
-      </tr>
-    `;
-
     const chaseWrap = document.getElementById('chase-grid');
     chaseWrap.innerHTML = CHASES.map(ch => `
       <div class="chase-card">
@@ -1074,6 +1063,165 @@
         <p style="margin:0;font-size:0.86rem;color:var(--text-muted);line-height:1.5;">${ch.detail}</p>
       </div>
     `).join('');
+  }
+
+  // ==========================================================================
+  // DEDICATED ESTIMATED VALUES TAB (BREAKDOWN + RANKED DESCENDING LIST)
+  // ==========================================================================
+  function renderValuesTab() {
+    const ownedAll = CARDS.filter(c => !isCardMissing(c));
+    const ownedKandy = ownedAll.filter(c => c.owner === 'Kandy');
+    const ownedHope = ownedAll.filter(c => c.owner === 'Hope');
+    const mode = state.valMode;
+
+    // 1. Update Estimate Mode Buttons & Column Highlights
+    document.querySelectorAll('#val-mode-switcher button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+
+    ['low', 'mid', 'high'].forEach(m => {
+      const thBd = document.getElementById(`th-bd-${m}`);
+      const thRk = document.getElementById(`th-rk-${m}`);
+      if (thBd) thBd.classList.toggle('col-active-val', m === mode);
+      if (thRk) thRk.classList.toggle('col-active-val', m === mode);
+    });
+
+    // 2. Top KPI Cards
+    const grandLow = sumVals(ownedAll, 'low');
+    const grandHigh = sumVals(ownedAll, 'high');
+    const grandCur = sumVals(ownedAll, mode);
+    const kandyCur = sumVals(ownedKandy, mode);
+    const hopeCur = sumVals(ownedHope, mode);
+
+    const rankedAll = sortCards(ownedAll, 'val-desc');
+    const topCard = rankedAll[0] || null;
+
+    document.getElementById('val-kpi-total').textContent = fmtGBP(grandCur);
+    document.getElementById('val-kpi-range').textContent = `Range: ${fmtGBP(grandLow)} – ${fmtGBP(grandHigh)}`;
+    document.getElementById('val-kpi-kandy').textContent = fmtGBP(kandyCur);
+    document.getElementById('val-kpi-kandy-sub').textContent = `${ownedKandy.length} owned cards (${fmtGBP(sumVals(ownedKandy, 'low'))}–${fmtGBP(sumVals(ownedKandy, 'high'))})`;
+    document.getElementById('val-kpi-hope').textContent = fmtGBP(hopeCur);
+    document.getElementById('val-kpi-hope-sub').textContent = `${ownedHope.length} owned cards (${fmtGBP(sumVals(ownedHope, 'low'))}–${fmtGBP(sumVals(ownedHope, 'high'))})`;
+    document.getElementById('val-kpi-top').textContent = topCard ? fmtGBP(cardVal(topCard, mode)) : '£0';
+    document.getElementById('val-kpi-top-sub').textContent = topCard
+      ? `${topCard.character} · ${getCardSerial(topCard)}${topCard.grade ? ' · ' + topCard.grade.replace(' Gem Mint', '').replace(' Mint', '') : ''}`
+      : '—';
+
+    // 3. Estimated Market Value Breakdown Table
+    const summaryRows = [
+      { label: 'Hope: Moon Girl Rainbow', owner: 'Hope', filter: c => c.display === 1 },
+      { label: 'Hope: Devil Dinosaur Rainbow', owner: 'Hope', filter: c => c.display === 2 },
+      { label: 'Hope: Neon/Sapphire Others', owner: 'Hope', filter: c => c.display === 6 },
+      { label: "Kandy: Chrome Base (Numbered Only)", owner: 'Kandy', filter: c => c.display === 3 },
+      { label: `Kandy: Chrome Insert Sets (${CHROME_INSERT_DISPLAYS.length} Sets)`, owner: 'Kandy', filter: c => CHROME_INSERT_IDS.has(c.display) },
+      { label: "Kandy: Neon Marvel Vault", owner: 'Kandy', filter: c => c.display === 5 },
+    ];
+
+    const colClass = (m) => m === mode ? 'col-active-val' : '';
+    const valBody = document.getElementById('valuation-tbody');
+    valBody.innerHTML = summaryRows.map(row => {
+      const dc = ownedAll.filter(row.filter);
+      return `
+        <tr>
+          <td><strong>${row.label}</strong></td>
+          <td><span class="pill ${row.owner === 'Hope' ? 'pill-pink' : 'pill-cyan'}">${row.owner}</span></td>
+          <td>${dc.length}</td>
+          <td class="${colClass('low')}" style="font-family:'JetBrains Mono',monospace;">${fmtGBP(sumVals(dc, 'low'))}</td>
+          <td class="${colClass('mid')}" style="font-family:'JetBrains Mono',monospace;">${fmtGBP(sumVals(dc, 'mid'))}</td>
+          <td class="${colClass('high')}" style="font-family:'JetBrains Mono',monospace;">${fmtGBP(sumVals(dc, 'high'))}</td>
+        </tr>
+      `;
+    }).join('') + `
+      <tr style="background:var(--surface-soft);font-weight:900;">
+        <td colspan="2">COMBINED VAULT TOTAL (HOPE + KANDY)</td>
+        <td>${ownedAll.length}</td>
+        <td class="${colClass('low')}" style="font-family:'JetBrains Mono',monospace;">${fmtGBP(grandLow)}</td>
+        <td class="${colClass('mid')}" style="font-family:'JetBrains Mono',monospace;">${fmtGBP(sumVals(ownedAll, 'mid'))}</td>
+        <td class="${colClass('high')}" style="font-family:'JetBrains Mono',monospace;">${fmtGBP(grandHigh)}</td>
+      </tr>
+    `;
+
+    // 4. Owner Filter Buttons (Together = Default, Kandy, Hope)
+    document.getElementById('val-btn-all').textContent = `✨ Together (${ownedAll.length})`;
+    document.getElementById('val-btn-kandy').textContent = `🏆 Kandy's Cards (${ownedKandy.length})`;
+    document.getElementById('val-btn-hope').textContent = `🌈 Hope's Cards (${ownedHope.length})`;
+    document.querySelectorAll('#val-owner-filter button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.vowner === state.valOwnerFilter);
+    });
+
+    // 5. Filtered & Ranked Descending Card List
+    const q = state.valSearch.trim().toLowerCase();
+    const filteredList = rankedAll.filter(c => {
+      if (state.valOwnerFilter !== 'all' && c.owner !== state.valOwnerFilter) return false;
+      if (q) {
+        const hay = `${c.character} ${c.parallel} ${c.set} ${c.cardNum} ${getCardSerial(c)} ${c.grade || ''} ${c.artist || ''} ${c.owner}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+
+    const filteredSubtotal = sumVals(filteredList, mode);
+    const ownerLabel = state.valOwnerFilter === 'all'
+      ? "Kandy & Hope Together"
+      : `${state.valOwnerFilter}'s Cards`;
+    const modeLabel = mode === 'low' ? 'Low' : (mode === 'high' ? 'High' : 'Mid');
+
+    document.getElementById('val-list-summary').textContent =
+      `Showing ${filteredList.length} cards (${ownerLabel}) · Sorted highest → lowest (${modeLabel} Est.) · Click any row to inspect`;
+    document.getElementById('val-list-subtotal-pill').textContent =
+      `Subtotal (${modeLabel}): ${fmtGBP(filteredSubtotal)}`;
+
+    const rankedTbody = document.getElementById('val-ranked-tbody');
+    rankedTbody.innerHTML = '';
+
+    if (!filteredList.length) {
+      rankedTbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-muted);font-weight:700;">No cards match your search filter.</td></tr>';
+      return;
+    }
+
+    const frag = document.createDocumentFragment();
+    filteredList.forEach((c, idx) => {
+      const rank = idx + 1;
+      const rankClass = rank <= 3 ? `rank-${rank}` : '';
+      const serial = getCardSerial(c);
+      const { low, high } = getCardValBounds(c);
+      const mid = Math.round((low + high) / 2);
+
+      const gradeHTML = c.grade
+        ? `<span class="val-grade-pill ${c.grade.includes('9') ? 'ace-9' : ''}">${c.grade.replace(' Gem Mint', '').replace(' Mint', '')}</span>`
+        : '';
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span class="rank-badge ${rankClass}">#${rank}</span></td>
+        <td>
+          <div class="val-card-cell">
+            <div class="val-thumb"><img alt="${c.character}" loading="lazy" /></div>
+            <div class="val-card-info">
+              <span class="val-card-name">${c.character}${c.artist ? ` <span style="font-weight:600;color:var(--text-muted);font-size:0.78rem;">(${c.artist})</span>` : ''}</span>
+              <span class="val-card-sub">${c.set} · ${c.parallel}</span>
+            </div>
+          </div>
+        </td>
+        <td><span class="pill ${c.owner === 'Hope' ? 'pill-pink' : 'pill-cyan'}">${c.owner}</span></td>
+        <td>
+          <div class="val-serial-stack">
+            <span class="serial-chip">${serial === 'Unnumbered' ? c.cardNum : serial}</span>
+            ${gradeHTML}
+          </div>
+        </td>
+        <td class="${colClass('low')}" style="font-family:'JetBrains Mono',monospace;">${fmtGBP(low)}</td>
+        <td class="${colClass('mid')}" style="font-family:'JetBrains Mono',monospace;">${fmtGBP(mid)}</td>
+        <td class="${colClass('high')}" style="font-family:'JetBrains Mono',monospace;">${fmtGBP(high)}</td>
+      `;
+
+      const thumbImg = tr.querySelector('.val-thumb img');
+      attachSmartImage(thumbImg, c, null);
+      tr.addEventListener('click', () => openCardModal(c, true));
+      frag.appendChild(tr);
+    });
+
+    rankedTbody.appendChild(frag);
   }
 
   // Render Photo Setup & Filename Guide Tab
@@ -1132,7 +1280,7 @@
     tbody.querySelectorAll('button[data-open-card]').forEach(btn => {
       btn.addEventListener('click', () => {
         const card = CARDS.find(x => x.id === btn.dataset.openCard);
-        if (card) openCardModal(card);
+        if (card) openCardModal(card, false);
       });
     });
   }
@@ -1141,6 +1289,7 @@
   // CARD INSPECTOR MODAL + STATUS TOGGLE + STAGED PHOTO STUDIO
   // ==========================================================================
   let currentModalCard = null;
+  let currentModalShowValue = false;
   let pendingModalMissingState = false;
 
   function renderModalDetails(card) {
@@ -1157,13 +1306,18 @@
       ['Print Run', card.printRun ? `/${card.printRun}` : 'Unnumbered'],
       ['Format / Exclusivity', card.format],
       ['Pull Odds', card.odds],
-      ['Est. Value (GBP)', valText],
+      currentModalShowValue
+        ? ['Est. Value (GBP)', valText]
+        : ['Card Number', card.cardNum],
       ['Grade / Condition', missing ? 'Not yet acquired' : (card.grade || 'Raw · One-Touch Magnetic Case')],
       ['Subset / Artist', card.artist ? `${card.subset} · ${card.artist}` : card.subset]
     ];
     document.getElementById('modal-details').innerHTML = details.map(([k, v]) => `
       <div class="detail-item"><span>${k}</span><strong>${v}</strong></div>
     `).join('');
+
+    // Apply/remove greyscale filter on modal preview immediately to match status!
+    document.getElementById('modal-drop-preview').classList.toggle('is-missing', missing);
   }
 
   function syncModalStatusUI(card, draftMissing, showEditor = false) {
@@ -1172,11 +1326,13 @@
     const pill = document.getElementById('modal-status-pill');
     const toggleBtn = document.getElementById('modal-toggle-status-btn');
     const fields = document.getElementById('status-edit-fields');
+    const valueFieldWrap = document.getElementById('status-value-field-wrap');
     const saveRow = document.getElementById('status-save-row');
     const markOwnedWrap = document.getElementById('opt-mark-owned-wrap');
 
     box.classList.toggle('is-missing', draftMissing);
     box.classList.toggle('is-owned', !draftMissing);
+    document.getElementById('modal-drop-preview').classList.toggle('is-missing', draftMissing);
 
     if (draftMissing) {
       pill.className = 'status-pill-missing';
@@ -1196,6 +1352,11 @@
       if (markOwnedWrap) markOwnedWrap.style.display = 'none';
     }
 
+    // Only expose GBP input when opened from the Estimated Values tab
+    if (valueFieldWrap) {
+      valueFieldWrap.style.display = currentModalShowValue ? 'block' : 'none';
+    }
+    fields.classList.toggle('single-col', !currentModalShowValue);
     fields.classList.toggle('visible', showEditor && !draftMissing);
     saveRow.classList.toggle('visible', showEditor);
   }
@@ -1250,8 +1411,9 @@
     }
   }
 
-  function openCardModal(card) {
+  function openCardModal(card, showValueContext = false) {
     currentModalCard = card;
+    currentModalShowValue = Boolean(showValueContext || state.activeTab === 'values');
     clearStagedCardPhoto(false);
 
     const modal = document.getElementById('card-modal');
@@ -1295,13 +1457,20 @@
       };
     } else {
       const serialInput = (document.getElementById('status-serial-input').value || '').trim();
-      const valNum = Math.max(0, parseInt(document.getElementById('status-value-input').value || '0', 10) || 0);
       const finalSerial = serialInput || (card.printRun ? `/${card.printRun}` : 'Unnumbered');
+      // Preserve existing card valuation bounds unless explicitly edited in Estimated Values context
+      let valLow = card.valLow || 0;
+      let valHigh = card.valHigh || 0;
+      if (currentModalShowValue) {
+        const valNum = Math.max(0, parseInt(document.getElementById('status-value-input').value || '0', 10) || 0);
+        valLow = valNum;
+        valHigh = valNum;
+      }
       state.statusOverrides[card.id] = {
         missing: false,
         serial: finalSerial,
-        valLow: valNum,
-        valHigh: valNum,
+        valLow,
+        valHigh,
         updatedAt: Date.now()
       };
     }
@@ -1388,6 +1557,8 @@
       renderExplorer();
     } else if (state.activeTab === 'sets') {
       renderSetsTab();
+    } else if (state.activeTab === 'values') {
+      renderValuesTab();
     } else if (state.activeTab === 'guide') {
       renderGuideTab();
     }
@@ -1436,16 +1607,15 @@
 
   // CSV Download
   function downloadCSV() {
-    const header = ['Section','Slot','Status','Owner','Set','CardNum','Character','Parallel','Serial','Grade','EstLowGBP','EstHighGBP','Folder','ExactFilenameToSave'];
+    const header = ['Section','Slot','Status','Owner','Set','CardNum','Character','Parallel','Serial','Grade','Folder','ExactFilenameToSave'];
     const rows = CARDS.map(c => {
-      const { low, high } = getCardValBounds(c);
       const dispMeta = DISPLAYS.find(d => d.id === c.display);
       return [
         dispMeta ? dispMeta.shortTitle : `Display ${c.display}`,
         c.slot,
         isCardMissing(c) ? 'Missing' : 'Owned',
         c.owner, c.set, c.cardNum, c.character, c.parallel,
-        getCardSerial(c), c.grade || 'Raw', low, high,
+        getCardSerial(c), c.grade || 'Raw',
         `assets/cards/${c.folder}/`, `${c.baseFilename}.jpg`
       ];
     });
@@ -1467,9 +1637,24 @@
       btn.addEventListener('click', () => { state.activeTab = btn.dataset.tab; renderActiveTab(); });
     });
 
-    // Valuation toggle
-    document.querySelectorAll('.val-toggle button').forEach(btn => {
-      btn.addEventListener('click', () => { state.valMode = btn.dataset.mode; renderActiveTab(); });
+    // Estimated Values tab controls
+    document.querySelectorAll('#val-mode-switcher button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.valMode = btn.dataset.mode;
+        renderValuesTab();
+      });
+    });
+
+    document.querySelectorAll('#val-owner-filter button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.valOwnerFilter = btn.dataset.vowner;
+        renderValuesTab();
+      });
+    });
+
+    document.getElementById('val-search').addEventListener('input', (e) => {
+      state.valSearch = e.target.value;
+      renderValuesTab();
     });
 
     // Theme switcher
@@ -1580,8 +1765,10 @@
       syncModalStatusUI(currentModalCard, nextMissing, true);
       const msg = document.getElementById('modal-status-msg');
       msg.textContent = nextMissing
-        ? 'Click Save below to mark this card as Missing (£0).'
-        : 'Enter the card serial # & estimated value (optional), then click Save!';
+        ? 'Click Save below to mark this card as Missing (greyscale).'
+        : (currentModalShowValue
+            ? 'Enter the card serial # & estimated value (optional), then click Save!'
+            : 'Enter the card serial # (optional), then click Save to unlock full colour!');
       msg.className = 'upload-status';
     });
 

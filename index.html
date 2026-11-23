@@ -53,14 +53,14 @@
         <div class="hero-eyebrow">🦸‍♀️ Hope's Rainbow + Kandy's Chrome &amp; Neon Vaults</div>
         <h1>Kandy &amp; Hope's Marvel Card Vault!</h1>
         <p>
-          Welcome to our interactive wall-display showcase featuring <strong>Hope's 66-card Moon Girl &amp; Devil Dinosaur Rainbow</strong>
-          and <strong>Kandy's 114-card 2026 Topps Chrome &amp; Neon Marvel</strong> slabs, artist autographs, and case hits.
-          Hover over any card for 3D holographic shine, or click to inspect serials, pull odds, GBP values, or snap/upload your own photo!
+          Welcome to our interactive collector showcase featuring <strong>Hope's Moon Girl &amp; Devil Dinosaur Rainbow</strong>
+          and <strong>Kandy's 2026 Topps Chrome &amp; Neon Marvel</strong> slabs, artist autographs, numbered parallels, and insert chases.
+          Hover over any card for 3D holographic shine, or click to inspect serials, pull odds, grades, or upload your own photo!
         </p>
 
-        <div class="stats-grid">
+        <div class="stats-grid stats-grid-3">
           <div class="stat-card">
-            <div class="stat-label">Total Display Cards</div>
+            <div class="stat-label">Total Collected Cards</div>
             <div id="stat-total-cards" class="stat-value">180</div>
             <div id="stat-total-sub" class="stat-sub">66 Hope · 114 Kandy</div>
           </div>
@@ -74,16 +74,6 @@
             <div id="stat-ultra" class="stat-value">17</div>
             <div class="stat-sub">/5, /10 &amp; SSP Case Hits</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-label">Est. Vault Value (GBP)</div>
-            <div id="stat-value" class="stat-value">£6,264</div>
-            <div id="stat-value-range" class="stat-sub">Range: £4,669 – £7,858</div>
-            <div class="val-toggle">
-              <button data-mode="low">Low</button>
-              <button data-mode="mid" class="active">Mid</button>
-              <button data-mode="high">High</button>
-            </div>
-          </div>
         </div>
       </div>
     </header>
@@ -92,10 +82,11 @@
     <nav class="nav-tabs" aria-label="Vault Sections">
       <button class="tab-btn tab-hope active" data-tab="hope" id="tab-btn-hope">🌈 Hope's Rainbow Room (66)</button>
       <button class="tab-btn tab-chrome" data-tab="chrome" id="tab-btn-chrome">🏆 Kandy's Chrome Vault (75)</button>
-      <button class="tab-btn tab-neon" data-tab="neon">⚡ Kandy's Neon Vault (39)</button>
+      <button class="tab-btn tab-neon" data-tab="neon" id="tab-btn-neon">⚡ Kandy's Neon Vault (39)</button>
       <button class="tab-btn" data-tab="explorer" id="tab-btn-explorer">🔎 Vault Explorer</button>
       <button class="tab-btn" data-tab="sets">📚 Sets, Checklists &amp; Odds</button>
-      <button class="tab-btn" data-tab="guide">📷 Photo Setup &amp; Filenames</button>
+      <button class="tab-btn tab-values" data-tab="values" id="tab-btn-values">💷 Estimated Values</button>
+      <button class="tab-btn" data-tab="guide">📷 Photo Setup</button>
     </nav>
 
     <main>
@@ -114,22 +105,22 @@
         <div id="neon-displays-wrap"></div>
       </section>
 
-      <!-- Tab 4: All 180 Cards Explorer -->
+      <!-- Tab 4: Vault Explorer -->
       <section id="panel-explorer" class="tab-panel">
         <div class="display-section">
           <div class="display-header">
             <div class="display-title-group">
-              <h2>🔎 Master 180-Card Vault Explorer</h2>
-              <p id="explorer-summary">Showing 180 of 180 cards</p>
+              <h2>🔎 Master Vault Explorer</h2>
+              <p id="explorer-summary">Showing 180 of 180 owned cards</p>
             </div>
           </div>
 
           <div class="filter-bar">
             <input type="search" id="f-search" placeholder="Search character, artist, parallel, serial (e.g. Moon Girl, 01/39, Auto)..." />
             <select id="f-owner">
-              <option value="all">Both Owners (180)</option>
-              <option value="Hope">Hope's Cards (66)</option>
-              <option value="Kandy">Kandy's Cards (114)</option>
+              <option value="all">Both Owners</option>
+              <option value="Hope">Hope's Cards</option>
+              <option value="Kandy">Kandy's Cards</option>
             </select>
             <select id="f-display">
               <option value="all">All Sections</option>
@@ -148,8 +139,6 @@
             </select>
             <select id="f-sort">
               <option value="rarity" selected>Sort: Pull Rarity (Default)</option>
-              <option value="val-desc">Sort: Value (High → Low)</option>
-              <option value="val-asc">Sort: Value (Low → High)</option>
               <option value="alpha">Sort: Name (A–Z)</option>
             </select>
           </div>
@@ -168,7 +157,7 @@
         </div>
       </section>
 
-      <!-- Tab 5: Sets, Checklists, Pull Odds & GBP Dashboard -->
+      <!-- Tab 5: Sets, Checklists & Odds (No Money Values) -->
       <section id="panel-sets" class="tab-panel">
         <div id="sets-cards-wrap" class="sets-grid"></div>
 
@@ -199,33 +188,117 @@
         <div class="display-section">
           <div class="display-header">
             <div class="display-title-group">
+              <h2>🎯 Active Chase Tracker</h2>
+              <p>The biggest missing pieces we're still hunting for Hope's rainbows and Kandy's Chrome &amp; Neon sets!</p>
+            </div>
+          </div>
+          <div id="chase-grid" class="chase-grid" style="margin-top:0;"></div>
+        </div>
+      </section>
+
+      <!-- Tab 6: Dedicated Estimated Values Dashboard -->
+      <section id="panel-values" class="tab-panel">
+        <!-- Section 1: KPI Summary + Estimated Market Value Breakdown (GBP) -->
+        <div class="display-section">
+          <div class="display-header">
+            <div class="display-title-group">
               <h2>💷 Estimated Market Value Breakdown (GBP)</h2>
               <p>Benchmarked against recent UK/global completed sales (Nov 2026) including ACE 10/9 slab &amp; bookend premiums.</p>
             </div>
+            <div class="sort-controls">
+              <span class="sort-label">Estimate:</span>
+              <div class="segmented" id="val-mode-switcher">
+                <button data-mode="low">Low</button>
+                <button data-mode="mid" class="active">Mid</button>
+                <button data-mode="high">High</button>
+              </div>
+            </div>
           </div>
+
+          <div class="val-kpi-grid">
+            <div class="stat-card val-kpi-highlight">
+              <div class="stat-label">Combined Vault Total</div>
+              <div id="val-kpi-total" class="stat-value">£6,264</div>
+              <div id="val-kpi-range" class="stat-sub">Range: £4,669 – £7,858</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">🏆 Kandy's Collection</div>
+              <div id="val-kpi-kandy" class="stat-value">£0</div>
+              <div id="val-kpi-kandy-sub" class="stat-sub">114 owned cards</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">🌈 Hope's Collection</div>
+              <div id="val-kpi-hope" class="stat-value">£0</div>
+              <div id="val-kpi-hope-sub" class="stat-sub">66 owned cards</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">👑 Top Valued Card</div>
+              <div id="val-kpi-top" class="stat-value">£0</div>
+              <div id="val-kpi-top-sub" class="stat-sub">Ghost Rider</div>
+            </div>
+          </div>
+
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Wall Display</th>
+                  <th>Vault Section</th>
                   <th>Owner</th>
-                  <th>Cards</th>
-                  <th>Low Est. (£)</th>
-                  <th>Mid Est. (£)</th>
-                  <th>High Est. (£)</th>
+                  <th>Owned Cards</th>
+                  <th id="th-bd-low">Low Est. (£)</th>
+                  <th id="th-bd-mid" class="col-active-val">Mid Est. (£)</th>
+                  <th id="th-bd-high">High Est. (£)</th>
                 </tr>
               </thead>
               <tbody id="valuation-tbody"></tbody>
             </table>
           </div>
+        </div>
 
-          <h3 style="font-family:'Fredoka',sans-serif;margin:26px 0 4px;">🎯 Active Chase Tracker</h3>
-          <p style="margin:0;color:var(--text-muted);font-size:0.9rem;">The biggest missing pieces we're still hunting for the walls!</p>
-          <div id="chase-grid" class="chase-grid"></div>
+        <!-- Section 2: Ranked Card-by-Card Valuations List (Descending Order) -->
+        <div class="display-section">
+          <div class="display-header">
+            <div class="display-title-group">
+              <h2>🏆 All Collected Cards — Ranked by Estimated Value</h2>
+              <p id="val-list-summary">Showing 180 cards · Descending value order</p>
+            </div>
+            <div class="display-badges">
+              <span id="val-list-subtotal-pill" class="pill pill-gold">Subtotal: £6,264</span>
+            </div>
+          </div>
+
+          <div class="val-list-toolbar">
+            <div class="sort-controls">
+              <span class="sort-label">Owner:</span>
+              <div class="segmented" id="val-owner-filter">
+                <button class="active" data-vowner="all" id="val-btn-all">✨ Together (180)</button>
+                <button data-vowner="Kandy" id="val-btn-kandy">🏆 Kandy's Cards (114)</button>
+                <button data-vowner="Hope" id="val-btn-hope">🌈 Hope's Cards (66)</button>
+              </div>
+            </div>
+            <input type="search" id="val-search" class="val-search-input" placeholder="Filter ranked cards by character, set, parallel, serial, or ACE grade..." />
+          </div>
+
+          <div class="table-wrap">
+            <table class="val-rank-table">
+              <thead>
+                <tr>
+                  <th style="width:66px;">Rank</th>
+                  <th>Card</th>
+                  <th>Owner</th>
+                  <th>Serial / Grade</th>
+                  <th id="th-rk-low">Low (£)</th>
+                  <th id="th-rk-mid" class="col-active-val">Mid (£)</th>
+                  <th id="th-rk-high">High (£)</th>
+                </tr>
+              </thead>
+              <tbody id="val-ranked-tbody"></tbody>
+            </table>
+          </div>
         </div>
       </section>
 
-      <!-- Tab 6: Photo Setup & Filename Guide -->
+      <!-- Tab 7: Photo Setup & Filename Guide -->
       <section id="panel-guide" class="tab-panel">
         <div class="display-section">
           <div class="display-header">
@@ -236,12 +309,12 @@
             <div class="display-badges">
               <button id="guide-gh-btn" class="btn btn-primary">☁️ Connect GitHub Sync</button>
               <button id="guide-folder-btn" class="btn btn-soft">📁 Load Local Folder</button>
-              <button id="download-csv-btn" class="btn btn-soft">⬇️ Download 180-Card CSV</button>
+              <button id="download-csv-btn" class="btn btn-soft">⬇️ Download Card CSV</button>
             </div>
           </div>
 
           <div class="rainbow-bar-box" style="margin-bottom:20px;">
-            <strong>Fastest Way to Swap All 180 Photos (Zero Manual Renaming!):</strong>
+            <strong>Fastest Way to Swap All Card Photos (Zero Manual Renaming!):</strong>
             <ol style="margin:8px 0 0;padding-left:20px;line-height:1.65;color:var(--text-muted);font-size:0.9rem;">
               <li><strong>On your phone (easiest for Google Photos!):</strong> Open this live site on your Pixel, click <strong>☁️ GitHub Sync</strong> once to paste your token, then tap any card → <strong>📸 Choose Photo</strong> (opens your Google Photos albums directly) → <strong>☁️ Confirm &amp; Save to GitHub</strong>!</li>
               <li><strong>On your Windows PC with Google Photos:</strong> Open your Google Photos album side-by-side, right-click any card photo → <strong>Copy image</strong>, click the card here and press <strong>Ctrl+V</strong> (or click <strong>📋 Paste Image</strong>), then hit <strong>☁️ Save to GitHub</strong> or <strong>💾 Save Locally (Auto-Renamed)</strong>!</li>
@@ -300,7 +373,7 @@
           <p id="modal-subtitle" style="margin:0;color:var(--text-muted);font-weight:700;"></p>
           <div id="modal-details" class="detail-list"></div>
 
-          <!-- Collection Status Control (Missing <-> Collected + Serial/Value Editor) -->
+          <!-- Collection Status Control (Missing <-> Collected + Serial Editor) -->
           <div class="status-studio" id="modal-status-studio">
             <div class="status-studio-top">
               <span id="modal-status-pill" class="status-pill-owned">✅ Owned in Collection</span>
@@ -311,7 +384,7 @@
                 <label for="status-serial-input">Card Serial # (e.g. 03/5)</label>
                 <input type="text" id="status-serial-input" placeholder="/5" />
               </div>
-              <div>
+              <div id="status-value-field-wrap" style="display:none;">
                 <label for="status-value-input">Est. Value (£ GBP)</label>
                 <input type="number" id="status-value-input" min="0" step="1" placeholder="0" />
               </div>

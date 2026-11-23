@@ -1687,3 +1687,240 @@ body.dark-vault .pill-owned-hit { color: #6ee7b7; }
   padding: 8px 14px;
   cursor: pointer;
 }
+
+/* ==========================================================================
+   V5 UI UPDATES: CLEAN 3-COL HERO, GREYSCALE MISSING CARDS & ESTIMATED VALUES TAB
+   ========================================================================== */
+.stats-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media (max-width: 640px) {
+  .stats-grid-3 { grid-template-columns: 1fr; }
+}
+
+/* Refine nav tabs to fit all 7 sections cleanly */
+.nav-tabs {
+  gap: 8px;
+  padding: 8px;
+}
+.tab-btn {
+  padding: 11px 14px;
+  font-size: 0.86rem;
+}
+.tab-btn.tab-values.active {
+  background: linear-gradient(135deg, #059669, #10b981);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.34);
+}
+
+/* Smooth transition & Greyscale Filter for Missing Card Images (tiles + modal) */
+.card-img-wrap img,
+.modal-preview-card img {
+  transition: filter 0.32s ease, opacity 0.32s ease;
+}
+
+.card-tile.is-missing .card-img-wrap img {
+  filter: grayscale(100%) contrast(0.92) brightness(0.92);
+  opacity: 0.78;
+}
+.card-tile.is-missing:hover .card-img-wrap img {
+  filter: grayscale(88%) contrast(0.96) brightness(0.96);
+  opacity: 0.9;
+}
+
+.modal-preview-card.is-missing img {
+  filter: grayscale(100%) contrast(0.92) brightness(0.92);
+  opacity: 0.84;
+}
+
+/* Clean non-monetary right-hand metadata chip on card tiles */
+.card-code-chip {
+  font-size: 0.69rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 52%;
+  text-align: right;
+}
+
+/* Empty state card inside Kandy's 0-owned insert accordions */
+.empty-owned-state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: var(--surface-soft);
+  border: 1.5px dashed var(--border);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+/* Status Editor single-column mode when value field is hidden outside Estimated Values */
+.status-edit-fields.single-col {
+  grid-template-columns: 1fr;
+}
+
+/* ==========================================================================
+   DEDICATED ESTIMATED VALUES DASHBOARD & RANKED VALUATION TABLE
+   ========================================================================== */
+.val-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+@media (max-width: 960px) {
+  .val-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .val-kpi-grid { grid-template-columns: 1fr; }
+}
+
+.val-kpi-highlight {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(6, 182, 212, 0.12));
+  border-color: rgba(16, 185, 129, 0.45);
+}
+.val-kpi-highlight .stat-value {
+  color: #059669;
+}
+body.dark-vault .val-kpi-highlight .stat-value {
+  color: #34d399;
+}
+
+.val-list-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.val-search-input {
+  flex: 1 1 260px;
+  max-width: 420px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 2px solid var(--border);
+  background: var(--surface-solid);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.col-active-val {
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: #047857;
+  font-weight: 900 !important;
+}
+body.dark-vault .col-active-val {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: #6ee7b7;
+}
+
+.val-rank-table tbody tr {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.val-rank-table tbody tr:hover {
+  background: var(--surface-soft);
+}
+
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 900;
+  background: var(--surface-soft);
+  border: 1.5px solid var(--border);
+  color: var(--text-muted);
+}
+.rank-badge.rank-1 {
+  background: linear-gradient(135deg, #f59e0b, #facc15);
+  color: #18142c;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+}
+.rank-badge.rank-2 {
+  background: linear-gradient(135deg, #94a3b8, #e2e8f0);
+  color: #0f172a;
+  border-color: transparent;
+}
+.rank-badge.rank-3 {
+  background: linear-gradient(135deg, #b45309, #f97316);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.val-card-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 220px;
+}
+.val-thumb {
+  width: 38px;
+  height: 52px;
+  border-radius: 7px;
+  overflow: hidden;
+  background: #0b0f19;
+  border: 1.5px solid var(--border);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.val-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.val-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.val-card-name {
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.val-card-sub {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.val-serial-stack {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.val-grade-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  color: #fff;
+}
+.val-grade-pill.ace-9 {
+  background: linear-gradient(135deg, #475569, #64748b);
+}
