@@ -17,6 +17,7 @@
   <input type="file" id="hero-photo-input" accept="image/*" hidden />
   <input type="file" id="folder-upload-input" webkitdirectory directory multiple hidden />
   <input type="file" id="modal-photo-input" accept="image/*" hidden />
+  <input type="file" id="add-card-photo-input" accept="image/*" hidden />
 
   <div class="container">
     <!-- Top Control Strip -->
@@ -24,11 +25,13 @@
       <div class="brand-pill">
         <span class="brand-dot"></span>
         <span>Kandy &amp; Hope's Marvel Card Vault · 2026 Edition</span>
-        <button type="button" id="app-version-pill" class="version-chip" title="About &amp; Version Info">V1.9</button>
+        <button type="button" id="app-version-pill" class="version-chip" title="About &amp; Version Info">V1.10</button>
       </div>
       <div class="top-actions">
         <span id="photo-progress-badge" class="pill">0 / 180 Real Photos Loaded</span>
+        <button id="add-card-btn" class="btn btn-primary gh-only">➕ Add Card</button>
         <button id="about-btn" class="btn btn-soft">ℹ️ About</button>
+        <button id="gh-drift-btn" class="btn btn-warn-sync" hidden title="Some local changes have not been pushed to GitHub yet">⚠️ Sync Local Changes</button>
         <button id="gh-settings-btn" class="btn btn-soft">☁️ GitHub Sync</button>
         <button id="load-folder-btn" class="btn btn-soft">📁 Load Folder</button>
         <button id="theme-toggle" class="btn btn-soft">🌙 Dark Vault Mode</button>
@@ -181,6 +184,7 @@
             </select>
             <select id="f-sort">
               <option value="rarity" selected>Sort: Pull Rarity (Default)</option>
+              <option value="cardnum">Sort: Card Serial # (Group Same #)</option>
               <option value="alpha">Sort: Name (A–Z)</option>
             </select>
           </div>
@@ -394,10 +398,14 @@
               </div>
             </div>
             <div id="status-save-row" class="status-save-row">
-              <button id="status-save-local-btn" class="btn btn-primary" style="padding:7px 13px;font-size:0.78rem;">💾 Save Status Locally</button>
               <button id="status-save-gh-btn" class="btn btn-success" style="padding:7px 13px;font-size:0.78rem;">☁️ Save Status to GitHub</button>
+              <button id="status-save-local-btn" class="btn btn-soft" style="padding:7px 13px;font-size:0.78rem;">💾 Save Locally Only (This PC)</button>
             </div>
             <div id="modal-status-msg" class="upload-status"></div>
+            <div id="custom-card-actions" class="custom-card-actions" hidden>
+              <span class="custom-badge-note">✨ Added Custom Card</span>
+              <button type="button" id="modal-delete-custom-btn" class="btn btn-danger-soft" style="padding:5px 12px;font-size:0.76rem;">🗑️ Remove Added Card</button>
+            </div>
           </div>
 
           <div class="photo-studio" id="photo-studio-zone" hidden>
@@ -423,8 +431,8 @@
                 <span id="staged-size-info">Ready to save</span>
                 <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
                   <label class="staged-opt-label" id="opt-mark-owned-wrap" style="display:none;">
-                    <input type="checkbox" id="opt-mark-owned" checked />
-                    Also mark as Collected
+                    <input type="checkbox" id="opt-mark-owned" />
+                    Also mark as Collected (leave unchecked for greyscale missing photo)
                   </label>
                   <label class="staged-opt-label">
                     <input type="checkbox" id="opt-web-jpeg" checked />
@@ -485,9 +493,154 @@
         <button id="gh-clear-btn" class="btn btn-danger-soft">🗑️ Disconnect Token</button>
       </div>
       <div id="gh-test-status" class="upload-status"></div>
+
+      <div id="gh-sync-box" class="gh-sync-box" hidden>
+        <div class="gh-sync-title" id="gh-sync-summary">✅ Local browser &amp; GitHub are in sync</div>
+        <p class="gh-sync-sub" id="gh-sync-detail">All card statuses and added cards match what visitors see on GitHub Pages.</p>
+        <div class="gh-sync-actions">
+          <button type="button" id="gh-push-local-btn" class="btn btn-success" style="padding:7px 13px;font-size:0.78rem;" hidden>☁️ Push Local Changes to GitHub</button>
+          <button type="button" id="gh-reset-local-btn" class="btn btn-soft" style="padding:7px 13px;font-size:0.78rem;">🔄 Reset Local Cache to Match GitHub</button>
+        </div>
+      </div>
     </div>
   </div>
 
+
+
+  <!-- Add New Card Modal (GitHub Connected Only) -->
+  <div id="add-card-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="add-card-modal-title">
+    <div class="modal-box add-card-modal-box">
+      <button id="add-card-close-btn" class="modal-close" aria-label="Close">✕</button>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px;">
+        <span class="pill pill-cyan">➕ Add Card Studio</span>
+        <span style="font-size:0.78rem;color:var(--text-muted);font-weight:700;">Keeps all existing cards &amp; empty slots intact</span>
+      </div>
+      <h2 id="add-card-modal-title" style="font-family:'Fredoka',sans-serif;font-size:1.75rem;margin:0 0 16px;">Add Additional Card to Vault</h2>
+
+      <div class="add-card-grid">
+        <!-- Left Column: Live Preview & Photo Drop Zone -->
+        <div class="add-preview-col">
+          <div id="add-drop-zone" class="add-preview-tile">
+            <div class="card-3d" id="add-preview-3d">
+              <div class="card-img-wrap" id="add-preview-img-wrap">
+                <span id="add-preview-grade-badge" class="ace-floating-badge ace-10" style="display:none;">
+                  <span>ACE</span><span class="grade-num">10</span>
+                </span>
+                <img id="add-preview-img" src="" alt="New card preview" />
+              </div>
+            </div>
+            <div class="card-caption" style="padding:10px 4px 2px;">
+              <div id="add-prev-char" class="card-char">Character Name</div>
+              <div id="add-prev-par" class="card-par">Parallel / Variant</div>
+              <div class="card-meta-row">
+                <span id="add-prev-num" class="card-num-chip">#1</span>
+                <span id="add-prev-serial" class="serial-chip serial-unnumbered">Unnumbered</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="add-photo-controls">
+            <button type="button" id="add-choose-photo-btn" class="btn btn-primary" style="padding:8px 13px;font-size:0.8rem;flex:1;">📸 Choose Photo</button>
+            <button type="button" id="add-paste-photo-btn" class="btn btn-soft" style="padding:8px 12px;font-size:0.8rem;flex:1;">📋 Paste</button>
+            <button type="button" id="add-clear-photo-btn" class="btn btn-danger-soft" style="padding:8px 10px;font-size:0.78rem;display:none;" title="Clear Photo">↺</button>
+          </div>
+          <p class="add-photo-hint" id="add-photo-meta">
+            Drop an image above, pick from phone/Google Photos, or press <strong>Ctrl+V</strong>. Optional — you can add or swap the photo later too.
+          </p>
+        </div>
+
+        <!-- Right Column: Set, Sub-Section, Serial & Details Form -->
+        <form id="add-card-form" class="add-form-col" autocomplete="off">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="add-set">1. Set *</label>
+              <select id="add-set" required>
+                <option value="2026 Topps Chrome Marvel">2026 Topps Chrome Marvel</option>
+                <option value="2026 Topps Neon Marvel">2026 Topps Neon Marvel</option>
+                <option value="2026 Topps Chrome Marvel Sapphire">2026 Topps Chrome Marvel Sapphire</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="add-subsection">2. Sub-Section *</label>
+              <select id="add-subsection" required></select>
+            </div>
+          </div>
+
+          <div class="form-group" id="add-checklist-wrap">
+            <label for="add-checklist-pick">Quick-Fill from Sub-Section Checklist (Optional)</label>
+            <select id="add-checklist-pick">
+              <option value="">— Type manually or pick an existing card # to clone —</option>
+            </select>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="add-card-num">Card Serial # (Bottom-Left) *</label>
+              <input type="text" id="add-card-num" placeholder="e.g. #FF-46, #138, #24" required />
+            </div>
+            <div class="form-group">
+              <label for="add-character">Character Name *</label>
+              <input type="text" id="add-character" list="vault-characters-list" placeholder="e.g. Venom, Moon Girl" required />
+              <datalist id="vault-characters-list"></datalist>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="add-numbered">Numbered (Bottom-Right)</label>
+              <input type="text" id="add-numbered" placeholder="e.g. 12/50, 04/10 (blank = Unnumbered)" />
+            </div>
+            <div class="form-group">
+              <label for="add-parallel">Parallel / Finish</label>
+              <input type="text" id="add-parallel" list="vault-parallels-list" placeholder="e.g. Gold Refractor, Black Wave" />
+              <datalist id="vault-parallels-list"></datalist>
+            </div>
+          </div>
+
+          <div class="form-row-3">
+            <div class="form-group">
+              <label for="add-grade">Grade</label>
+              <select id="add-grade">
+                <option value="">Raw (Ungraded)</option>
+                <option value="ACE 10 Gem Mint">ACE 10 Gem Mint</option>
+                <option value="ACE 9 Mint">ACE 9 Mint</option>
+                <option value="PSA 10 Gem Mint">PSA 10 Gem Mint</option>
+                <option value="PSA 9 Mint">PSA 9 Mint</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="add-orientation">Layout</label>
+              <select id="add-orientation">
+                <option value="portrait">Portrait (Standard)</option>
+                <option value="landscape">Landscape (Horizontal)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="add-artist">Artist (Optional)</label>
+              <input type="text" id="add-artist" placeholder="e.g. Rose Besch" />
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="add-val-low">Est. Value Low (£ Optional)</label>
+              <input type="number" id="add-val-low" min="0" step="1" placeholder="0" />
+            </div>
+            <div class="form-group">
+              <label for="add-val-high">Est. Value High (£ Optional)</label>
+              <input type="number" id="add-val-high" min="0" step="1" placeholder="0" />
+            </div>
+          </div>
+
+          <div class="add-save-bar">
+            <button type="button" id="add-save-gh-btn" class="btn btn-success">☁️ Add Card &amp; Save to GitHub</button>
+            <button type="button" id="add-save-local-btn" class="btn btn-soft">💾 Add Card Locally</button>
+          </div>
+          <div id="add-card-status" class="upload-status"></div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <!-- About Modal -->
   <div id="about-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="about-modal-title">
@@ -509,7 +662,7 @@
       </div>
 
       <div class="about-version-row">
-        <span class="about-version-badge">Version <strong id="about-version-num">V1.9</strong></span>
+        <span class="about-version-badge">Version <strong id="about-version-num">V1.10</strong></span>
         <span class="about-meta-dot">•</span>
         <span class="about-edition-text">2026 Chrome &amp; Neon Marvel Edition</span>
       </div>

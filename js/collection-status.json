@@ -1,16 +1,1 @@
-{
-  "d1-miss-clawed-superfractor": {
-    "missing": true,
-    "serial": "/1",
-    "valLow": 0,
-    "valHigh": 0,
-    "updatedAt": 1795421214940
-  },
-  "d1-miss-superfractor": {
-    "missing": false,
-    "serial": "/1",
-    "valLow": 0,
-    "valHigh": 0,
-    "updatedAt": 1795421182347
-  }
-}
+{}

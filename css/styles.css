@@ -2732,3 +2732,187 @@ body.dark-vault .bio-accordion.bio-devil-dino .bio-issue-code {
   line-height: 1.54;
   color: var(--text-muted);
 }
+
+/* ==========================================================================
+   V1.10 UI UPDATES: ADD CARD STUDIO, GITHUB PERMISSION GATE & CUSTOM CARDS
+   ========================================================================== */
+.gh-only {
+  display: none !important;
+}
+body.gh-can-edit .gh-only {
+  display: inline-flex !important;
+}
+
+.btn-add-inline {
+  padding: 6px 13px;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+/* Add Card Modal Layout */
+.add-card-modal-box {
+  max-width: 900px;
+}
+
+.add-card-grid {
+  display: grid;
+  grid-template-columns: 248px 1fr;
+  gap: 26px;
+  align-items: start;
+}
+@media (max-width: 820px) {
+  .add-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.add-preview-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-preview-tile {
+  background: var(--surface-soft);
+  border: 2px dashed var(--purple);
+  border-radius: 20px;
+  padding: 12px;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.add-preview-tile.drag-over {
+  border-color: var(--pink);
+  background: rgba(236, 72, 153, 0.12);
+  transform: scale(1.01);
+}
+.add-preview-tile.is-landscape .card-img-wrap {
+  aspect-ratio: 3.5 / 2.5;
+}
+.add-preview-tile.has-real-photo .card-img-wrap img {
+  object-fit: contain;
+  padding: 3px;
+}
+
+.add-photo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.add-photo-hint {
+  margin: 0;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.add-form-col select,
+.add-form-col input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 13px;
+  border: 2px solid var(--border);
+  background: var(--surface-soft);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+.add-form-col input[type="text"],
+.add-form-col input[type="number"] {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.add-form-col #add-card-num,
+.add-form-col #add-numbered {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+}
+.add-form-col .form-group {
+  margin-bottom: 12px;
+}
+.add-form-col .form-group label {
+  font-size: 0.72rem;
+  margin-bottom: 4px;
+}
+
+.form-row-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+@media (max-width: 560px) {
+  .form-row-2,
+  .form-row-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.add-save-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* Custom card badge & remove row inside Card Inspector Modal */
+.custom-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+.custom-card-actions[hidden] {
+  display: none !important;
+}
+.custom-badge-note {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--purple);
+}
+body.dark-vault .custom-badge-note {
+  color: #c4b5fd;
+}
+
+/* Sync Drift Warning Pill & GitHub Sync Status Box */
+.btn-warn-sync {
+  background: linear-gradient(135deg, #f59e0b, #ea580c);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.35);
+}
+.btn-warn-sync[hidden],
+.gh-sync-box[hidden],
+#gh-push-local-btn[hidden] {
+  display: none !important;
+}
+
+.gh-sync-box {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--surface-soft);
+  border: 1.5px solid var(--border);
+}
+.gh-sync-box.has-drift {
+  border-color: rgba(245, 158, 11, 0.6);
+  background: rgba(245, 158, 11, 0.09);
+}
+.gh-sync-title {
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.gh-sync-sub {
+  margin: 0 0 10px;
+  font-size: 0.79rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+.gh-sync-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

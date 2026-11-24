@@ -1,6 +1,7 @@
 (function () {
-  const APP_VERSION = 'V1.9';
-  const CARDS = window.VAULT_CARDS || [];
+  const APP_VERSION = 'V1.10';
+  const BASE_CARDS = window.VAULT_CARDS || [];
+  let CARDS = [...BASE_CARDS];
   const BIOS = window.VAULT_CHARACTER_BIOS || {};
   const DISPLAYS = window.VAULT_DISPLAYS || [];
   const SETS = window.VAULT_SETS || [];
@@ -10,6 +11,9 @@
   const GH_STORAGE_KEY = 'kh_vault_gh_config_v1';
   const RECENT_UPLOADS_KEY = 'kh_vault_recent_uploads_v1';
   const STATUS_STORAGE_KEY = 'kh_vault_card_status_v1';
+  const CUSTOM_CARDS_STORAGE_KEY = 'kh_vault_custom_cards_v1';
+  const LOCAL_PHOTO_DB_NAME = 'kh_vault_local_photos_v1';
+  const LOCAL_PHOTO_STORE = 'photos';
 
   const CHROME_INSERT_DISPLAYS = DISPLAYS.filter(d => d.isChromeInsert);
   const CHROME_INSERT_IDS = new Set(CHROME_INSERT_DISPLAYS.map(d => d.id));
@@ -47,6 +51,98 @@
     try { localStorage.setItem(STATUS_STORAGE_KEY, JSON.stringify(map)); } catch (_) {}
   }
 
+  function loadLocalCustomStore() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(CUSTOM_CARDS_STORAGE_KEY) || 'null');
+      if (Array.isArray(raw)) return { cards: raw, deletedIds: [] };
+      if (raw && Array.isArray(raw.cards)) {
+        return { cards: raw.cards, deletedIds: Array.isArray(raw.deletedIds) ? raw.deletedIds : [] };
+      }
+    } catch (_) {}
+    return { cards: [], deletedIds: [] };
+  }
+
+  function saveLocalCustomStore(store) {
+    try { localStorage.setItem(CUSTOM_CARDS_STORAGE_KEY, JSON.stringify(store)); } catch (_) {}
+  }
+
+  // Lightweight IndexedDB store so locally-added card photos survive page refreshes offline
+  function openLocalPhotoDB() {
+    return new Promise((resolve, reject) => {
+      if (!window.indexedDB) return resolve(null);
+      const req = indexedDB.open(LOCAL_PHOTO_DB_NAME, 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains(LOCAL_PHOTO_STORE)) {
+          db.createObjectStore(LOCAL_PHOTO_STORE);
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function saveLocalPhotoBlob(cardId, blob) {
+    try {
+      const db = await openLocalPhotoDB();
+      if (!db) return;
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(LOCAL_PHOTO_STORE, 'readwrite');
+        tx.objectStore(LOCAL_PHOTO_STORE).put(blob, cardId);
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject(tx.error);
+      });
+    } catch (_) {}
+  }
+
+  async function deleteLocalPhotoBlob(cardId) {
+    try {
+      const db = await openLocalPhotoDB();
+      if (!db) return;
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(LOCAL_PHOTO_STORE, 'readwrite');
+        tx.objectStore(LOCAL_PHOTO_STORE).delete(cardId);
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject(tx.error);
+      });
+    } catch (_) {}
+  }
+
+  async function hydrateLocalPhotoBlobs() {
+    try {
+      const db = await openLocalPhotoDB();
+      if (!db) return;
+      const entries = await new Promise((resolve) => {
+        const out = [];
+        const tx = db.transaction(LOCAL_PHOTO_STORE, 'readonly');
+        const store = tx.objectStore(LOCAL_PHOTO_STORE);
+        const curReq = store.openCursor();
+        curReq.onsuccess = (e) => {
+          const cursor = e.target.result;
+          if (cursor) {
+            out.push([cursor.key, cursor.value]);
+            cursor.continue();
+          } else {
+            resolve(out);
+          }
+        };
+        curReq.onerror = () => resolve(out);
+      });
+      let hydrated = 0;
+      entries.forEach(([cardId, blob]) => {
+        if (blob instanceof Blob && !state.sessionPhotos[cardId]) {
+          state.sessionPhotos[cardId] = URL.createObjectURL(blob);
+          state.realPhotoLoaded[cardId] = true;
+          hydrated++;
+        }
+      });
+      if (hydrated > 0) {
+        renderActiveTab();
+        updatePhotoCounter();
+      }
+    } catch (_) {}
+  }
+
   // Default section status filters:
   // - Hope's Moon Girl (1) & Devil Dinosaur (2): default to 'owned'
   // - Kandy's collapsible Chrome Insert subsets (101..129): default to 'owned'
@@ -66,11 +162,17 @@
     chromeInsertFilter: 'all',// 'all' | 'with-owned'
     neonInsertFilter: 'all',  // 'all' | 'with-owned'
     statusOverrides: loadLocalStatusOverrides(),
+    remoteStatusOverrides: {},
+    remoteStatusLoaded: false,
+    customStore: loadLocalCustomStore(),
+    remoteCustomStore: { cards: [], deletedIds: [] },
+    remoteCustomLoaded: false,
     sessionPhotos: {},
     realPhotoLoaded: {},
     recentUploads: loadRecentUploads(),
     gh: loadGHConfig(),
     stagedCardPhoto: null,
+    stagedAddPhoto: null,
     stagedHeroPhoto: null,
     filters: {
       search: '',
@@ -81,6 +183,14 @@
       quickTag: 'all'
     }
   };
+
+  function syncCardsArray() {
+    const customList = (state.customStore && Array.isArray(state.customStore.cards))
+      ? state.customStore.cards
+      : [];
+    CARDS = [...BASE_CARDS, ...customList];
+  }
+  syncCardsArray();
 
   // ==========================================================================
   // EFFECTIVE CARD ACCESSORS (MERGING BASE DATA + STATUS OVERRIDES)
@@ -122,6 +232,107 @@
   };
   const sumVals = (list, mode = state.valMode) => list.reduce((acc, c) => acc + cardVal(c, mode), 0);
 
+  // Check whether an override entry matches a card's base definition in data.js
+  function isOverrideMatchingBase(cardId, ov) {
+    const base = BASE_CARDS.find(c => c.id === cardId);
+    if (!base || !ov) return false;
+    const baseMissing = Boolean(base.missing);
+    const ovMissing = typeof ov.missing === 'boolean' ? ov.missing : baseMissing;
+    if (ovMissing !== baseMissing) return false;
+    if (ovMissing) return true; // Both missing -> redundant
+    const ovSerial = (ov.serial || '').trim();
+    if (ovSerial && ovSerial !== base.serial) return false;
+    if (typeof ov.valLow === 'number' && ov.valLow !== (base.valLow || 0)) return false;
+    if (typeof ov.valHigh === 'number' && ov.valHigh !== (base.valHigh || 0)) return false;
+    return true;
+  }
+
+  // Build a clean status map with redundant base-matching entries stripped before pushing to GitHub
+  function getCleanedStatusMapForGitHub(sourceMap) {
+    const clean = {};
+    Object.keys(sourceMap || {}).forEach(id => {
+      const ov = sourceMap[id];
+      if (!isOverrideMatchingBase(id, ov)) {
+        clean[id] = ov;
+      }
+    });
+    return clean;
+  }
+
+  function computeLocalGitHubDrift() {
+    const driftItems = [];
+    if (state.remoteStatusLoaded) {
+      const allIds = new Set([
+        ...Object.keys(state.statusOverrides || {}),
+        ...Object.keys(state.remoteStatusOverrides || {})
+      ]);
+      allIds.forEach(id => {
+        const loc = state.statusOverrides[id];
+        const rem = state.remoteStatusOverrides[id];
+        const base = BASE_CARDS.find(c => c.id === id);
+        const locMissing = loc && typeof loc.missing === 'boolean' ? loc.missing : (base ? Boolean(base.missing) : false);
+        const remMissing = rem && typeof rem.missing === 'boolean' ? rem.missing : (base ? Boolean(base.missing) : false);
+        const locSerial = (loc && loc.serial) || (base ? base.serial : '');
+        const remSerial = (rem && rem.serial) || (base ? base.serial : '');
+        if (locMissing !== remMissing || (!locMissing && locSerial !== remSerial)) {
+          driftItems.push(base ? `${base.character} (${base.parallel})` : id);
+        }
+      });
+    }
+    if (state.remoteCustomLoaded) {
+      const locIds = new Set((state.customStore.cards || []).map(c => c.id));
+      const remIds = new Set((state.remoteCustomStore.cards || []).map(c => c.id));
+      locIds.forEach(id => {
+        if (!remIds.has(id)) {
+          const c = (state.customStore.cards || []).find(x => x.id === id);
+          driftItems.push(c ? `Added: ${c.character} (${c.cardNum})` : id);
+        }
+      });
+      remIds.forEach(id => {
+        if (!locIds.has(id)) {
+          const c = (state.remoteCustomStore.cards || []).find(x => x.id === id);
+          driftItems.push(c ? `Removed: ${c.character} (${c.cardNum})` : id);
+        }
+      });
+    }
+    return driftItems;
+  }
+
+  function updateDriftIndicatorUI() {
+    const canEdit = hasGitHubEditPermissions();
+    const driftItems = canEdit ? computeLocalGitHubDrift() : [];
+    const hasDrift = driftItems.length > 0;
+
+    const driftBtn = document.getElementById('gh-drift-btn');
+    if (driftBtn) {
+      driftBtn.hidden = !hasDrift;
+      if (hasDrift) {
+        driftBtn.textContent = `⚠️ Sync ${driftItems.length} Local Change${driftItems.length === 1 ? '' : 's'}`;
+      }
+    }
+
+    const syncBox = document.getElementById('gh-sync-box');
+    const syncTitle = document.getElementById('gh-sync-summary');
+    const syncDetail = document.getElementById('gh-sync-detail');
+    const pushBtn = document.getElementById('gh-push-local-btn');
+
+    if (syncBox) {
+      syncBox.hidden = !canEdit;
+      syncBox.classList.toggle('has-drift', hasDrift);
+    }
+    if (pushBtn) pushBtn.hidden = !hasDrift;
+    if (syncTitle && syncDetail) {
+      if (hasDrift) {
+        syncTitle.textContent = `⚠️ ${driftItems.length} Unsynced Local Change${driftItems.length === 1 ? '' : 's'} Found`;
+        const preview = driftItems.slice(0, 3).join(', ') + (driftItems.length > 3 ? ` (+${driftItems.length - 3} more)` : '');
+        syncDetail.textContent = `Other browsers won't see these until pushed to GitHub: ${preview}.`;
+      } else {
+        syncTitle.textContent = '✅ Local browser & GitHub are in sync';
+        syncDetail.textContent = 'Every card status and added card matches what visitors see on GitHub Pages.';
+      }
+    }
+  }
+
   // Pull live js/collection-status.json on boot so status updates saved to GitHub sync across devices
   async function loadRemoteStatusOverrides() {
     try {
@@ -129,19 +340,90 @@
       if (!res.ok) return;
       const remote = await res.json();
       if (!remote || typeof remote !== 'object') return;
+      state.remoteStatusOverrides = remote;
+      state.remoteStatusLoaded = true;
+
+      // Visitors (without GitHub write access) ALWAYS see exact GitHub live data — never stale localStorage
+      if (!hasGitHubEditPermissions()) {
+        state.statusOverrides = { ...remote };
+        saveLocalStatusOverrides(state.statusOverrides);
+        renderActiveTab();
+        updateDriftIndicatorUI();
+        return;
+      }
+
+      // GitHub-connected browser: merge newer local edits, but prune redundant entries that match both remote & base
       const merged = { ...remote };
       Object.keys(state.statusOverrides).forEach(id => {
         const loc = state.statusOverrides[id];
         const rem = remote[id];
-        if (!rem || (loc.updatedAt || 0) >= (rem.updatedAt || 0)) {
+        if (!rem) {
+          // If remote doesn't override this card AND local matches base data.js, drop redundant local entry
+          if (!isOverrideMatchingBase(id, loc)) {
+            merged[id] = loc;
+          }
+        } else if ((loc.updatedAt || 0) >= (rem.updatedAt || 0)) {
           merged[id] = loc;
         }
       });
+
       state.statusOverrides = merged;
       saveLocalStatusOverrides(merged);
       renderActiveTab();
+      updateDriftIndicatorUI();
     } catch (_) {
       // Offline / file:// open — keep localStorage overrides
+    }
+  }
+
+  // Pull live js/custom-cards.json on boot so added cards saved to GitHub sync across devices
+  async function loadRemoteCustomCards() {
+    try {
+      const res = await fetch(`js/custom-cards.json?v=${Date.now()}`, { cache: 'no-store' });
+      if (!res.ok) return;
+      const raw = await res.json();
+      const remoteCards = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.cards) ? raw.cards : []);
+      const remoteDeleted = Array.isArray(raw && raw.deletedIds) ? raw.deletedIds : [];
+      state.remoteCustomStore = { cards: remoteCards, deletedIds: remoteDeleted };
+      state.remoteCustomLoaded = true;
+
+      // Visitors (without GitHub write access) ALWAYS see exact GitHub live custom cards
+      if (!hasGitHubEditPermissions()) {
+        const delSet = new Set(remoteDeleted);
+        state.customStore = {
+          cards: remoteCards.filter(c => c && c.id && !delSet.has(c.id)),
+          deletedIds: [...remoteDeleted]
+        };
+        saveLocalCustomStore(state.customStore);
+        syncCardsArray();
+        renderActiveTab();
+        updateDriftIndicatorUI();
+        return;
+      }
+
+      const allDeleted = new Set([...remoteDeleted, ...(state.customStore.deletedIds || [])]);
+      const byId = new Map();
+      remoteCards.forEach(c => {
+        if (c && c.id && !allDeleted.has(c.id)) byId.set(c.id, c);
+      });
+      (state.customStore.cards || []).forEach(c => {
+        if (!c || !c.id || allDeleted.has(c.id)) return;
+        const prev = byId.get(c.id);
+        if (!prev || (c.updatedAt || 0) >= (prev.updatedAt || 0)) {
+          byId.set(c.id, c);
+        }
+      });
+
+      state.customStore = {
+        cards: [...byId.values()],
+        deletedIds: [...allDeleted]
+      };
+      saveLocalCustomStore(state.customStore);
+      syncCardsArray();
+      renderActiveTab();
+      updateDriftIndicatorUI();
+    } catch (_) {
+      // Offline / file:// or js/custom-cards.json not yet created — keep localStorage custom cards
     }
   }
 
@@ -208,30 +490,40 @@
 
     if (a.printRun == null && b.printRun == null) {
       if (a.subset !== b.subset) return (a.subset || '').localeCompare(b.subset || '');
-      const numDiff = compareNaturalCardNum(a.cardNum, b.cardNum);
-      if (numDiff !== 0) return numDiff;
     }
+
+    // Group cards sharing the same Card Serial # right alongside each other
+    const numDiff = compareNaturalCardNum(a.cardNum, b.cardNum);
+    if (numDiff !== 0) return numDiff;
 
     const serDiff = parseSerialNum(getCardSerial(a)) - parseSerialNum(getCardSerial(b));
     if (serDiff !== 0) return serDiff;
+
+    // Owned cards appear directly before any matching empty/missing slot
+    const missDiff = (isCardMissing(a) ? 1 : 0) - (isCardMissing(b) ? 1 : 0);
+    if (missDiff !== 0) return missDiff;
 
     return (a.character || '').localeCompare(b.character || '');
   }
 
   function compareChecklistPosition(a, b) {
+    // Primary: natural Card Serial # order so all cards with the same # sit alongside each other
     const numDiff = compareNaturalCardNum(a.cardNum, b.cardNum);
     if (numDiff !== 0) return numDiff;
+    // Secondary: owned versions right next to each other before empty/missing slot, rarest first
+    const missDiff = (isCardMissing(a) ? 1 : 0) - (isCardMissing(b) ? 1 : 0);
+    if (missDiff !== 0) return missDiff;
     return comparePullRarity(a, b);
   }
 
   function sortCards(list, sortMode) {
     const copy = [...list];
-    if (sortMode === 'checklist') {
+    if (sortMode === 'checklist' || sortMode === 'cardnum') {
       copy.sort(compareChecklistPosition);
     } else if (sortMode === 'val-desc' || sortMode === 'value') {
       copy.sort((a, b) => (cardVal(b) - cardVal(a)) || comparePullRarity(a, b));
     } else if (sortMode === 'alpha' || sortMode === 'name') {
-      copy.sort((a, b) => (a.character || '').localeCompare(b.character || '') || comparePullRarity(a, b));
+      copy.sort((a, b) => (a.character || '').localeCompare(b.character || '') || compareChecklistPosition(a, b));
     } else {
       copy.sort(comparePullRarity);
     }
@@ -345,8 +637,27 @@
   }
 
   async function saveStatusOverridesToGitHub(commitMsg) {
-    const jsonText = JSON.stringify(state.statusOverrides, null, 2) + '\n';
-    return await uploadToGitHub('js/collection-status.json', utf8ToBase64(jsonText), commitMsg);
+    const cleanMap = getCleanedStatusMapForGitHub(state.statusOverrides);
+    const jsonText = JSON.stringify(cleanMap, null, 2) + '\n';
+    const result = await uploadToGitHub('js/collection-status.json', utf8ToBase64(jsonText), commitMsg);
+    state.statusOverrides = { ...cleanMap };
+    state.remoteStatusOverrides = { ...cleanMap };
+    state.remoteStatusLoaded = true;
+    saveLocalStatusOverrides(state.statusOverrides);
+    updateDriftIndicatorUI();
+    return result;
+  }
+
+  async function saveCustomCardsToGitHub(commitMsg) {
+    const jsonText = JSON.stringify(state.customStore, null, 2) + '\n';
+    const result = await uploadToGitHub('js/custom-cards.json', utf8ToBase64(jsonText), commitMsg);
+    state.remoteCustomStore = {
+      cards: [...(state.customStore.cards || [])],
+      deletedIds: [...(state.customStore.deletedIds || [])]
+    };
+    state.remoteCustomLoaded = true;
+    updateDriftIndicatorUI();
+    return result;
   }
 
   // Save Blob locally with exact required filename
@@ -400,12 +711,14 @@
   function updateGHButtonState() {
     const btn = document.getElementById('gh-settings-btn');
     const connected = hasGitHubEditPermissions();
+    document.body.classList.toggle('gh-can-edit', connected);
     if (btn) {
       btn.textContent = connected ? '✅ GitHub Connected' : '☁️ GitHub Sync';
       btn.classList.toggle('btn-github-connected', connected);
       btn.classList.toggle('btn-soft', !connected);
     }
     updateModalPermissionsUI();
+    updateDriftIndicatorUI();
   }
 
   // Silently re-verify stored GitHub token permissions on startup (handles revoked/read-only tokens)
@@ -547,6 +860,42 @@
     if (neonTabBtn) neonTabBtn.textContent = `⚡ Kandy's Neon Vault (${kandyNeonOwned.length})`;
   }
 
+  function escSvg(str) {
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function generateCustomCardSvgUri(card) {
+    const isLand = card.orientation === 'landscape';
+    const w = isLand ? 420 : 300;
+    const h = isLand ? 300 : 420;
+    const isNeon = (card.set || '').toLowerCase().includes('neon');
+    const isSapphire = (card.set || '').toLowerCase().includes('sapphire');
+    const c1 = isNeon ? '#06b6d4' : (isSapphire ? '#2563eb' : '#ec4899');
+    const c2 = isNeon ? '#8b5cf6' : (isSapphire ? '#38bdf8' : '#f59e0b');
+    const serial = getCardSerial(card);
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#131932"/>
+          <stop offset="100%" stop-color="#090d1b"/>
+        </linearGradient>
+        <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="${c1}"/>
+          <stop offset="100%" stop-color="${c2}"/>
+        </linearGradient>
+      </defs>
+      <rect width="${w}" height="${h}" rx="18" fill="url(#bg)"/>
+      <rect x="8" y="8" width="${w - 16}" height="${h - 16}" rx="14" fill="none" stroke="url(#rim)" stroke-width="4"/>
+      <text x="${w / 2}" y="${isLand ? 58 : 74}" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="13" font-weight="700" letter-spacing="1.2">${escSvg((card.set || '2026 TOPPS MARVEL').toUpperCase())}</text>
+      <text x="${w / 2}" y="${isLand ? 132 : 185}" text-anchor="middle" fill="#ffffff" font-family="sans-serif" font-size="24" font-weight="800">${escSvg((card.character || 'New Card').slice(0, 22))}</text>
+      <text x="${w / 2}" y="${isLand ? 166 : 220}" text-anchor="middle" fill="${c1}" font-family="sans-serif" font-size="15" font-weight="700">${escSvg((card.parallel || card.subset || '').slice(0, 30))}</text>
+      <rect x="${w / 2 - 74}" y="${isLand ? 198 : 262}" width="148" height="34" rx="17" fill="url(#rim)" opacity="0.22"/>
+      <text x="${w / 2}" y="${isLand ? 220 : 284}" text-anchor="middle" fill="#facc15" font-family="monospace" font-size="15" font-weight="800">${escSvg(card.cardNum || '#')} · ${escSvg(serial)}</text>
+      <text x="${w / 2}" y="${h - 26}" text-anchor="middle" fill="#64748b" font-family="sans-serif" font-size="11" font-weight="700">CLICK CARD TO ADD PHOTO</text>
+    </svg>`;
+    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+  }
+
   // Smart Image Resolver per Card
   function attachSmartImage(imgEl, card, tileEl) {
     if (state.sessionPhotos[card.id]) {
@@ -560,7 +909,9 @@
     const base = `assets/cards/${card.folder}/${card.baseFilename}`;
     const ts = state.recentUploads[card.recommendedPath];
     const qs = ts ? `?v=${ts}` : '';
-    const fallbackUrl = isCardMissing(card) ? 'assets/cards/missing-card-icon.svg' : card.placeholderSvg;
+    const fallbackUrl = isCardMissing(card)
+      ? 'assets/cards/missing-card-icon.svg'
+      : (card.placeholderSvg || generateCustomCardSvgUri(card));
 
     const candidates = [
       { url: `${base}.jpg${qs}`, isReal: true },
@@ -860,12 +1211,13 @@
         </div>
       </div>` : '';
 
-    // Sort controls ONLY on Kandy's sections (Pull Rarity & Name — no Value, and removed on Hope's sections)
+    // Sort controls ONLY on Kandy's sections (Pull Rarity, Card Serial # & Name — removed on Hope's sections)
     const sortControlHTML = !isHopeSection ? `
       <div class="sort-controls">
         <span class="sort-label">Sort by:</span>
         <div class="segmented">
           <button class="${sortMode === 'rarity' ? 'active' : ''}" data-sort="rarity">🎯 Pull Rarity</button>
+          <button class="${sortMode === 'cardnum' ? 'active' : ''}" data-sort="cardnum">🔢 Card #</button>
           <button class="${sortMode === 'name' ? 'active' : ''}" data-sort="name">🔤 Name</button>
         </div>
       </div>` : '';
@@ -882,6 +1234,7 @@
         </div>
         <div class="display-badges">
           <span class="pill ${meta.owner === 'Hope' ? 'pill-pink' : 'pill-cyan'}">${countBadgeText}</span>
+          <button type="button" class="btn btn-primary btn-add-inline gh-only" data-add-display="${displayId}">➕ Add Card</button>
         </div>
       </div>
       ${rainbowBar}
@@ -908,6 +1261,11 @@
         renderActiveTab();
       });
     });
+
+    const addInlineBtn = sec.querySelector('[data-add-display]');
+    if (addInlineBtn) {
+      addInlineBtn.addEventListener('click', () => openAddCardModal(displayId));
+    }
 
     const body = sec.querySelector('.display-body');
 
@@ -971,31 +1329,37 @@
   // - Default to Owned cards
   // - When All is selected, show cards in their exact proper checklist positions!
   // ==========================================================================
+  function getSectionChecklistStats(secCards) {
+    const ownedCards = secCards.filter(c => !isCardMissing(c));
+    const missingCards = secCards.filter(c => isCardMissing(c));
+    const uniqueTotal = new Set(secCards.map(c => String(c.cardNum || c.id).toUpperCase())).size;
+    const uniqueOwned = new Set(ownedCards.map(c => String(c.cardNum || c.id).toUpperCase())).size;
+    const pct = Math.min(100, Math.round((uniqueOwned / Math.max(1, uniqueTotal)) * 100));
+    return { ownedCards, missingCards, uniqueTotal, uniqueOwned, pct };
+  }
+
   function populateAccordionBody(bodyEl, meta) {
     const displayId = meta.id;
     const allSectionCards = CARDS.filter(c => c.display === displayId);
-    const ownedSectionCards = allSectionCards.filter(c => !isCardMissing(c));
-    const missingSectionCards = allSectionCards.filter(c => isCardMissing(c));
-    const sortMode = state.sectionSort[displayId] || 'rarity';
+    const { ownedCards: ownedSectionCards, missingCards: missingSectionCards, uniqueTotal, uniqueOwned, pct } = getSectionChecklistStats(allSectionCards);
     const statusFilter = state.sectionStatusFilter[displayId] || 'owned';
+    // Default: Pull Rarity for Owned, exact Card # Checklist Order for All/Missing (respects user override)
+    const explicitSort = state.sectionSort[displayId];
+    const effectiveSort = explicitSort || (statusFilter === 'owned' ? 'rarity' : 'cardnum');
 
     let visibleCards = ownedSectionCards;
     if (statusFilter === 'all') visibleCards = allSectionCards;
     else if (statusFilter === 'missing') visibleCards = missingSectionCards;
 
-    // When 'All' or 'Missing' is selected and default order is active -> exact checklist positions!
-    const effectiveSort = (sortMode === 'name')
-      ? 'name'
-      : (statusFilter === 'owned' ? 'rarity' : 'checklist');
-
     const sortedCards = sortCards(visibleCards, effectiveSort);
-    const pct = Math.min(100, Math.round((ownedSectionCards.length / Math.max(1, allSectionCards.length)) * 100));
-    const defaultSortLabel = statusFilter === 'owned' ? '🎯 Pull Rarity' : '📋 Checklist Order';
+    const extraVariantNote = ownedSectionCards.length > uniqueOwned
+      ? ` · ${ownedSectionCards.length} Total Owned`
+      : '';
 
     bodyEl.innerHTML = `
       <div class="rainbow-bar-box" style="margin-top:12px;margin-bottom:16px;">
         <div class="rainbow-bar-top">
-          <span>✨ ${meta.title} Progress — ${ownedSectionCards.length} of ${allSectionCards.length} Cards Collected (${missingSectionCards.length} Missing)</span>
+          <span>✨ ${meta.title} Progress — ${uniqueOwned} of ${uniqueTotal} Checklist Slots Filled${extraVariantNote} (${missingSectionCards.length} Empty Slots)</span>
           <span>${pct}% Complete</span>
         </div>
         <div class="rainbow-track"><div class="rainbow-fill" style="width:${pct}%"></div></div>
@@ -1014,10 +1378,12 @@
           <div class="sort-controls">
             <span class="sort-label">Sort by:</span>
             <div class="segmented">
-              <button class="${sortMode === 'rarity' ? 'active' : ''}" data-sort="rarity">${defaultSortLabel}</button>
-              <button class="${sortMode === 'name' ? 'active' : ''}" data-sort="name">🔤 Name</button>
+              <button class="${effectiveSort === 'cardnum' ? 'active' : ''}" data-sort="cardnum">🔢 Card #</button>
+              <button class="${effectiveSort === 'rarity' ? 'active' : ''}" data-sort="rarity">🎯 Pull Rarity</button>
+              <button class="${effectiveSort === 'name' ? 'active' : ''}" data-sort="name">🔤 Name</button>
             </div>
           </div>
+          <button type="button" class="btn btn-primary btn-add-inline gh-only" data-add-sub="${displayId}">➕ Add Card</button>
         </div>
       </div>
       <div class="accordion-cards-host"></div>
@@ -1033,9 +1399,18 @@
     bodyEl.querySelectorAll('.segmented button[data-sfilter]').forEach(btn => {
       btn.addEventListener('click', () => {
         state.sectionStatusFilter[displayId] = btn.dataset.sfilter;
+        // Reset to natural default for All/Missing so proper checklist order kicks in automatically
+        if (btn.dataset.sfilter !== 'owned' && state.sectionSort[displayId] === 'rarity') {
+          delete state.sectionSort[displayId];
+        }
         populateAccordionBody(bodyEl, meta);
       });
     });
+
+    const addSubBtn = bodyEl.querySelector('[data-add-sub]');
+    if (addSubBtn) {
+      addSubBtn.addEventListener('click', () => openAddCardModal(displayId));
+    }
 
     const host = bodyEl.querySelector('.accordion-cards-host');
     if (!sortedCards.length) {
@@ -1126,8 +1501,10 @@
     // 3. Render Each Collapsible Insert Section (Zero Money Values!)
     visibleInsertDisplays.forEach(meta => {
       const secCards = CARDS.filter(c => c.display === meta.id);
-      const ownedCards = secCards.filter(c => !isCardMissing(c));
-      const pct = Math.min(100, Math.round((ownedCards.length / Math.max(1, secCards.length)) * 100));
+      const { ownedCards, uniqueTotal, uniqueOwned, pct } = getSectionChecklistStats(secCards);
+      const ownedPillText = ownedCards.length > uniqueOwned
+        ? `${ownedCards.length} Owned (${uniqueOwned}/${uniqueTotal})`
+        : `${ownedCards.length} / ${uniqueTotal} Owned`;
       const isOpen = Boolean(state.expandedInserts[meta.id]);
 
       const acc = document.createElement('section');
@@ -1149,7 +1526,7 @@
               <div class="mini-progress-track"><div class="mini-progress-fill" style="width:${pct}%"></div></div>
               <span class="mini-progress-pct">${pct}%</span>
             </div>
-            <span class="pill ${ownedCards.length > 0 ? 'pill-owned-hit' : 'pill-zero'}">${ownedCards.length} / ${secCards.length} Owned</span>
+            <span class="pill ${ownedCards.length > 0 ? 'pill-owned-hit' : 'pill-zero'}">${ownedPillText}</span>
           </div>
         </button>
         <div class="accordion-body"></div>
@@ -1605,9 +1982,13 @@
     const statusMsg = document.getElementById('modal-status-msg');
     statusMsg.textContent = '';
     statusMsg.className = 'upload-status';
+    const markOwnedCb = document.getElementById('opt-mark-owned');
+    if (markOwnedCb) markOwnedCb.checked = false;
     syncModalStatusUI(card, missing, false);
 
     document.getElementById('modal-filepath').textContent = card.recommendedPath;
+    const customActions = document.getElementById('custom-card-actions');
+    if (customActions) customActions.hidden = !Boolean(card.isCustom);
     updateModalPermissionsUI();
     modal.classList.add('open');
   }
@@ -1650,6 +2031,460 @@
     renderModalDetails(card);
     attachSmartImage(document.getElementById('modal-img'), card, null);
     renderActiveTab();
+    updateDriftIndicatorUI();
+  }
+
+
+  // ==========================================================================
+  // ADD CARD STUDIO MODAL (SET -> SUB-SECTION -> SERIAL -> PHOTO)
+  // ==========================================================================
+  function slugifyStr(text) {
+    return String(text || '')
+      .toLowerCase()
+      .replace(/['’"]/g, '')
+      .replace(/&/g, 'and')
+      .replace(/\//g, '-')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'card';
+  }
+
+  function parseNumberedInput(rawText) {
+    const cleaned = String(rawText || '').trim();
+    if (!cleaned || cleaned.toLowerCase() === 'unnumbered') {
+      return { serial: 'Unnumbered', printRun: null };
+    }
+    const m = cleaned.match(/^(\d*)\s*\/\s*(\d+)$/);
+    if (m) {
+      const pr = parseInt(m[2], 10);
+      const numPart = m[1] ? m[1] : '';
+      return { serial: numPart ? `${numPart}/${pr}` : `/${pr}`, printRun: isNaN(pr) ? null : pr };
+    }
+    return { serial: cleaned, printRun: null };
+  }
+
+  function normalizeCardNumInput(rawText) {
+    const cleaned = String(rawText || '').trim();
+    if (!cleaned) return '';
+    return cleaned.startsWith('#') ? cleaned : `#${cleaned}`;
+  }
+
+  function getDisplaysForSet(setName) {
+    if (setName === '2026 Topps Neon Marvel') {
+      return DISPLAYS.filter(d => d.id === 5 || d.id === 6 || d.isNeonInsert);
+    }
+    if (setName === '2026 Topps Chrome Marvel Sapphire') {
+      return DISPLAYS.filter(d => d.id === 6 || d.id === 3);
+    }
+    // 2026 Topps Chrome Marvel
+    return DISPLAYS.filter(d => d.id === 1 || d.id === 2 || d.id === 3 || d.isChromeInsert);
+  }
+
+  function getDefaultSetForDisplay(displayId) {
+    const d = DISPLAYS.find(x => x.id === displayId);
+    if (!d) return '2026 Topps Chrome Marvel';
+    if (d.id === 5 || d.isNeonInsert) return '2026 Topps Neon Marvel';
+    if (d.id === 6) return '2026 Topps Neon Marvel';
+    return '2026 Topps Chrome Marvel';
+  }
+
+  function populateAddSubsections(setName, preselectDisplayId = null) {
+    const sel = document.getElementById('add-subsection');
+    const valid = getDisplaysForSet(setName);
+    const groups = [];
+
+    const hopeDisps = valid.filter(d => d.owner === 'Hope');
+    const kandyBase = valid.filter(d => d.owner === 'Kandy' && !d.isChromeInsert && !d.isNeonInsert);
+    const kandyIns = valid.filter(d => d.isChromeInsert || d.isNeonInsert);
+
+    if (hopeDisps.length) groups.push({ label: "🌈 Hope's Sections", items: hopeDisps });
+    if (kandyBase.length) groups.push({ label: "🏆 Kandy's Base Sections", items: kandyBase });
+    if (kandyIns.length) groups.push({ label: `📚 Kandy's Insert & Auto Sub-Sections (${kandyIns.length})`, items: kandyIns });
+
+    sel.innerHTML = groups.map(g => `
+      <optgroup label="${g.label}">
+        ${g.items.map(d => `<option value="${d.id}">${d.title}</option>`).join('')}
+      </optgroup>
+    `).join('');
+
+    if (preselectDisplayId && valid.some(d => d.id === Number(preselectDisplayId))) {
+      sel.value = String(preselectDisplayId);
+    }
+    populateAddChecklistAndSuggestions();
+  }
+
+  function populateAddChecklistAndSuggestions() {
+    const setName = document.getElementById('add-set').value;
+    const displayId = Number(document.getElementById('add-subsection').value);
+    const disp = DISPLAYS.find(d => d.id === displayId);
+
+    // 1. Populate Quick-Fill Checklist dropdown for this sub-section (unique cardNum slots)
+    const pickSel = document.getElementById('add-checklist-pick');
+    const pickWrap = document.getElementById('add-checklist-wrap');
+    const secCards = CARDS.filter(c => c.display === displayId);
+    const seenNums = new Map();
+    sortCards(secCards, 'cardnum').forEach(c => {
+      const key = `${c.cardNum}|||${c.character}`;
+      if (!seenNums.has(key)) seenNums.set(key, c);
+    });
+
+    const uniqueSlots = [...seenNums.values()];
+    if (uniqueSlots.length > 0 && displayId !== 1 && displayId !== 2) {
+      pickWrap.style.display = 'block';
+      pickSel.innerHTML = '<option value="">— Type manually or pick an existing card # to clone —</option>' +
+        uniqueSlots.map(c => {
+          const tag = c.artist ? ` (${c.artist})` : '';
+          return `<option value="${c.id}">${c.cardNum} — ${c.character}${tag}</option>`;
+        }).join('');
+    } else {
+      pickWrap.style.display = 'none';
+      pickSel.innerHTML = '<option value="">—</option>';
+    }
+
+    // 2. Smart auto-fill for dedicated character rainbows & horizontal sets
+    const numEl = document.getElementById('add-card-num');
+    const charEl = document.getElementById('add-character');
+    const oriEl = document.getElementById('add-orientation');
+
+    if (displayId === 1) {
+      numEl.value = '#138';
+      charEl.value = 'Moon Girl';
+    } else if (displayId === 2) {
+      numEl.value = '#110';
+      charEl.value = 'Devil Dinosaur';
+    }
+    if (displayId === 206) {
+      oriEl.value = 'landscape';
+    } else if (oriEl.value === 'landscape' && displayId !== 206) {
+      oriEl.value = 'portrait';
+    }
+
+    // 3. Populate parallel autocomplete suggestions relevant to the chosen set
+    const parList = document.getElementById('vault-parallels-list');
+    const parSet = new Set();
+    if (disp && (disp.isChromeInsert || disp.isNeonInsert)) {
+      parSet.add(disp.title);
+      parSet.add(`${disp.title} — Gold Refractor`);
+      parSet.add(`${disp.title} — Orange Refractor`);
+      parSet.add(`${disp.title} — Black Refractor`);
+      parSet.add(`${disp.title} — Red Refractor`);
+      parSet.add(`${disp.title} — Purple Refractor`);
+      parSet.add(`${disp.title} — Green Refractor`);
+      parSet.add(`${disp.title} — Gold Foil`);
+    }
+    BASE_CARDS.filter(c => c.set === setName).forEach(c => {
+      if (c.parallel) parSet.add(c.parallel);
+    });
+    parList.innerHTML = [...parSet].sort().map(p => `<option value="${escSvg(p)}"></option>`).join('');
+
+    // 4. Populate character autocomplete datalist
+    const charList = document.getElementById('vault-characters-list');
+    if (!charList.hasChildNodes()) {
+      const chars = [...new Set(BASE_CARDS.map(c => c.character).filter(Boolean))].sort();
+      charList.innerHTML = chars.map(ch => `<option value="${escSvg(ch)}"></option>`).join('');
+    }
+
+    updateAddCardPreview();
+  }
+
+  function buildCardObjectFromAddForm() {
+    const setName = document.getElementById('add-set').value;
+    const displayId = Number(document.getElementById('add-subsection').value);
+    const disp = DISPLAYS.find(d => d.id === displayId) || DISPLAYS[0];
+    const cardNum = normalizeCardNumInput(document.getElementById('add-card-num').value) || '#1';
+    const character = (document.getElementById('add-character').value || '').trim() || 'New Card';
+    const { serial, printRun } = parseNumberedInput(document.getElementById('add-numbered').value);
+    const rawPar = (document.getElementById('add-parallel').value || '').trim();
+    const isInsert = Boolean(disp.isChromeInsert || disp.isNeonInsert);
+    const parallel = rawPar || (isInsert ? disp.title : (printRun ? `Numbered Parallel /${printRun}` : 'Base Card'));
+    const grade = document.getElementById('add-grade').value || null;
+    const orientation = document.getElementById('add-orientation').value || 'portrait';
+    const artist = (document.getElementById('add-artist').value || '').trim() || null;
+    const valLow = Math.max(0, parseInt(document.getElementById('add-val-low').value || '0', 10) || 0);
+    const rawHigh = parseInt(document.getElementById('add-val-high').value || '0', 10) || 0;
+    const valHigh = Math.max(valLow, rawHigh);
+
+    const tags = [];
+    if (setName.includes('Neon')) tags.push('Neon');
+    if (setName.includes('Sapphire')) tags.push('Sapphire');
+    if (isInsert) tags.push('Insert');
+    if (grade) tags.push(grade.includes('10') ? 'ACE 10' : 'ACE 9');
+    if (printRun && printRun <= 10) tags.push('Ultra Rare', `/${printRun} Hit`);
+    else if (printRun && printRun <= 25) tags.push('Low Numbered');
+    else if (printRun === 50) tags.push('Gold /50');
+    if (serial.startsWith('1/') || serial.startsWith('01/') || serial.startsWith('001/')) tags.push('Alpha #1');
+    if (printRun && serial === `${printRun}/${printRun}`) tags.push('Bookend');
+    if ((disp.title || '').toLowerCase().includes('autograph') || parallel.toLowerCase().includes('auto')) tags.push('Autograph');
+    if (['1-UP', 'Neon Heroines', 'Neon Villains', 'Neon Tarots', 'Marvel Murals', 'Topps Originals', 'Varied Visage AoA', 'Astonishing', 'Marvel Reflections'].includes(disp.title)) {
+      tags.push('Case Hit');
+    }
+    if (orientation === 'landscape') tags.push('Horizontal');
+
+    const folder = disp.folder || 'display-3-chrome-hits';
+    const uniqueSuffix = Date.now().toString(36).slice(-5);
+    const numSlug = slugifyStr(cardNum);
+    const charSlug = slugifyStr(character);
+    const parSlug = slugifyStr(parallel).slice(0, 28);
+    const serSlug = slugifyStr(serial);
+    const baseFilename = `custom_d${displayId}_${numSlug}_${charSlug}_${parSlug}_${serSlug}_${uniqueSuffix}`;
+
+    const subset = isInsert
+      ? disp.title
+      : (setName.includes('Neon') ? 'Neon Parallel' : (setName.includes('Sapphire') ? 'Sapphire Parallel' : 'Base Parallel'));
+
+    return {
+      id: `custom-${displayId}-${uniqueSuffix}-${Math.random().toString(36).slice(2, 6)}`,
+      display: displayId,
+      row: 98,
+      col: 1,
+      slot: cardNum.replace(/^#/, ''),
+      owner: disp.owner,
+      set: setName,
+      cardNum,
+      character,
+      artist,
+      subset,
+      parallel,
+      serial,
+      printRun,
+      format: 'All Formats',
+      odds: printRun ? `Numbered /${printRun}` : (isInsert ? 'Insert' : 'Base / Parallel'),
+      valLow,
+      valHigh,
+      grade,
+      tags: [...new Set(tags)],
+      theme: setName.includes('Neon') ? 'neon-cyan' : 'purple',
+      pattern: isInsert ? 'insert' : 'smooth',
+      orientation,
+      folder,
+      baseFilename,
+      recommendedPath: `assets/cards/${folder}/${baseFilename}.jpg`,
+      placeholderSvg: null,
+      missing: false,
+      isCustom: true,
+      updatedAt: Date.now()
+    };
+  }
+
+  function updateAddCardPreview() {
+    const draft = buildCardObjectFromAddForm();
+    const previewTile = document.getElementById('add-drop-zone');
+    const preview3d = document.getElementById('add-preview-3d');
+    const imgEl = document.getElementById('add-preview-img');
+    const gradeBadge = document.getElementById('add-preview-grade-badge');
+
+    previewTile.classList.toggle('is-landscape', draft.orientation === 'landscape');
+    const isSlab = Boolean(draft.grade);
+    const slabTier = isSlab ? (draft.grade.includes('10') ? 'ace-10' : 'ace-9') : '';
+    preview3d.className = 'card-3d' + (isSlab ? ` is-slab ${slabTier}` : '');
+
+    if (isSlab) {
+      gradeBadge.style.display = 'inline-flex';
+      gradeBadge.className = `ace-floating-badge ${slabTier}`;
+      const labelBrand = draft.grade.startsWith('PSA') ? 'PSA' : 'ACE';
+      const labelNum = draft.grade.includes('10') ? '10' : '9';
+      gradeBadge.innerHTML = `<span>${labelBrand}</span><span class="grade-num">${labelNum}</span>`;
+    } else {
+      gradeBadge.style.display = 'none';
+    }
+
+    document.getElementById('add-prev-char').textContent = draft.character;
+    document.getElementById('add-prev-par').textContent = draft.artist
+      ? `${draft.parallel} · ${draft.artist}`
+      : draft.parallel;
+    document.getElementById('add-prev-num').textContent = draft.cardNum;
+
+    const serEl = document.getElementById('add-prev-serial');
+    const isNum = draft.serial !== 'Unnumbered';
+    serEl.textContent = draft.serial;
+    serEl.className = 'serial-chip' + (isNum ? '' : ' serial-unnumbered');
+
+    if (state.stagedAddPhoto && state.stagedAddPhoto.previewUrl) {
+      previewTile.classList.add('has-real-photo');
+      imgEl.src = state.stagedAddPhoto.previewUrl;
+    } else {
+      previewTile.classList.remove('has-real-photo');
+      imgEl.src = generateCustomCardSvgUri(draft);
+    }
+  }
+
+  function clearStagedAddPhoto() {
+    if (state.stagedAddPhoto && state.stagedAddPhoto.previewUrl) {
+      URL.revokeObjectURL(state.stagedAddPhoto.previewUrl);
+    }
+    state.stagedAddPhoto = null;
+    document.getElementById('add-clear-photo-btn').style.display = 'none';
+    document.getElementById('add-photo-meta').innerHTML =
+      'Drop an image above, pick from phone/Google Photos, or press <strong>Ctrl+V</strong>. Optional — you can add or swap the photo later too.';
+    updateAddCardPreview();
+  }
+
+  async function stageAddCardPhotoBlob(blob) {
+    if (!blob) return;
+    const metaEl = document.getElementById('add-photo-meta');
+    metaEl.textContent = 'Optimising photo preview...';
+    try {
+      const processed = await processImageBlob(blob, true);
+      if (state.stagedAddPhoto && state.stagedAddPhoto.previewUrl) {
+        URL.revokeObjectURL(state.stagedAddPhoto.previewUrl);
+      }
+      const previewUrl = URL.createObjectURL(processed.blob);
+      state.stagedAddPhoto = {
+        previewUrl,
+        outBlob: processed.blob,
+        outBase64: processed.base64
+      };
+      document.getElementById('add-clear-photo-btn').style.display = 'inline-flex';
+      metaEl.textContent = `✅ Photo ready · ${processed.width}×${processed.height}px (${fmtKB(processed.blob.size)})`;
+      updateAddCardPreview();
+    } catch (err) {
+      metaEl.textContent = `❌ Could not process image: ${err.message}`;
+    }
+  }
+
+  function openAddCardModal(preselectDisplayId = null) {
+    if (!hasGitHubEditPermissions()) {
+      openGHModal('Connect GitHub Sync with write permissions to add cards to the vault.');
+      return;
+    }
+
+    // Reset form cleanly
+    document.getElementById('add-card-form').reset();
+    clearStagedAddPhoto();
+    const st = document.getElementById('add-card-status');
+    st.textContent = '';
+    st.className = 'upload-status';
+
+    let targetDisplayId = preselectDisplayId;
+    if (!targetDisplayId) {
+      if (state.activeTab === 'chrome') targetDisplayId = 3;
+      else if (state.activeTab === 'neon') targetDisplayId = 5;
+      else targetDisplayId = 1;
+    }
+
+    const defaultSet = getDefaultSetForDisplay(Number(targetDisplayId));
+    document.getElementById('add-set').value = defaultSet;
+    populateAddSubsections(defaultSet, targetDisplayId);
+
+    document.getElementById('add-card-modal').classList.add('open');
+  }
+
+  function closeAddCardModal() {
+    clearStagedAddPhoto();
+    document.getElementById('add-card-modal').classList.remove('open');
+  }
+
+  async function commitNewCard(saveToGitHub = false) {
+    const numVal = (document.getElementById('add-card-num').value || '').trim();
+    const charVal = (document.getElementById('add-character').value || '').trim();
+    const st = document.getElementById('add-card-status');
+
+    if (!numVal || !charVal) {
+      st.textContent = 'Please enter both a Card Serial # (e.g. #FF-46) and Character Name.';
+      st.className = 'upload-status err';
+      return;
+    }
+
+    if (saveToGitHub && !hasGitHubEditPermissions()) {
+      openGHModal('Connect your GitHub token to save new cards directly to GitHub!');
+      return;
+    }
+
+    const newCard = buildCardObjectFromAddForm();
+    const ghBtn = document.getElementById('add-save-gh-btn');
+    const locBtn = document.getElementById('add-save-local-btn');
+
+    ghBtn.disabled = true;
+    locBtn.disabled = true;
+
+    try {
+      // 1. If a photo was staged, handle local IndexedDB + optional GitHub upload
+      if (state.stagedAddPhoto) {
+        const keepUrl = URL.createObjectURL(state.stagedAddPhoto.outBlob);
+        state.sessionPhotos[newCard.id] = keepUrl;
+        state.realPhotoLoaded[newCard.id] = true;
+        await saveLocalPhotoBlob(newCard.id, state.stagedAddPhoto.outBlob);
+
+        if (saveToGitHub) {
+          st.textContent = `⏳ Uploading photo (${newCard.recommendedPath}) to GitHub...`;
+          st.className = 'upload-status';
+          await uploadToGitHub(
+            newCard.recommendedPath,
+            state.stagedAddPhoto.outBase64,
+            `Add card photo: ${newCard.character} (${newCard.cardNum} ${newCard.serial})`
+          );
+          markRecentUpload(newCard.recommendedPath);
+          state.recentUploads = loadRecentUploads();
+        }
+      }
+
+      // 2. Append card to customStore WITHOUT touching any existing cards or empty slots!
+      state.customStore.cards.push(newCard);
+      state.customStore.deletedIds = (state.customStore.deletedIds || []).filter(id => id !== newCard.id);
+      saveLocalCustomStore(state.customStore);
+      syncCardsArray();
+
+      // 3. Commit js/custom-cards.json to GitHub if requested
+      if (saveToGitHub) {
+        st.textContent = '⏳ Saving js/custom-cards.json to GitHub...';
+        st.className = 'upload-status';
+        await saveCustomCardsToGitHub(
+          `Add card to vault: ${newCard.character} (${newCard.cardNum} ${newCard.serial})`
+        );
+      }
+
+      // Expand the target accordion automatically if it's an insert section so Kandy sees his new card immediately!
+      if (ALL_INSERT_IDS.has(newCard.display)) {
+        state.expandedInserts[newCard.display] = true;
+      }
+
+      renderActiveTab();
+      updatePhotoCounter();
+      burstConfetti();
+
+      const msg = saveToGitHub
+        ? `✅ Added ${newCard.character} (${newCard.cardNum} · ${newCard.serial}) & saved to GitHub!`
+        : `💾 Added ${newCard.character} (${newCard.cardNum} · ${newCard.serial}) locally!`;
+      st.textContent = msg;
+      st.className = 'upload-status ok';
+      showToast(msg);
+
+      setTimeout(() => closeAddCardModal(), 1050);
+    } catch (err) {
+      st.textContent = `❌ Could not save card: ${err.message}`;
+      st.className = 'upload-status err';
+    } finally {
+      ghBtn.disabled = false;
+      locBtn.disabled = false;
+    }
+  }
+
+  async function deleteCustomCard(card) {
+    if (!card || !card.isCustom) return;
+    if (!confirm(`Remove added card "${card.character} (${card.cardNum} · ${getCardSerial(card)})" from the vault?`)) return;
+
+    state.customStore.cards = (state.customStore.cards || []).filter(c => c.id !== card.id);
+    if (!state.customStore.deletedIds) state.customStore.deletedIds = [];
+    if (!state.customStore.deletedIds.includes(card.id)) state.customStore.deletedIds.push(card.id);
+    saveLocalCustomStore(state.customStore);
+    delete state.sessionPhotos[card.id];
+    delete state.realPhotoLoaded[card.id];
+    await deleteLocalPhotoBlob(card.id);
+
+    syncCardsArray();
+    renderActiveTab();
+    updatePhotoCounter();
+
+    if (hasGitHubEditPermissions()) {
+      try {
+        await saveCustomCardsToGitHub(`Remove custom card: ${card.character} (${card.cardNum})`);
+        showToast(`☁️ Removed ${card.character} & synced to GitHub.`);
+      } catch (err) {
+        showToast(`Removed locally (GitHub sync error: ${err.message})`);
+      }
+    } else {
+      showToast(`Removed ${card.character} locally.`);
+    }
+    closeCardModal();
   }
 
   // ==========================================================================
@@ -1800,6 +2635,86 @@
     if (modalVerNum) modalVerNum.textContent = APP_VERSION;
 
     document.getElementById('about-btn').addEventListener('click', openAboutModal);
+    document.getElementById('add-card-btn').addEventListener('click', () => openAddCardModal(null));
+    document.getElementById('add-card-close-btn').addEventListener('click', closeAddCardModal);
+    document.getElementById('add-card-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'add-card-modal') closeAddCardModal();
+    });
+
+    document.getElementById('add-set').addEventListener('change', (e) => {
+      populateAddSubsections(e.target.value, null);
+    });
+    document.getElementById('add-subsection').addEventListener('change', populateAddChecklistAndSuggestions);
+
+    document.getElementById('add-checklist-pick').addEventListener('change', (e) => {
+      const pickedId = e.target.value;
+      if (!pickedId) return;
+      const src = CARDS.find(c => c.id === pickedId);
+      if (!src) return;
+      document.getElementById('add-card-num').value = src.cardNum || '';
+      document.getElementById('add-character').value = src.character || '';
+      if (src.artist) document.getElementById('add-artist').value = src.artist;
+      document.getElementById('add-orientation').value = src.orientation || 'portrait';
+      updateAddCardPreview();
+    });
+
+    ['add-card-num', 'add-character', 'add-numbered', 'add-parallel', 'add-grade', 'add-orientation', 'add-artist'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', updateAddCardPreview);
+        el.addEventListener('change', updateAddCardPreview);
+      }
+    });
+
+    document.getElementById('add-choose-photo-btn').addEventListener('click', () => {
+      document.getElementById('add-card-photo-input').click();
+    });
+    document.getElementById('add-card-photo-input').addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) stageAddCardPhotoBlob(file);
+      e.target.value = '';
+    });
+    document.getElementById('add-clear-photo-btn').addEventListener('click', clearStagedAddPhoto);
+
+    document.getElementById('add-paste-photo-btn').addEventListener('click', async () => {
+      if (!navigator.clipboard || !navigator.clipboard.read) {
+        showToast('Press Ctrl+V on your keyboard to paste the copied photo!');
+        return;
+      }
+      try {
+        const items = await navigator.clipboard.read();
+        for (const item of items) {
+          const imgType = item.types.find(t => t.startsWith('image/'));
+          if (imgType) {
+            const blob = await item.getType(imgType);
+            await stageAddCardPhotoBlob(blob);
+            return;
+          }
+        }
+        showToast('No image found on clipboard — copy an image first, then click Paste!');
+      } catch (_) {
+        showToast('Tip: Press Ctrl+V on your keyboard to paste your copied image!');
+      }
+    });
+
+    const addDropZone = document.getElementById('add-drop-zone');
+    addDropZone.addEventListener('dragover', (e) => {
+      if (!hasGitHubEditPermissions()) return;
+      e.preventDefault();
+      addDropZone.classList.add('drag-over');
+    });
+    addDropZone.addEventListener('dragleave', () => addDropZone.classList.remove('drag-over'));
+    addDropZone.addEventListener('drop', (e) => {
+      if (!hasGitHubEditPermissions()) return;
+      e.preventDefault();
+      addDropZone.classList.remove('drag-over');
+      const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) stageAddCardPhotoBlob(file);
+    });
+
+    document.getElementById('add-save-gh-btn').addEventListener('click', () => commitNewCard(true));
+    document.getElementById('add-save-local-btn').addEventListener('click', () => commitNewCard(false));
+    document.getElementById('modal-delete-custom-btn').addEventListener('click', () => deleteCustomCard(currentModalCard));
     if (topVerPill) topVerPill.addEventListener('click', openAboutModal);
     document.getElementById('about-close-btn').addEventListener('click', closeAboutModal);
     document.getElementById('about-modal').addEventListener('click', (e) => {
@@ -1866,6 +2781,49 @@
 
     // GitHub Sync Modal controls
     document.getElementById('gh-settings-btn').addEventListener('click', () => openGHModal());
+    document.getElementById('gh-drift-btn').addEventListener('click', () => openGHModal('Review and push your local changes so all browsers stay in sync!'));
+
+    document.getElementById('gh-push-local-btn').addEventListener('click', async () => {
+      if (!hasGitHubEditPermissions()) return;
+      const btn = document.getElementById('gh-push-local-btn');
+      const st = document.getElementById('gh-test-status');
+      btn.disabled = true;
+      btn.textContent = '⏳ Pushing...';
+      st.textContent = 'Syncing local card statuses & custom cards to GitHub...';
+      st.className = 'upload-status';
+      try {
+        await saveStatusOverridesToGitHub('Sync local card statuses to GitHub');
+        await saveCustomCardsToGitHub('Sync local custom cards to GitHub');
+        renderActiveTab();
+        st.textContent = '✅ All local changes synced to GitHub! Live site refreshes in ~45s.';
+        st.className = 'upload-status ok';
+        showToast('✅ Local changes pushed to GitHub!');
+      } catch (err) {
+        st.textContent = `❌ Sync failed: ${err.message}`;
+        st.className = 'upload-status err';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '☁️ Push Local Changes to GitHub';
+      }
+    });
+
+    document.getElementById('gh-reset-local-btn').addEventListener('click', async () => {
+      if (!confirm('Reset local browser status & custom card cache to match GitHub Pages exactly?')) return;
+      state.statusOverrides = { ...state.remoteStatusOverrides };
+      saveLocalStatusOverrides(state.statusOverrides);
+      state.customStore = {
+        cards: [...(state.remoteCustomStore.cards || [])],
+        deletedIds: [...(state.remoteCustomStore.deletedIds || [])]
+      };
+      saveLocalCustomStore(state.customStore);
+      syncCardsArray();
+      renderActiveTab();
+      updateDriftIndicatorUI();
+      const st = document.getElementById('gh-test-status');
+      st.textContent = '🔄 Local cache reset to match GitHub Pages exactly.';
+      st.className = 'upload-status ok';
+      showToast('🔄 Local browser cache synced with GitHub!');
+    });
     document.getElementById('gh-close-btn').addEventListener('click', closeGHModal);
     document.getElementById('gh-modal').addEventListener('click', (e) => { if (e.target.id === 'gh-modal') closeGHModal(); });
 
@@ -1919,6 +2877,19 @@
       saveGHConfig(state.gh);
       document.getElementById('gh-token').value = '';
       updateGHButtonState();
+      if (state.remoteStatusLoaded) {
+        state.statusOverrides = { ...state.remoteStatusOverrides };
+        saveLocalStatusOverrides(state.statusOverrides);
+      }
+      if (state.remoteCustomLoaded) {
+        state.customStore = {
+          cards: [...(state.remoteCustomStore.cards || [])],
+          deletedIds: [...(state.remoteCustomStore.deletedIds || [])]
+        };
+        saveLocalCustomStore(state.customStore);
+        syncCardsArray();
+      }
+      renderActiveTab();
       const st = document.getElementById('gh-test-status');
       st.textContent = 'Token cleared from this browser.';
       st.className = 'upload-status';
@@ -1989,7 +2960,7 @@
     document.getElementById('modal-close-btn').addEventListener('click', closeCardModal);
     document.getElementById('card-modal').addEventListener('click', (e) => { if (e.target.id === 'card-modal') closeCardModal(); });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeCardModal(); closeGHModal(); closeAboutModal(); }
+      if (e.key === 'Escape') { closeCardModal(); closeGHModal(); closeAboutModal(); closeAddCardModal(); }
     });
 
     document.getElementById('modal-copy-btn').addEventListener('click', () => {
@@ -2033,7 +3004,9 @@
 
     window.addEventListener('paste', (e) => {
       if (!hasGitHubEditPermissions()) return;
-      if (!document.getElementById('card-modal').classList.contains('open')) return;
+      const isCardOpen = document.getElementById('card-modal').classList.contains('open');
+      const isAddOpen = document.getElementById('add-card-modal').classList.contains('open');
+      if (!isCardOpen && !isAddOpen) return;
       const items = e.clipboardData && e.clipboardData.items;
       if (!items) return;
       for (const item of items) {
@@ -2041,7 +3014,8 @@
           const blob = item.getAsFile();
           if (blob) {
             e.preventDefault();
-            stageCardPhotoBlob(blob);
+            if (isAddOpen) stageAddCardPhotoBlob(blob);
+            else stageCardPhotoBlob(blob);
             return;
           }
         }
@@ -2164,6 +3138,7 @@
         const keepUrl = URL.createObjectURL(state.stagedCardPhoto.outBlob);
         state.sessionPhotos[currentModalCard.id] = keepUrl;
         state.realPhotoLoaded[currentModalCard.id] = true;
+        await saveLocalPhotoBlob(currentModalCard.id, state.stagedCardPhoto.outBlob);
         document.getElementById('modal-img').src = keepUrl;
         renderActiveTab();
         updatePhotoCounter();
@@ -2178,7 +3153,9 @@
     });
 
     renderActiveTab();
+    hydrateLocalPhotoBlobs();
     loadRemoteStatusOverrides();
+    loadRemoteCustomCards();
     verifyStoredGitHubPermissions();
   });
 })();
