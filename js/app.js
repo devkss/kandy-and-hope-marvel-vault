@@ -17,7 +17,7 @@
       const raw = localStorage.getItem(GH_STORAGE_KEY);
       if (raw) return JSON.parse(raw);
     } catch (_) {}
-    return { owner: 'devkss', repo: 'kandy-and-hope-marvel-vault', branch: 'main', token: '' };
+    return { owner: 'devkss', repo: 'kandy-and-hope-marvel-vault', branch: 'main', token: '', hasWrite: false };
   }
 
   function saveGHConfig(cfg) {
@@ -71,10 +71,7 @@
       set: 'all',
       sort: 'rarity',
       quickTag: 'all'
-    },
-    guideFilter: 'all',
-    guideSearch: '',
-    guideHideMissing: true
+    }
   };
 
   // ==========================================================================
@@ -371,17 +368,72 @@
     return 'download';
   }
 
+  function hasGitHubEditPermissions() {
+    return Boolean(
+      state.gh &&
+      typeof state.gh.token === 'string' &&
+      state.gh.token.trim().length > 0 &&
+      state.gh.owner &&
+      state.gh.repo &&
+      state.gh.hasWrite !== false
+    );
+  }
+
+  function updateModalPermissionsUI() {
+    const canEdit = hasGitHubEditPermissions();
+    const modalBox = document.querySelector('#card-modal .modal-box');
+    const statusStudio = document.getElementById('modal-status-studio');
+    const photoStudio = document.getElementById('photo-studio-zone');
+    if (statusStudio) statusStudio.hidden = !canEdit;
+    if (photoStudio) photoStudio.hidden = !canEdit;
+    if (modalBox) modalBox.classList.toggle('modal-readonly', !canEdit);
+  }
+
   function updateGHButtonState() {
     const btn = document.getElementById('gh-settings-btn');
-    const guideBtn = document.getElementById('guide-gh-btn');
-    const connected = Boolean(state.gh.token && state.gh.owner && state.gh.repo);
+    const connected = hasGitHubEditPermissions();
     if (btn) {
       btn.textContent = connected ? '✅ GitHub Connected' : '☁️ GitHub Sync';
       btn.classList.toggle('btn-github-connected', connected);
       btn.classList.toggle('btn-soft', !connected);
     }
-    if (guideBtn) {
-      guideBtn.textContent = connected ? '✅ GitHub Sync Connected' : '☁️ Connect GitHub Sync';
+    updateModalPermissionsUI();
+  }
+
+  // Silently re-verify stored GitHub token permissions on startup (handles revoked/read-only tokens)
+  async function verifyStoredGitHubPermissions() {
+    if (!state.gh || !state.gh.token || !state.gh.owner || !state.gh.repo) {
+      if (state.gh && state.gh.hasWrite) {
+        state.gh.hasWrite = false;
+        saveGHConfig(state.gh);
+      }
+      updateGHButtonState();
+      return;
+    }
+    try {
+      const res = await fetch(
+        `https://api.github.com/repos/${encodeURIComponent(state.gh.owner)}/${encodeURIComponent(state.gh.repo)}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${state.gh.token.trim()}`,
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28'
+          }
+        }
+      );
+      if (res.ok) {
+        const repoData = await res.json();
+        const canPush = !(repoData.permissions && repoData.permissions.push === false);
+        state.gh.hasWrite = canPush;
+        saveGHConfig(state.gh);
+        updateGHButtonState();
+      } else if (res.status === 401 || res.status === 403 || res.status === 404) {
+        state.gh.hasWrite = false;
+        saveGHConfig(state.gh);
+        updateGHButtonState();
+      }
+    } catch (_) {
+      // Offline / transient network error — keep existing verified local state
     }
   }
 
@@ -561,10 +613,13 @@
                          card.tags.includes('Autograph') ? '✍️ ' : '';
 
     const isNumbered = serial !== 'Unnumbered';
-    const serialDisplay = isNumbered ? serial : card.cardNum;
-    const rightMetaLabel = isNumbered
-      ? card.cardNum
-      : (missing ? 'Missing' : (card.subset === 'Base' ? 'Base' : 'Unnumbered'));
+    const cardNumberLeft = card.cardNum || card.slot;
+    const numberedRight = isNumbered ? serial : 'Unnumbered';
+    const rightChipClasses = [
+      'serial-chip',
+      !isNumbered ? 'serial-unnumbered' : '',
+      missing ? 'serial-missing' : ''
+    ].filter(Boolean).join(' ');
 
     const subtitleLine = (card.artist && !card.parallel.includes(card.artist) && card.character !== card.artist)
       ? `${card.parallel} · ${card.artist}`
@@ -585,8 +640,8 @@
         <div class="card-char" title="${card.character}">${specialEmoji}${card.character}</div>
         <div class="card-par" title="${subtitleLine}">${subtitleLine}</div>
         <div class="card-meta-row">
-          <span class="serial-chip ${missing ? 'serial-missing' : ''}">${serialDisplay}</span>
-          <span class="card-code-chip" title="${rightMetaLabel}">${rightMetaLabel}</span>
+          <span class="card-num-chip" title="Card ${cardNumberLeft}">${cardNumberLeft}</span>
+          <span class="${rightChipClasses}" title="${numberedRight}">${numberedRight}</span>
         </div>
       </div>
     `;
@@ -1224,66 +1279,6 @@
     rankedTbody.appendChild(frag);
   }
 
-  // Render Photo Setup & Filename Guide Tab
-  function renderGuideTab() {
-    const tbody = document.getElementById('guide-tbody');
-    const q = state.guideSearch.trim().toLowerCase();
-    const list = CARDS.filter(c => {
-      if (state.guideHideMissing && isCardMissing(c)) return false;
-      if (state.guideFilter !== 'all') {
-        if (state.guideFilter === 'chrome-inserts') {
-          if (!CHROME_INSERT_IDS.has(c.display)) return false;
-        } else if (String(c.display) !== state.guideFilter) {
-          return false;
-        }
-      }
-      if (q && !`${c.character} ${c.parallel} ${c.subset} ${c.cardNum} ${getCardSerial(c)} ${c.recommendedPath}`.toLowerCase().includes(q)) return false;
-      return true;
-    });
-
-    tbody.innerHTML = list.map(c => {
-      const hasReal = Boolean(state.realPhotoLoaded[c.id]);
-      const missing = isCardMissing(c);
-      const dispMeta = DISPLAYS.find(d => d.id === c.display);
-      const locLabel = CHROME_INSERT_IDS.has(c.display)
-        ? `${dispMeta ? dispMeta.shortTitle : 'Insert'} · ${c.cardNum}`
-        : `${c.display === 6 ? 'Other' : 'D' + c.display} · ${c.slot}`;
-      const statusBadge = missing
-        ? '<span class="pill" style="background:rgba(225,29,72,0.16);color:#e11d48;">🔍 Missing Slot</span>'
-        : (hasReal
-            ? '<span class="pill" style="background:rgba(16,185,129,0.2);color:#059669;">✅ Real Photo</span>'
-            : '<span class="pill">🎨 Placeholder SVG</span>');
-      return `
-        <tr>
-          <td><strong>${locLabel}</strong></td>
-          <td>${c.character}</td>
-          <td>${c.parallel} <span style="color:var(--text-muted);">(${getCardSerial(c)})</span></td>
-          <td><code class="fname">${c.recommendedPath}</code></td>
-          <td>${statusBadge}</td>
-          <td>
-            <div style="display:flex;gap:6px;">
-              <button class="btn btn-primary" style="padding:5px 10px;font-size:0.74rem;" data-open-card="${c.id}">📸 Swap</button>
-              <button class="btn btn-soft" style="padding:5px 10px;font-size:0.74rem;" data-copy="${c.baseFilename}.jpg">Copy</button>
-            </div>
-          </td>
-        </tr>
-      `;
-    }).join('');
-
-    tbody.querySelectorAll('button[data-copy]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        navigator.clipboard?.writeText(btn.dataset.copy);
-        showToast(`Copied: ${btn.dataset.copy}`);
-      });
-    });
-
-    tbody.querySelectorAll('button[data-open-card]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const card = CARDS.find(x => x.id === btn.dataset.openCard);
-        if (card) openCardModal(card, false);
-      });
-    });
-  }
 
   // ==========================================================================
   // CARD INSPECTOR MODAL + STATUS TOGGLE + STAGED PHOTO STUDIO
@@ -1437,6 +1432,7 @@
     syncModalStatusUI(card, missing, false);
 
     document.getElementById('modal-filepath').textContent = card.recommendedPath;
+    updateModalPermissionsUI();
     modal.classList.add('open');
   }
 
@@ -1529,7 +1525,7 @@
       showToast(`🎉 Loaded ${matched} real photo${matched === 1 ? '' : 's'} into the vault!`);
       burstConfetti();
     } else {
-      showToast('No matching filenames found — check the Photo Setup tab for exact names.');
+      showToast('No matching filenames found — open any card to check its exact filename.');
     }
   }
 
@@ -1559,8 +1555,7 @@
       renderSetsTab();
     } else if (state.activeTab === 'values') {
       renderValuesTab();
-    } else if (state.activeTab === 'guide') {
-      renderGuideTab();
+
     }
   }
 
@@ -1605,27 +1600,6 @@
     tick();
   }
 
-  // CSV Download
-  function downloadCSV() {
-    const header = ['Section','Slot','Status','Owner','Set','CardNum','Character','Parallel','Serial','Grade','Folder','ExactFilenameToSave'];
-    const rows = CARDS.map(c => {
-      const dispMeta = DISPLAYS.find(d => d.id === c.display);
-      return [
-        dispMeta ? dispMeta.shortTitle : `Display ${c.display}`,
-        c.slot,
-        isCardMissing(c) ? 'Missing' : 'Owned',
-        c.owner, c.set, c.cardNum, c.character, c.parallel,
-        getCardSerial(c), c.grade || 'Raw',
-        `assets/cards/${c.folder}/`, `${c.baseFilename}.jpg`
-      ];
-    });
-    const csvText = [header, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
-    const blob = new Blob([csvText], { type: 'text/csv;charset=utf-8;' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'kandy-and-hope-card-filenames.csv';
-    a.click();
-  }
 
   // Boot & Event Wiring
   document.addEventListener('DOMContentLoaded', () => {
@@ -1673,7 +1647,6 @@
     // Folder batch loader
     const folderInput = document.getElementById('folder-upload-input');
     document.getElementById('load-folder-btn').addEventListener('click', () => folderInput.click());
-    document.getElementById('guide-folder-btn').addEventListener('click', () => folderInput.click());
     folderInput.addEventListener('change', (e) => handleFolderUpload(e.target.files));
 
     // Explorer Filters
@@ -1691,15 +1664,8 @@
       });
     });
 
-    // Guide tab filters & CSV
-    document.getElementById('guide-display-filter').addEventListener('change', e => { state.guideFilter = e.target.value; renderGuideTab(); });
-    document.getElementById('guide-search').addEventListener('input', e => { state.guideSearch = e.target.value; renderGuideTab(); });
-    document.getElementById('guide-hide-missing').addEventListener('change', e => { state.guideHideMissing = e.target.checked; renderGuideTab(); });
-    document.getElementById('download-csv-btn').addEventListener('click', downloadCSV);
-
     // GitHub Sync Modal controls
     document.getElementById('gh-settings-btn').addEventListener('click', () => openGHModal());
-    document.getElementById('guide-gh-btn').addEventListener('click', () => openGHModal());
     document.getElementById('gh-close-btn').addEventListener('click', closeGHModal);
     document.getElementById('gh-modal').addEventListener('click', (e) => { if (e.target.id === 'gh-modal') closeGHModal(); });
 
@@ -1734,7 +1700,7 @@
         if (repoData.permissions && repoData.permissions.push === false) {
           throw new Error('Token connected, but lacks Contents Read & Write permission.');
         }
-        state.gh = { owner, repo, branch, token };
+        state.gh = { owner, repo, branch, token, hasWrite: true };
         saveGHConfig(state.gh);
         updateGHButtonState();
         st.textContent = `✅ Connected to ${owner}/${repo} (${branch})! You can now save photos & status directly to GitHub.`;
@@ -1749,6 +1715,7 @@
 
     document.getElementById('gh-clear-btn').addEventListener('click', () => {
       state.gh.token = '';
+      state.gh.hasWrite = false;
       saveGHConfig(state.gh);
       document.getElementById('gh-token').value = '';
       updateGHButtonState();
@@ -1865,6 +1832,7 @@
     });
 
     window.addEventListener('paste', (e) => {
+      if (!hasGitHubEditPermissions()) return;
       if (!document.getElementById('card-modal').classList.contains('open')) return;
       const items = e.clipboardData && e.clipboardData.items;
       if (!items) return;
@@ -1880,17 +1848,20 @@
       }
     });
 
-    // Drag & Drop onto Photo Studio or Card Preview
+    // Drag & Drop onto Photo Studio or Card Preview (only active when GitHub write permissions are connected)
     ['photo-studio-zone', 'modal-drop-preview'].forEach(elId => {
       const zone = document.getElementById(elId);
       zone.addEventListener('dragover', (e) => {
+        if (!hasGitHubEditPermissions()) return;
         e.preventDefault();
         document.getElementById('photo-studio-zone').classList.add('drag-over');
       });
       zone.addEventListener('dragleave', () => {
+        if (!hasGitHubEditPermissions()) return;
         document.getElementById('photo-studio-zone').classList.remove('drag-over');
       });
       zone.addEventListener('drop', (e) => {
+        if (!hasGitHubEditPermissions()) return;
         e.preventDefault();
         document.getElementById('photo-studio-zone').classList.remove('drag-over');
         const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
@@ -2008,5 +1979,6 @@
 
     renderActiveTab();
     loadRemoteStatusOverrides();
+    verifyStoredGitHubPermissions();
   });
 })();

@@ -1924,3 +1924,65 @@ body.dark-vault .col-active-val {
 .val-grade-pill.ace-9 {
   background: linear-gradient(135deg, #475569, #64748b);
 }
+
+/* ==========================================================================
+   V6 UI UPDATES: CONSISTENT CARD BOTTOM META & READ-ONLY MODAL POLISH
+   ========================================================================== */
+.card-meta-row {
+  gap: 6px;
+}
+
+/* Left side: always the card number / card serial no (e.g. #138, #FF-49, #CC-01) */
+.card-num-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.71rem;
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Right side: always the numbered print-run (e.g. 06/10, /5) or Unnumbered */
+.card-meta-row .serial-chip {
+  margin-left: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 62%;
+  text-align: right;
+}
+
+.serial-chip.serial-unnumbered {
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 700;
+  padding: 2px 2px;
+}
+body.dark-vault .serial-chip.serial-unnumbered {
+  color: var(--text-muted);
+}
+.serial-chip.serial-unnumbered.serial-missing {
+  background: transparent;
+  color: #e11d48;
+  opacity: 0.85;
+}
+body.dark-vault .serial-chip.serial-unnumbered.serial-missing {
+  color: #fda4af;
+}
+
+/* Clean spacing on Card Modal when visitor is in read-only mode (GitHub not connected) */
+.modal-box.modal-readonly .detail-list {
+  margin-bottom: 0;
+}
+
+/* Explicitly honour HTML hidden attribute on studio blocks */
+.status-studio[hidden],
+.photo-studio[hidden] {
+  display: none !important;
+}

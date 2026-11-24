@@ -55,7 +55,7 @@
         <p>
           Welcome to our interactive collector showcase featuring <strong>Hope's Moon Girl &amp; Devil Dinosaur Rainbow</strong>
           and <strong>Kandy's 2026 Topps Chrome &amp; Neon Marvel</strong> slabs, artist autographs, numbered parallels, and insert chases.
-          Hover over any card for 3D holographic shine, or click to inspect serials, pull odds, grades, or upload your own photo!
+          Hover over any card for 3D holographic shine, or click to inspect card numbers, serials, pull odds, and grades!
         </p>
 
         <div class="stats-grid stats-grid-3">
@@ -86,7 +86,6 @@
       <button class="tab-btn" data-tab="explorer" id="tab-btn-explorer">🔎 Vault Explorer</button>
       <button class="tab-btn" data-tab="sets">📚 Sets, Checklists &amp; Odds</button>
       <button class="tab-btn tab-values" data-tab="values" id="tab-btn-values">💷 Estimated Values</button>
-      <button class="tab-btn" data-tab="guide">📷 Photo Setup</button>
     </nav>
 
     <main>
@@ -298,64 +297,6 @@
         </div>
       </section>
 
-      <!-- Tab 7: Photo Setup & Filename Guide -->
-      <section id="panel-guide" class="tab-panel">
-        <div class="display-section">
-          <div class="display-header">
-            <div class="display-title-group">
-              <h2>📷 Zero-Rename Photo Uploader &amp; Filename Guide</h2>
-              <p>Click any card in the vault to pick, paste from Google Photos, save directly to GitHub, or auto-save locally with the exact filename!</p>
-            </div>
-            <div class="display-badges">
-              <button id="guide-gh-btn" class="btn btn-primary">☁️ Connect GitHub Sync</button>
-              <button id="guide-folder-btn" class="btn btn-soft">📁 Load Local Folder</button>
-              <button id="download-csv-btn" class="btn btn-soft">⬇️ Download Card CSV</button>
-            </div>
-          </div>
-
-          <div class="rainbow-bar-box" style="margin-bottom:20px;">
-            <strong>Fastest Way to Swap All Card Photos (Zero Manual Renaming!):</strong>
-            <ol style="margin:8px 0 0;padding-left:20px;line-height:1.65;color:var(--text-muted);font-size:0.9rem;">
-              <li><strong>On your phone (easiest for Google Photos!):</strong> Open this live site on your Pixel, click <strong>☁️ GitHub Sync</strong> once to paste your token, then tap any card → <strong>📸 Choose Photo</strong> (opens your Google Photos albums directly) → <strong>☁️ Confirm &amp; Save to GitHub</strong>!</li>
-              <li><strong>On your Windows PC with Google Photos:</strong> Open your Google Photos album side-by-side, right-click any card photo → <strong>Copy image</strong>, click the card here and press <strong>Ctrl+V</strong> (or click <strong>📋 Paste Image</strong>), then hit <strong>☁️ Save to GitHub</strong> or <strong>💾 Save Locally (Auto-Renamed)</strong>!</li>
-              <li>Every saved photo is automatically optimised to a razor-sharp web JPEG (~150 KB) and given its exact filename automatically.</li>
-            </ol>
-          </div>
-
-          <div class="filter-bar" style="grid-template-columns: 2fr 1.2fr auto;">
-            <input type="search" id="guide-search" placeholder="Filter filename guide by character, insert set, serial, or filename..." />
-            <select id="guide-display-filter">
-              <option value="all">All Sections</option>
-              <option value="1">Hope: Moon Girl Chrome Rainbow</option>
-              <option value="2">Hope: Devil Dinosaur Chrome Rainbow</option>
-              <option value="6">Hope: Neon/Sapphire Others (6)</option>
-              <option value="3">Kandy: Chrome Base (Numbered Only)</option>
-              <option value="chrome-inserts">Kandy: Chrome Insert Sets (29 Sets)</option>
-              <option value="5">Kandy: Neon Marvel (39)</option>
-            </select>
-            <label class="guide-toggle-wrap">
-              <input type="checkbox" id="guide-hide-missing" checked />
-              Owned Only
-            </label>
-          </div>
-
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Slot</th>
-                  <th>Character</th>
-                  <th>Parallel &amp; Serial</th>
-                  <th>Exact File Path</th>
-                  <th>Current Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="guide-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
     </main>
   </div>
 
@@ -374,7 +315,7 @@
           <div id="modal-details" class="detail-list"></div>
 
           <!-- Collection Status Control (Missing <-> Collected + Serial Editor) -->
-          <div class="status-studio" id="modal-status-studio">
+          <div class="status-studio" id="modal-status-studio" hidden>
             <div class="status-studio-top">
               <span id="modal-status-pill" class="status-pill-owned">✅ Owned in Collection</span>
               <button id="modal-toggle-status-btn" class="btn btn-soft" style="padding:6px 13px;font-size:0.78rem;">Mark as Missing</button>
@@ -396,7 +337,7 @@
             <div id="modal-status-msg" class="upload-status"></div>
           </div>
 
-          <div class="photo-studio" id="photo-studio-zone">
+          <div class="photo-studio" id="photo-studio-zone" hidden>
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;">
               <span style="font-size:0.75rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);">
                 📸 Swap Card Photo (Auto-Renames!)
