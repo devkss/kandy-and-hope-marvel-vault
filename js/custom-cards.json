@@ -1,4 +1,39 @@
 {
-  "cards": [],
+  "cards": [
+    {
+      "id": "custom-102-3aq8h-mhur",
+      "display": 102,
+      "row": 98,
+      "col": 1,
+      "slot": "MI-04",
+      "owner": "Kandy",
+      "set": "2026 Topps Chrome Marvel",
+      "cardNum": "#MI-04",
+      "character": "Dazzler",
+      "artist": null,
+      "subset": "Marvel Icons",
+      "parallel": "Marvel Icons",
+      "serial": "Unnumbered",
+      "printRun": null,
+      "format": "All Formats",
+      "odds": "Insert",
+      "valLow": 0,
+      "valHigh": 0,
+      "grade": null,
+      "tags": [
+        "Insert"
+      ],
+      "theme": "purple",
+      "pattern": "insert",
+      "orientation": "portrait",
+      "folder": "display-4-chrome-inserts",
+      "baseFilename": "custom_d102_mi-04_dazzler_marvel-icons_unnumbered_3aq8h",
+      "recommendedPath": "assets/cards/display-4-chrome-inserts/custom_d102_mi-04_dazzler_marvel-icons_unnumbered_3aq8h.jpg",
+      "placeholderSvg": null,
+      "missing": false,
+      "isCustom": true,
+      "updatedAt": 1795548635729
+    }
+  ],
   "deletedIds": []
 }
