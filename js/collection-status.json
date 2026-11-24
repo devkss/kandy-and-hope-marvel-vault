@@ -103,5 +103,19 @@
     "valLow": 0,
     "valHigh": 0,
     "updatedAt": 1795547583178
+  },
+  "kc-101-ff-31-031": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795547628697
+  },
+  "kc-101-ff-32-032": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795547647872
   }
 }
