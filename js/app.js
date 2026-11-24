@@ -1,9 +1,19 @@
 (function () {
-  const APP_VERSION = 'V1.11';
+  const APP_VERSION = 'V1.12';
+  const ANIM_PREF_KEY = 'kh_vault_anim_paused_v1';
   const DISPLAY_STICKERS = {
     1: { src: 'assets/stickers/moon-girl-topps.png', alt: 'Moon Girl Topps comic sticker', cls: 'sticker-tall' },
     2: { src: 'assets/stickers/devil-dinosaur.png', alt: 'Devil Dinosaur sticker', cls: 'sticker-wide' },
-    6: { src: 'assets/stickers/mg-dd-team.png', alt: 'Moon Girl and Devil Dinosaur sticker', cls: 'sticker-duo' }
+    6: {
+      isGif: true,
+      src: 'assets/animations/superhero-trex-loop.gif',
+      poster: 'assets/animations/posters/superhero-trex-loop.jpg',
+      alt: 'Moon Girl and Devil Dinosaur comic high-five animation',
+      title: 'Moon Girl & Devil Dinosaur High-Five!',
+      caption: 'Our favorite duo celebrating Hope\'s 2026 Sapphire & Neon bonus rainbow pulls!',
+      width: 414,
+      height: 414
+    }
   };
   const BASE_CARDS = window.VAULT_CARDS || [];
   let CARDS = [...BASE_CARDS];
@@ -155,7 +165,17 @@
   CHROME_INSERT_DISPLAYS.forEach(d => { defaultStatusFilters[d.id] = 'owned'; });
   NEON_INSERT_DISPLAYS.forEach(d => { defaultStatusFilters[d.id] = 'owned'; });
 
+  function loadInitialAnimPaused() {
+    try {
+      const saved = localStorage.getItem(ANIM_PREF_KEY);
+      if (saved === 'true') return true;
+      if (saved === 'false') return false;
+    } catch (_) {}
+    return Boolean(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
   const state = {
+    animationsPaused: loadInitialAnimPaused(),
     activeTab: 'hope',
     valMode: 'mid',           // 'low' | 'mid' | 'high' (used exclusively on Estimated Values tab)
     valOwnerFilter: 'all',    // 'all' (Together - default) | 'Kandy' | 'Hope'
@@ -1247,13 +1267,34 @@
 
     const dispSticker = DISPLAY_STICKERS[displayId] || null;
     const titleBlockHTML = dispSticker
-      ? `<div class="display-title-with-sticker">
-           <img src="${dispSticker.src}" alt="${dispSticker.alt}" class="comic-sticker section-header-sticker ${dispSticker.cls || ''}" loading="lazy" />
-           <div class="display-title-group">
-             <h2>${meta.title}</h2>
-             <p>${meta.subtitle}</p>
-           </div>
-         </div>`
+      ? (dispSticker.isGif
+          ? `<div class="display-title-with-sticker">
+               <button type="button" class="gif-cinema-btn gif-frame-square"
+                 data-gif-src="${dispSticker.src}"
+                 data-gif-title="${dispSticker.title}"
+                 data-gif-caption="${dispSticker.caption}"
+                 aria-label="Enlarge ${dispSticker.title} animation">
+                 <img class="vault-anim-gif"
+                   src="${state.animationsPaused ? dispSticker.poster : dispSticker.src}"
+                   data-gif="${dispSticker.src}"
+                   data-poster="${dispSticker.poster}"
+                   alt="${dispSticker.alt}"
+                   width="${dispSticker.width}" height="${dispSticker.height}" loading="lazy" decoding="async" />
+                 <span class="gif-zoom-pill" aria-hidden="true">🔍</span>
+                 <span class="gif-paused-pill" aria-hidden="true">▶</span>
+               </button>
+               <div class="display-title-group">
+                 <h2>${meta.title}</h2>
+                 <p>${meta.subtitle}</p>
+               </div>
+             </div>`
+          : `<div class="display-title-with-sticker">
+               <img src="${dispSticker.src}" alt="${dispSticker.alt}" class="comic-sticker section-header-sticker ${dispSticker.cls || ''}" loading="lazy" />
+               <div class="display-title-group">
+                 <h2>${meta.title}</h2>
+                 <p>${meta.subtitle}</p>
+               </div>
+             </div>`)
       : `<div class="display-title-group">
            <h2>${meta.title}</h2>
            <p>${meta.subtitle}</p>
@@ -2545,6 +2586,38 @@
     document.getElementById('about-modal').classList.remove('open');
   }
 
+  function syncAnimationsState() {
+    const paused = Boolean(state.animationsPaused);
+    document.body.classList.toggle('anims-paused', paused);
+    const btn = document.getElementById('anim-toggle-btn');
+    if (btn) {
+      btn.textContent = paused ? '▶️ Animations: Paused' : '🎬 Animations: On';
+      btn.setAttribute('aria-pressed', paused ? 'true' : 'false');
+    }
+    document.querySelectorAll('img.vault-anim-gif').forEach(img => {
+      const target = paused ? img.dataset.poster : img.dataset.gif;
+      if (target && img.getAttribute('src') !== target) {
+        img.setAttribute('src', target);
+      }
+    });
+  }
+
+  function openGifLightbox(gifSrc, title, caption) {
+    if (!gifSrc) return;
+    const modal = document.getElementById('gif-lightbox-modal');
+    const img = document.getElementById('gif-lightbox-img');
+    document.getElementById('gif-lightbox-title').textContent = title || 'Vault Animation';
+    document.getElementById('gif-lightbox-caption').textContent = caption || '';
+    img.src = gifSrc;
+    img.alt = title || 'Vault animation';
+    modal.classList.add('open');
+  }
+
+  function closeGifLightbox() {
+    const modal = document.getElementById('gif-lightbox-modal');
+    if (modal) modal.classList.remove('open');
+  }
+
   // Batch Folder Photo Loader
   function handleFolderUpload(files) {
     let matched = 0;
@@ -2607,8 +2680,8 @@
       renderSetsTab();
     } else if (state.activeTab === 'values') {
       renderValuesTab();
-
     }
+    syncAnimationsState();
   }
 
   // Confetti Celebration
@@ -2774,6 +2847,26 @@
     document.getElementById('val-search').addEventListener('input', (e) => {
       state.valSearch = e.target.value;
       renderValuesTab();
+    });
+
+    // Animations Play/Pause toggle (accessible + reduced-motion friendly)
+    document.getElementById('anim-toggle-btn').addEventListener('click', () => {
+      state.animationsPaused = !state.animationsPaused;
+      try { localStorage.setItem(ANIM_PREF_KEY, String(state.animationsPaused)); } catch (_) {}
+      syncAnimationsState();
+      showToast(state.animationsPaused ? '⏸️ Animations paused (click any scene to watch!)' : '🎬 Vault animations playing!');
+    });
+
+    // Delegated click handler for all Animated Cinema Frames (including dynamic Display 6)
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest && e.target.closest('.gif-cinema-btn');
+      if (!btn) return;
+      openGifLightbox(btn.dataset.gifSrc, btn.dataset.gifTitle, btn.dataset.gifCaption);
+    });
+
+    document.getElementById('gif-lightbox-close-btn').addEventListener('click', closeGifLightbox);
+    document.getElementById('gif-lightbox-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'gif-lightbox-modal') closeGifLightbox();
     });
 
     // Theme switcher
@@ -2990,7 +3083,7 @@
     document.getElementById('modal-close-btn').addEventListener('click', closeCardModal);
     document.getElementById('card-modal').addEventListener('click', (e) => { if (e.target.id === 'card-modal') closeCardModal(); });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeCardModal(); closeGHModal(); closeAboutModal(); closeAddCardModal(); }
+      if (e.key === 'Escape') { closeCardModal(); closeGHModal(); closeAboutModal(); closeAddCardModal(); closeGifLightbox(); }
     });
 
     document.getElementById('modal-copy-btn').addEventListener('click', () => {

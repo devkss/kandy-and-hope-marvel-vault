@@ -25,7 +25,7 @@
       <div class="brand-pill">
         <span class="brand-dot"></span>
         <span>Kandy &amp; Hope's Marvel Card Vault · 2026 Edition</span>
-        <button type="button" id="app-version-pill" class="version-chip" title="About &amp; Version Info">V1.11</button>
+        <button type="button" id="app-version-pill" class="version-chip" title="About &amp; Version Info">V1.12</button>
       </div>
       <div class="top-actions">
         <span id="photo-progress-badge" class="pill">0 / 180 Real Photos Loaded</span>
@@ -34,6 +34,7 @@
         <button id="gh-drift-btn" class="btn btn-warn-sync" hidden title="Some local changes have not been pushed to GitHub yet">⚠️ Sync Local Changes</button>
         <button id="gh-settings-btn" class="btn btn-soft">☁️ GitHub Sync</button>
         <button id="load-folder-btn" class="btn btn-soft">📁 Load Folder</button>
+        <button id="anim-toggle-btn" class="btn btn-soft" title="Pause or resume animated GIF scenes" aria-pressed="false">🎬 Animations: On</button>
         <button id="theme-toggle" class="btn btn-soft">🌙 Dark Vault Mode</button>
         <button id="sparkle-btn" class="btn btn-sparkle">✨ Sparkle Party!</button>
       </div>
@@ -96,10 +97,21 @@
     <main>
       <!-- Tab 1: Hope's Rainbow Room -->
       <section id="panel-hope" class="tab-panel active">
-        <div class="tab-mascot-banner mascot-hope has-banner-sticker">
-          <div class="mascot-avatar">
-            <img src="assets/illustrations/hope-slab.jpg" alt="Hope holding a shiny rainbow slab" loading="lazy" />
-          </div>
+        <div class="tab-mascot-banner mascot-hope mascot-banner-panoramic has-banner-sticker">
+          <button type="button" class="gif-cinema-btn gif-frame-panoramic"
+            data-gif-src="assets/animations/hope-glowing-card-reveal.gif"
+            data-gif-title="Hope's Glowing Trading Card Reveal"
+            data-gif-caption="Hope unveiling a sparkling rainbow hit right beside her graded slabs and Moon Girl &amp; Devil Dinosaur shelf!"
+            aria-label="Enlarge Hope's Glowing Trading Card Reveal animation">
+            <img class="vault-anim-gif"
+              src="assets/animations/hope-glowing-card-reveal.gif"
+              data-gif="assets/animations/hope-glowing-card-reveal.gif"
+              data-poster="assets/animations/posters/hope-glowing-card-reveal.jpg"
+              alt="Hope excitedly revealing a glowing rainbow trading card"
+              width="720" height="237" decoding="async" />
+            <span class="gif-zoom-pill" aria-hidden="true">🔍 Watch Big</span>
+            <span class="gif-paused-pill" aria-hidden="true">▶ Paused</span>
+          </button>
           <div class="mascot-copy">
             <span class="mascot-tag">🌈 Hope's Rainbow Room</span>
             <h3>Moon Girl &amp; Devil Dinosaur Rainbow HQ!</h3>
@@ -115,9 +127,20 @@
       <!-- Tab 2: Kandy's Chrome Vault -->
       <section id="panel-chrome" class="tab-panel">
         <div class="tab-mascot-banner mascot-chrome">
-          <div class="mascot-avatar">
-            <img src="assets/illustrations/kandy-slab.jpg" alt="Kandy showing off a rainbow graded slab" loading="lazy" />
-          </div>
+          <button type="button" class="gif-cinema-btn gif-frame-3x2 gif-rim-chrome"
+            data-gif-src="assets/animations/kandy-card-victory.gif"
+            data-gif-title="Kandy's Chrome Hit Victory!"
+            data-gif-caption="Ripping into a fresh pack and celebrating a gleaming rainbow graded slab pull!"
+            aria-label="Enlarge Kandy's Chrome Hit Victory animation">
+            <img class="vault-anim-gif"
+              src="assets/animations/kandy-card-victory.gif"
+              data-gif="assets/animations/kandy-card-victory.gif"
+              data-poster="assets/animations/posters/kandy-card-victory.jpg"
+              alt="Kandy ripping a glowing pack and celebrating a sparkling card hit"
+              width="508" height="337" loading="lazy" decoding="async" />
+            <span class="gif-zoom-pill" aria-hidden="true">🔍 Watch Big</span>
+            <span class="gif-paused-pill" aria-hidden="true">▶ Paused</span>
+          </button>
           <div class="mascot-copy">
             <span class="mascot-tag">🏆 Kandy's Chrome Vault</span>
             <h3>2026 Topps Chrome Marvel Slabs, Autos &amp; Inserts</h3>
@@ -130,9 +153,20 @@
       <!-- Tab 3: Kandy's Neon Vault -->
       <section id="panel-neon" class="tab-panel">
         <div class="tab-mascot-banner mascot-neon">
-          <div class="mascot-avatar">
-            <img src="assets/illustrations/kandy-rip.jpg" alt="Kandy ripping open a glowing pack of cards" loading="lazy" />
-          </div>
+          <button type="button" class="gif-cinema-btn gif-frame-3x2 gif-rim-neon"
+            data-gif-src="assets/animations/pack-opening-celebration.gif"
+            data-gif-title="Neon Glow Pack Opening Celebration"
+            data-gif-caption="Kandy &amp; Hope lighting up the card table with a glowing Neon Marvel foil pull!"
+            aria-label="Enlarge Neon Glow Pack Opening Celebration animation">
+            <img class="vault-anim-gif"
+              src="assets/animations/pack-opening-celebration.gif"
+              data-gif="assets/animations/pack-opening-celebration.gif"
+              data-poster="assets/animations/posters/pack-opening-celebration.jpg"
+              alt="Kandy and Hope celebrating a glowing trading card pack opening"
+              width="508" height="337" loading="lazy" decoding="async" />
+            <span class="gif-zoom-pill" aria-hidden="true">🔍 Watch Big</span>
+            <span class="gif-paused-pill" aria-hidden="true">▶ Paused</span>
+          </button>
           <div class="mascot-copy">
             <span class="mascot-tag">⚡ Kandy's Neon Vault</span>
             <h3>2026 Topps Neon Marvel Foil Parallels &amp; Case Hits</h3>
@@ -145,9 +179,20 @@
       <!-- Tab 4: Vault Explorer -->
       <section id="panel-explorer" class="tab-panel">
         <div class="tab-mascot-banner mascot-explorer">
-          <div class="mascot-avatar">
-            <img src="assets/illustrations/kandy-hope-rip.jpg" alt="Kandy and Hope ripping a glowing gold pack together" loading="lazy" />
-          </div>
+          <button type="button" class="gif-cinema-btn gif-frame-16x9 gif-rim-explorer"
+            data-gif-src="assets/animations/kandy-hope-welcome.gif"
+            data-gif-title="Welcome to Kandy &amp; Hope's Master Vault!"
+            data-gif-caption="Explore every card, graded slab, autograph, and rainbow parallel across both collections."
+            aria-label="Enlarge Joyful Trading Card Welcome animation">
+            <img class="vault-anim-gif"
+              src="assets/animations/kandy-hope-welcome.gif"
+              data-gif="assets/animations/kandy-hope-welcome.gif"
+              data-poster="assets/animations/posters/kandy-hope-welcome.jpg"
+              alt="Kandy and Hope welcoming visitors at their trading card table"
+              width="553" height="309" loading="lazy" decoding="async" />
+            <span class="gif-zoom-pill" aria-hidden="true">🔍 Watch Big</span>
+            <span class="gif-paused-pill" aria-hidden="true">▶ Paused</span>
+          </button>
           <div class="mascot-copy">
             <span class="mascot-tag">🔎 Master Vault Explorer</span>
             <h3>Search Every Card Across Both Collections</h3>
@@ -209,9 +254,20 @@
       <!-- Tab 5: Sets, Checklists & Odds (No Money Values) -->
       <section id="panel-sets" class="tab-panel">
         <div class="tab-mascot-banner mascot-sets">
-          <div class="mascot-avatar">
-            <img src="assets/illustrations/kandy-hope-waving.jpg" alt="Kandy and Hope waving hello" loading="lazy" />
-          </div>
+          <button type="button" class="gif-cinema-btn gif-frame-16x9 gif-rim-sets"
+            data-gif-src="assets/animations/dinosaur-park-chase.gif"
+            data-gif-title="Dinosaur Park Chase Adventure!"
+            data-gif-caption="Kandy &amp; Hope's park chat gets interrupted when Moon Girl &amp; Devil Dinosaur charge onto the chase!"
+            aria-label="Enlarge Dinosaur Park Chase Adventure animation">
+            <img class="vault-anim-gif"
+              src="assets/animations/dinosaur-park-chase.gif"
+              data-gif="assets/animations/dinosaur-park-chase.gif"
+              data-poster="assets/animations/posters/dinosaur-park-chase.jpg"
+              alt="Dinosaur Park Chase Adventure animated comic scene"
+              width="414" height="230" loading="lazy" decoding="async" />
+            <span class="gif-zoom-pill" aria-hidden="true">🔍 Watch Big</span>
+            <span class="gif-paused-pill" aria-hidden="true">▶ Paused</span>
+          </button>
           <div class="mascot-copy">
             <span class="mascot-tag">📚 Collector Reference Guide</span>
             <h3>Official 2026 Set Guides, Pull Odds &amp; Active Chases</h3>
@@ -261,9 +317,20 @@
       <!-- Tab 6: Dedicated Estimated Values Dashboard -->
       <section id="panel-values" class="tab-panel">
         <div class="tab-mascot-banner mascot-values">
-          <div class="mascot-avatar">
-            <img src="assets/illustrations/kandy-hope-celebrating.jpg" alt="Kandy and Hope high-fiving with glowing graded slabs" loading="lazy" />
-          </div>
+          <button type="button" class="gif-cinema-btn gif-frame-16x9 gif-rim-values"
+            data-gif-src="assets/animations/pack-opening-adventure.gif"
+            data-gif-title="Double Graded Slab Celebration!"
+            data-gif-caption="Kandy &amp; Hope pulling twin gleaming graded slabs together at the trading card table!"
+            aria-label="Enlarge Double Graded Slab Celebration animation">
+            <img class="vault-anim-gif"
+              src="assets/animations/pack-opening-adventure.gif"
+              data-gif="assets/animations/pack-opening-adventure.gif"
+              data-poster="assets/animations/posters/pack-opening-adventure.jpg"
+              alt="Kandy and Hope celebrating twin glowing graded slabs together"
+              width="553" height="309" loading="lazy" decoding="async" />
+            <span class="gif-zoom-pill" aria-hidden="true">🔍 Watch Big</span>
+            <span class="gif-paused-pill" aria-hidden="true">▶ Paused</span>
+          </button>
           <div class="mascot-copy">
             <span class="mascot-tag">💷 Vault Valuations</span>
             <h3>Estimated Market Values &amp; Top Ranked Hits</h3>
@@ -668,16 +735,37 @@
       </div>
 
       <div class="about-version-row">
-        <span class="about-version-badge">Version <strong id="about-version-num">V1.11</strong></span>
+        <span class="about-version-badge">Version <strong id="about-version-num">V1.12</strong></span>
         <span class="about-meta-dot">•</span>
         <span class="about-edition-text">2026 Chrome &amp; Neon Marvel Edition</span>
       </div>
 
       <div class="about-duo-strip">
-        <img src="assets/illustrations/kandy-hope-waving.jpg" alt="Kandy and Hope waving" class="about-duo-thumb" />
+        <img class="vault-anim-gif about-duo-thumb about-duo-gif"
+          src="assets/animations/kandy-hope-welcome.gif"
+          data-gif="assets/animations/kandy-hope-welcome.gif"
+          data-poster="assets/animations/posters/kandy-hope-welcome.jpg"
+          alt="Kandy and Hope joyful trading card welcome animation"
+          width="553" height="309" loading="lazy" decoding="async" />
         <p>
           Hand-crafted by <strong>BiddyBoo Software</strong> to showcase Hope's Moon Girl &amp; Devil Dinosaur rainbows alongside Kandy's 2026 Topps Chrome &amp; Neon Marvel vaults.
         </p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Animated Comic Cinema Lightbox Modal -->
+  <div id="gif-lightbox-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="gif-lightbox-title">
+    <div class="modal-box gif-lightbox-box">
+      <button id="gif-lightbox-close-btn" class="modal-close" aria-label="Close">✕</button>
+      <div class="gif-lightbox-header">
+        <span class="pill pill-pink">🎬 Vault Animation Cinema</span>
+        <h3 id="gif-lightbox-title" style="font-family:'Fredoka',sans-serif;font-size:1.55rem;margin:8px 0 4px;"></h3>
+        <p id="gif-lightbox-caption" style="margin:0;color:var(--text-muted);font-size:0.9rem;font-weight:600;"></p>
+      </div>
+      <div class="gif-lightbox-stage">
+        <img id="gif-lightbox-img" src="" alt="Full-size vault animation" />
       </div>
     </div>
   </div>

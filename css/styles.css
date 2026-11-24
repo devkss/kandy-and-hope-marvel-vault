@@ -3069,3 +3069,218 @@ body.dark-vault .comic-sticker {
     max-width: 54px;
   }
 }
+
+/* ==========================================================================
+   V1.12 UI UPDATES: ART-DIRECTED ANIMATED GIF CINEMA BANNERS & LIGHTBOX
+   ========================================================================== */
+.gif-cinema-btn {
+  position: relative;
+  display: block;
+  padding: 4px;
+  border: none;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #ec4899, #facc15, #06b6d4, #8b5cf6);
+  box-shadow: 0 14px 30px rgba(124, 58, 237, 0.28);
+  cursor: zoom-in;
+  flex-shrink: 0;
+  overflow: hidden;
+  z-index: 2;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+}
+.gif-cinema-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 20px 38px rgba(236, 72, 153, 0.36);
+}
+.gif-cinema-btn:focus-visible {
+  outline: 3px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+.gif-cinema-btn img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 18px;
+  background: #0f172a;
+}
+
+/* Theme-matched gradient rims per vault tab */
+.gif-rim-chrome {
+  background: linear-gradient(135deg, #f59e0b, #ef4444, #facc15);
+  box-shadow: 0 14px 28px rgba(245, 158, 11, 0.3);
+}
+.gif-rim-neon {
+  background: linear-gradient(135deg, #06b6d4, #8b5cf6, #ec4899);
+  box-shadow: 0 14px 28px rgba(6, 182, 212, 0.32);
+}
+.gif-rim-explorer {
+  background: linear-gradient(135deg, #8b5cf6, #ec4899, #38bdf8);
+  box-shadow: 0 14px 28px rgba(139, 92, 246, 0.3);
+}
+.gif-rim-sets {
+  background: linear-gradient(135deg, #38bdf8, #22c55e, #facc15);
+  box-shadow: 0 14px 28px rgba(56, 189, 248, 0.3);
+}
+.gif-rim-values {
+  background: linear-gradient(135deg, #10b981, #f59e0b, #06b6d4);
+  box-shadow: 0 14px 28px rgba(16, 185, 129, 0.3);
+}
+
+/* Aspect-ratio-locked cinema frame sizes (Zero cropping, Zero CLS!) */
+.gif-frame-panoramic {
+  width: clamp(320px, 42vw, 540px);
+  aspect-ratio: 720 / 237;
+  border-radius: 20px;
+}
+.gif-frame-panoramic img {
+  border-radius: 16px;
+}
+
+.gif-frame-3x2 {
+  width: 224px;
+  aspect-ratio: 508 / 337;
+}
+
+.gif-frame-16x9 {
+  width: 248px;
+  aspect-ratio: 16 / 9;
+}
+
+.gif-frame-square {
+  width: 108px;
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  padding: 3.5px;
+  background: linear-gradient(135deg, #ec4899, #ef4444, #facc15);
+  box-shadow: 0 10px 22px rgba(236, 72, 153, 0.28);
+}
+.gif-frame-square img {
+  border-radius: 16px;
+}
+
+/* Subtle Hover Zoom Pill & Paused Indicator */
+.gif-zoom-pill {
+  position: absolute;
+  bottom: 9px;
+  right: 9px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.82);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+.gif-cinema-btn:hover .gif-zoom-pill,
+.gif-cinema-btn:focus-visible .gif-zoom-pill {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.gif-paused-pill {
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.86);
+  color: #facc15;
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  border: 1px solid rgba(250, 204, 21, 0.45);
+  display: none;
+  pointer-events: none;
+}
+body.anims-paused .gif-paused-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* About Modal 16:9 Animated Welcome Thumb */
+.about-duo-gif {
+  width: 118px;
+  height: 66px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+/* Animated Comic Cinema Lightbox Modal */
+.gif-lightbox-box {
+  max-width: 780px;
+  text-align: center;
+  padding: 26px 26px 24px;
+}
+.gif-lightbox-header {
+  margin-bottom: 16px;
+}
+.gif-lightbox-stage {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 6px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #ec4899, #facc15, #06b6d4, #8b5cf6);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.45);
+}
+.gif-lightbox-stage img {
+  display: block;
+  width: 100%;
+  max-height: 68vh;
+  object-fit: contain;
+  border-radius: 17px;
+  background: #0b0f19;
+}
+
+/* Responsive layouts for panoramic & wide cinema banners */
+@media (max-width: 1100px) {
+  .tab-mascot-banner.mascot-banner-panoramic {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+  .tab-mascot-banner.mascot-banner-panoramic .gif-frame-panoramic {
+    width: min(100%, 620px);
+  }
+  .tab-mascot-banner.mascot-banner-panoramic .mascot-copy {
+    flex: 1 1 320px;
+    text-align: left;
+  }
+}
+
+@media (max-width: 760px) {
+  .tab-mascot-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 16px;
+    gap: 14px;
+  }
+  .tab-mascot-banner.mascot-banner-panoramic .mascot-copy {
+    text-align: center;
+    flex: 1 1 auto;
+  }
+  .gif-frame-3x2,
+  .gif-frame-16x9 {
+    width: min(100%, 300px);
+  }
+  .gif-frame-square {
+    width: 84px;
+  }
+  .about-duo-strip {
+    flex-direction: column;
+    text-align: center;
+  }
+  .about-duo-gif {
+    width: 168px;
+    height: 94px;
+  }
+}
