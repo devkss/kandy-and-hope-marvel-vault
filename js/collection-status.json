@@ -180,5 +180,12 @@
     "valLow": 0,
     "valHigh": 0,
     "updatedAt": 1795548020805
+  },
+  "kc-102-mi-01-001": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795548280270
   }
 }
