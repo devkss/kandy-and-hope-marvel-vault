@@ -257,5 +257,33 @@
     "valLow": 0,
     "valHigh": 0,
     "updatedAt": 1795548476023
+  },
+  "kc-102-mi-15-015": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795548503321
+  },
+  "kc-102-mi-16-016": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795548523289
+  },
+  "kc-102-mi-17-017": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795548534340
+  },
+  "kc-102-mi-18-018": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795548554857
   }
 }
