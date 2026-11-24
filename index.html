@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=JetBrains+Mono:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css?v=1.14" />
 </head>
 <body>
   <canvas id="confetti-canvas"></canvas>
@@ -25,7 +25,7 @@
       <div class="brand-pill">
         <span class="brand-dot"></span>
         <span>Kandy &amp; Hope's Marvel Card Vault · 2026 Edition</span>
-        <button type="button" id="app-version-pill" class="version-chip" title="About &amp; Version Info">V1.13</button>
+        <button type="button" id="app-version-pill" class="version-chip" title="About &amp; Version Info">V1.14</button>
       </div>
       <div class="top-actions">
         <span id="photo-progress-badge" class="pill">0 / 180 Real Photos Loaded</span>
@@ -268,15 +268,19 @@
       <section id="panel-sets" class="tab-panel">
         <div class="tab-mascot-banner mascot-sets">
           <button type="button" id="sets-odds-banner-btn" class="gif-cinema-btn gif-frame-16x9 gif-rim-sets"
-            data-gif-src="assets/illustrations/kandy-hope-odds-confused.jpg"
+            data-gif-src="assets/animations/kandy-hope-odds-confused.gif"
             data-gif-title="Crunching the 2026 Pull Odds!"
-            data-gif-caption="Kandy &amp; Hope trying to make sense of Topps Hobby, Mega, and Blaster pack odds with calculators and charts!"
-            aria-label="Enlarge Kandy and Hope checking pull odds illustration">
+            data-gif-caption="Kandy &amp; Hope scratching their heads trying to make sense of Topps Hobby, Mega, and Blaster pack odds with calculators and charts!"
+            aria-label="Enlarge Kandy and Hope checking pull odds animation">
             <img id="sets-odds-banner-img"
-              src="assets/illustrations/kandy-hope-odds-confused.jpg"
-              alt="Kandy and Hope looking confused holding a calculator, graphs, and pull-odds charts"
+              class="vault-anim-gif"
+              src="assets/animations/kandy-hope-odds-confused.gif"
+              data-gif="assets/animations/kandy-hope-odds-confused.gif"
+              data-poster="assets/animations/posters/kandy-hope-odds-confused.jpg"
+              alt="Kandy and Hope scratching their heads looking confused holding a calculator, graphs, and pull-odds charts"
               width="640" height="360" loading="lazy" decoding="async" />
-            <span class="gif-zoom-pill" aria-hidden="true">🔍 View Big</span>
+            <span class="gif-zoom-pill" aria-hidden="true">🔍 Watch Big</span>
+            <span class="gif-paused-pill" aria-hidden="true">▶ Paused</span>
           </button>
           <div class="mascot-copy">
             <span class="mascot-tag">📚 Collector Reference Guide</span>
@@ -745,7 +749,7 @@
       </div>
 
       <div class="about-version-row">
-        <span class="about-version-badge">Version <strong id="about-version-num">V1.13</strong></span>
+        <span class="about-version-badge">Version <strong id="about-version-num">V1.14</strong></span>
         <span class="about-meta-dot">•</span>
         <span class="about-edition-text">2026 Chrome &amp; Neon Marvel Edition</span>
       </div>
@@ -782,6 +786,6 @@
 
   <script src="js/data.js"></script>
   <script src="js/bios.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=1.14"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = 'V1.13';
+  const APP_VERSION = 'V1.14';
   const ANIM_PREF_KEY = 'kh_vault_anim_paused_v1';
   const DISPLAY_STICKERS = {
     1: { src: 'assets/stickers/moon-girl-topps.png', alt: 'Moon Girl Topps comic sticker', cls: 'sticker-tall' },
@@ -2831,12 +2831,16 @@
 
 
   // Boot & Event Wiring
-  // Auto-resolve Sets/Odds banner artwork (.jpg / .jpeg / .png / .webp with graceful fallback)
+  // Auto-resolve Sets/Odds banner animated GIF (with poster & static fallbacks)
   function initOddsBannerArt() {
     const img = document.getElementById('sets-odds-banner-img');
     const btn = document.getElementById('sets-odds-banner-btn');
     if (!img) return;
+    const posterUrl = img.dataset.poster || 'assets/animations/posters/kandy-hope-odds-confused.jpg';
     const candidates = [
+      'assets/animations/kandy-hope-odds-confused.gif',
+      'assets/illustrations/kandy-hope-odds-confused.gif',
+      posterUrl,
       'assets/illustrations/kandy-hope-odds-confused.jpg',
       'assets/illustrations/kandy-hope-odds-confused.jpeg',
       'assets/illustrations/kandy-hope-odds-confused.png',
@@ -2847,12 +2851,19 @@
     function tryNext() {
       if (idx >= candidates.length) return;
       const url = candidates[idx++];
-      img.onload = () => {
+      const probe = new Image();
+      probe.onload = () => {
+        const isGif = /\.gif($|\?)/i.test(url);
+        img.dataset.gif = url;
+        if (!isGif) {
+          img.dataset.poster = url;
+        }
         if (btn) btn.dataset.gifSrc = url;
+        img.src = (state.animationsPaused && isGif) ? img.dataset.poster : url;
       };
-      img.src = url;
+      probe.onerror = tryNext;
+      probe.src = url;
     }
-    img.onerror = tryNext;
     tryNext();
   }
 
