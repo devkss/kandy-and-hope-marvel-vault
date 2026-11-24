@@ -1986,3 +1986,307 @@ body.dark-vault .serial-chip.serial-unnumbered.serial-missing {
 .photo-studio[hidden] {
   display: none !important;
 }
+
+/* ==========================================================================
+   V1.8 UI UPDATES: ABOUT MODAL, VERSION BADGE & COLLECTOR MASCOT BANNERS
+   ========================================================================== */
+.version-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(139, 92, 246, 0.32);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.14), rgba(139, 92, 246, 0.18));
+  color: var(--purple);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.2s ease, color 0.2s ease;
+}
+body.dark-vault .version-chip {
+  color: #f9a8d4;
+  border-color: rgba(244, 114, 182, 0.4);
+}
+.version-chip:hover {
+  transform: scale(1.06);
+  background: linear-gradient(135deg, var(--pink), var(--purple));
+  color: #fff;
+  border-color: transparent;
+}
+
+/* Tab Collector Mascot Banners */
+.tab-mascot-banner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 22px;
+  margin-bottom: 22px;
+  border-radius: 26px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-mascot-banner::after {
+  content: "";
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  opacity: 0.16;
+  filter: blur(22px);
+  pointer-events: none;
+}
+
+.tab-mascot-banner.mascot-hope {
+  border-color: rgba(236, 72, 153, 0.34);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.08), rgba(250, 204, 21, 0.06) 55%, var(--surface));
+}
+.tab-mascot-banner.mascot-hope::after { background: linear-gradient(135deg, #ec4899, #facc15); }
+
+.tab-mascot-banner.mascot-chrome {
+  border-color: rgba(245, 158, 11, 0.36);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.09), rgba(239, 68, 68, 0.06) 55%, var(--surface));
+}
+.tab-mascot-banner.mascot-chrome::after { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+
+.tab-mascot-banner.mascot-neon {
+  border-color: rgba(6, 182, 212, 0.38);
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(139, 92, 246, 0.07) 55%, var(--surface));
+}
+.tab-mascot-banner.mascot-neon::after { background: linear-gradient(135deg, #06b6d4, #8b5cf6); }
+
+.tab-mascot-banner.mascot-explorer {
+  border-color: rgba(139, 92, 246, 0.34);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.09), rgba(236, 72, 153, 0.06) 55%, var(--surface));
+}
+.tab-mascot-banner.mascot-explorer::after { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+
+.tab-mascot-banner.mascot-sets {
+  border-color: rgba(56, 189, 248, 0.34);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.09), rgba(250, 204, 21, 0.06) 55%, var(--surface));
+}
+.tab-mascot-banner.mascot-sets::after { background: linear-gradient(135deg, #38bdf8, #facc15); }
+
+.tab-mascot-banner.mascot-values {
+  border-color: rgba(16, 185, 129, 0.38);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(245, 158, 11, 0.06) 55%, var(--surface));
+}
+.tab-mascot-banner.mascot-values::after { background: linear-gradient(135deg, #10b981, #f59e0b); }
+
+.mascot-avatar {
+  width: 108px;
+  height: 108px;
+  border-radius: 24px;
+  padding: 4px;
+  background: linear-gradient(135deg, #ec4899, #facc15, #06b6d4, #8b5cf6);
+  box-shadow: 0 12px 26px rgba(124, 58, 237, 0.24);
+  flex-shrink: 0;
+  transform: rotate(-2deg);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  z-index: 2;
+}
+.tab-mascot-banner:hover .mascot-avatar {
+  transform: rotate(1deg) scale(1.05);
+  box-shadow: 0 16px 32px rgba(236, 72, 153, 0.32);
+}
+.mascot-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+  display: block;
+  background: #fef3dc;
+}
+
+.mascot-copy {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+}
+.mascot-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--pink);
+  margin-bottom: 4px;
+}
+body.dark-vault .mascot-tag { color: #f472b6; }
+
+.mascot-copy h3 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.38rem;
+  margin: 0 0 4px;
+  line-height: 1.18;
+  color: var(--text);
+}
+.mascot-copy p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .tab-mascot-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 16px;
+    gap: 12px;
+  }
+  .mascot-avatar {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+/* About Pop-Up Modal */
+.about-modal-box {
+  max-width: 520px;
+  text-align: center;
+  padding: 32px 30px 28px;
+  background: radial-gradient(circle at 50% 0%, rgba(236, 72, 153, 0.12), transparent 52%),
+              radial-gradient(circle at 85% 90%, rgba(6, 182, 212, 0.12), transparent 50%),
+              var(--surface-solid);
+}
+
+.about-header-badge {
+  margin-bottom: 10px;
+}
+
+.about-title {
+  font-family: 'Fredoka', 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(1.65rem, 3.2vw, 2.05rem);
+  line-height: 1.12;
+  margin: 0 0 10px;
+  background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 52%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.about-by-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 4px 0 16px;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-transform: lowercase;
+  letter-spacing: 0.08em;
+}
+.about-by-line::before,
+.about-by-line::after {
+  content: "";
+  height: 1.5px;
+  width: 54px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+
+.about-logo-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  padding: 12px 20px;
+  border-radius: 26px;
+  background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.12), rgba(139, 92, 246, 0.06) 70%, transparent);
+  max-width: 310px;
+}
+
+.about-logo-img {
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 14px 24px rgba(15, 23, 42, 0.25));
+  transition: transform 0.25s ease;
+}
+.about-logo-img:hover {
+  transform: scale(1.04) rotate(-1deg);
+}
+
+.about-version-row {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  border: 1.5px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.about-version-badge {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.about-version-badge strong {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 900;
+  color: var(--purple);
+  background: rgba(139, 92, 246, 0.14);
+  padding: 2px 8px;
+  border-radius: 8px;
+  margin-left: 3px;
+}
+body.dark-vault .about-version-badge strong {
+  color: #f9a8d4;
+  background: rgba(244, 114, 182, 0.2);
+}
+
+.about-meta-dot {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+.about-edition-text {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.about-duo-strip {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  padding: 12px 15px;
+  border-radius: 20px;
+  background: var(--surface-soft);
+  border: 1.5px solid var(--border);
+}
+.about-duo-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid rgba(236, 72, 153, 0.45);
+  box-shadow: 0 6px 14px rgba(124, 58, 237, 0.2);
+}
+.about-duo-strip p {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  color: var(--text-muted);
+}
+.about-duo-strip strong {
+  color: var(--text);
+}

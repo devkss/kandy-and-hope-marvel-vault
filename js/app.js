@@ -1,4 +1,5 @@
 (function () {
+  const APP_VERSION = 'V1.8';
   const CARDS = window.VAULT_CARDS || [];
   const DISPLAYS = window.VAULT_DISPLAYS || [];
   const SETS = window.VAULT_SETS || [];
@@ -1534,6 +1535,16 @@
     document.getElementById('gh-modal').classList.remove('open');
   }
 
+  function openAboutModal() {
+    const verEl = document.getElementById('about-version-num');
+    if (verEl) verEl.textContent = APP_VERSION;
+    document.getElementById('about-modal').classList.add('open');
+  }
+
+  function closeAboutModal() {
+    document.getElementById('about-modal').classList.remove('open');
+  }
+
   // Batch Folder Photo Loader
   function handleFolderUpload(files) {
     let matched = 0;
@@ -1644,6 +1655,19 @@
   document.addEventListener('DOMContentLoaded', () => {
     initHeroPhoto();
     updateGHButtonState();
+
+    // Sync version labels & About modal controls
+    const topVerPill = document.getElementById('app-version-pill');
+    const modalVerNum = document.getElementById('about-version-num');
+    if (topVerPill) topVerPill.textContent = APP_VERSION;
+    if (modalVerNum) modalVerNum.textContent = APP_VERSION;
+
+    document.getElementById('about-btn').addEventListener('click', openAboutModal);
+    if (topVerPill) topVerPill.addEventListener('click', openAboutModal);
+    document.getElementById('about-close-btn').addEventListener('click', closeAboutModal);
+    document.getElementById('about-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'about-modal') closeAboutModal();
+    });
 
     // Tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -1828,7 +1852,7 @@
     document.getElementById('modal-close-btn').addEventListener('click', closeCardModal);
     document.getElementById('card-modal').addEventListener('click', (e) => { if (e.target.id === 'card-modal') closeCardModal(); });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeCardModal(); closeGHModal(); }
+      if (e.key === 'Escape') { closeCardModal(); closeGHModal(); closeAboutModal(); }
     });
 
     document.getElementById('modal-copy-btn').addEventListener('click', () => {

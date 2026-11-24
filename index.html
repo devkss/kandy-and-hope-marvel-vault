@@ -24,9 +24,11 @@
       <div class="brand-pill">
         <span class="brand-dot"></span>
         <span>Kandy &amp; Hope's Marvel Card Vault · 2026 Edition</span>
+        <button type="button" id="app-version-pill" class="version-chip" title="About &amp; Version Info">V1.8</button>
       </div>
       <div class="top-actions">
         <span id="photo-progress-badge" class="pill">0 / 180 Real Photos Loaded</span>
+        <button id="about-btn" class="btn btn-soft">ℹ️ About</button>
         <button id="gh-settings-btn" class="btn btn-soft">☁️ GitHub Sync</button>
         <button id="load-folder-btn" class="btn btn-soft">📁 Load Folder</button>
         <button id="theme-toggle" class="btn btn-soft">🌙 Dark Vault Mode</button>
@@ -91,21 +93,61 @@
     <main>
       <!-- Tab 1: Hope's Rainbow Room -->
       <section id="panel-hope" class="tab-panel active">
+        <div class="tab-mascot-banner mascot-hope">
+          <div class="mascot-avatar">
+            <img src="assets/illustrations/hope-slab.jpg" alt="Hope holding a shiny rainbow slab" loading="lazy" />
+          </div>
+          <div class="mascot-copy">
+            <span class="mascot-tag">🌈 Hope's Rainbow Room</span>
+            <h3>Moon Girl &amp; Devil Dinosaur Rainbow HQ!</h3>
+            <p>Hunting down every shimmering 2026 Topps Chrome Marvel parallel — from Red /5s and Black Clawed /10s to Sapphire &amp; Neon bonus pulls.</p>
+          </div>
+        </div>
         <div id="hope-displays-wrap"></div>
       </section>
 
       <!-- Tab 2: Kandy's Chrome Vault -->
       <section id="panel-chrome" class="tab-panel">
+        <div class="tab-mascot-banner mascot-chrome">
+          <div class="mascot-avatar">
+            <img src="assets/illustrations/kandy-slab.jpg" alt="Kandy showing off a rainbow graded slab" loading="lazy" />
+          </div>
+          <div class="mascot-copy">
+            <span class="mascot-tag">🏆 Kandy's Chrome Vault</span>
+            <h3>2026 Topps Chrome Marvel Slabs, Autos &amp; Inserts</h3>
+            <p>Numbered base hits, ACE 10 &amp; ACE 9 slabs, authentic Marvel artist autographs, and all 29 collapsible insert sets in checklist order.</p>
+          </div>
+        </div>
         <div id="chrome-displays-wrap"></div>
       </section>
 
       <!-- Tab 3: Kandy's Neon Vault -->
       <section id="panel-neon" class="tab-panel">
+        <div class="tab-mascot-banner mascot-neon">
+          <div class="mascot-avatar">
+            <img src="assets/illustrations/kandy-rip.jpg" alt="Kandy ripping open a glowing pack of cards" loading="lazy" />
+          </div>
+          <div class="mascot-copy">
+            <span class="mascot-tag">⚡ Kandy's Neon Vault</span>
+            <h3>2026 Topps Neon Marvel Foil Parallels &amp; Case Hits</h3>
+            <p>Sparkle &amp; Diamante foils, Jubilee's Fireworks /89, Manga Madness Gold /50, 1-UP &amp; Neon Heroines case hits across all 15 insert sets.</p>
+          </div>
+        </div>
         <div id="neon-displays-wrap"></div>
       </section>
 
       <!-- Tab 4: Vault Explorer -->
       <section id="panel-explorer" class="tab-panel">
+        <div class="tab-mascot-banner mascot-explorer">
+          <div class="mascot-avatar">
+            <img src="assets/illustrations/kandy-hope-rip.jpg" alt="Kandy and Hope ripping a glowing gold pack together" loading="lazy" />
+          </div>
+          <div class="mascot-copy">
+            <span class="mascot-tag">🔎 Master Vault Explorer</span>
+            <h3>Search Every Card Across Both Collections</h3>
+            <p>Instantly filter Hope's and Kandy's combined 2026 Marvel vaults by character, artist, serial, ACE slab grade, or missing checklist slot.</p>
+          </div>
+        </div>
         <div class="display-section">
           <div class="display-header">
             <div class="display-title-group">
@@ -159,6 +201,16 @@
 
       <!-- Tab 5: Sets, Checklists & Odds (No Money Values) -->
       <section id="panel-sets" class="tab-panel">
+        <div class="tab-mascot-banner mascot-sets">
+          <div class="mascot-avatar">
+            <img src="assets/illustrations/kandy-hope-waving.jpg" alt="Kandy and Hope waving hello" loading="lazy" />
+          </div>
+          <div class="mascot-copy">
+            <span class="mascot-tag">📚 Collector Reference Guide</span>
+            <h3>Official 2026 Set Guides, Pull Odds &amp; Active Chases</h3>
+            <p>Everything we're chasing across 2026 Topps Chrome Marvel and 2026 Topps Neon Marvel, complete with official pack odds and external checklists.</p>
+          </div>
+        </div>
         <div id="sets-cards-wrap" class="sets-grid"></div>
 
         <div class="display-section">
@@ -198,6 +250,16 @@
 
       <!-- Tab 6: Dedicated Estimated Values Dashboard -->
       <section id="panel-values" class="tab-panel">
+        <div class="tab-mascot-banner mascot-values">
+          <div class="mascot-avatar">
+            <img src="assets/illustrations/kandy-hope-celebrating.jpg" alt="Kandy and Hope high-fiving with glowing graded slabs" loading="lazy" />
+          </div>
+          <div class="mascot-copy">
+            <span class="mascot-tag">💷 Vault Valuations</span>
+            <h3>Estimated Market Values &amp; Top Ranked Hits</h3>
+            <p>Full GBP breakdown across every vault section plus all collected cards ranked highest to lowest—filterable by Together, Kandy, or Hope.</p>
+          </div>
+        </div>
         <!-- Section 1: KPI Summary + Estimated Market Value Breakdown (GBP) -->
         <div class="display-section">
           <div class="display-header">
@@ -423,6 +485,41 @@
         <button id="gh-clear-btn" class="btn btn-danger-soft">🗑️ Disconnect Token</button>
       </div>
       <div id="gh-test-status" class="upload-status"></div>
+    </div>
+  </div>
+
+
+  <!-- About Modal -->
+  <div id="about-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="about-modal-title">
+    <div class="modal-box about-modal-box">
+      <button id="about-close-btn" class="modal-close" aria-label="Close">✕</button>
+
+      <div class="about-header-badge">
+        <span class="pill pill-pink">✨ About This Vault</span>
+      </div>
+
+      <h2 id="about-modal-title" class="about-title">Kandy &amp; Hope's Marvel Card Vaults</h2>
+
+      <div class="about-by-line">
+        <span>by</span>
+      </div>
+
+      <div class="about-logo-stage">
+        <img src="assets/photos/biddyboo-software-logo.png" alt="BiddyBoo Software Logo" class="about-logo-img" />
+      </div>
+
+      <div class="about-version-row">
+        <span class="about-version-badge">Version <strong id="about-version-num">V1.8</strong></span>
+        <span class="about-meta-dot">•</span>
+        <span class="about-edition-text">2026 Chrome &amp; Neon Marvel Edition</span>
+      </div>
+
+      <div class="about-duo-strip">
+        <img src="assets/illustrations/kandy-hope-waving.jpg" alt="Kandy and Hope waving" class="about-duo-thumb" />
+        <p>
+          Hand-crafted by <strong>BiddyBoo Software</strong> to showcase Hope's Moon Girl &amp; Devil Dinosaur rainbows alongside Kandy's 2026 Topps Chrome &amp; Neon Marvel vaults.
+        </p>
+      </div>
     </div>
   </div>
 
