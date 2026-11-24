@@ -685,13 +685,57 @@
     return result;
   }
 
+  function readBlobAsBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const parts = String(reader.result || '').split(',');
+        resolve(parts[1] || '');
+      };
+      reader.onerror = () => reject(new Error('Could not read file bytes'));
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  function isGifFile(file) {
+    return Boolean(file && (file.type === 'image/gif' || /\.gif$/i.test(file.name || '')));
+  }
+
+  async function deleteFromGitHubIfExists(repoFilePath, commitMessage) {
+    const { owner, repo, branch, token } = state.gh;
+    if (!token || !owner || !repo) return;
+    const encodedPath = repoFilePath.split('/').map(encodeURIComponent).join('/');
+    const apiBase = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${encodedPath}`;
+    const headers = {
+      'Authorization': `Bearer ${token.trim()}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    };
+    const checkRes = await fetch(`${apiBase}?ref=${encodeURIComponent(branch || 'main')}`, { headers });
+    if (checkRes.status !== 200) return;
+    const existingData = await checkRes.json();
+    if (!existingData || !existingData.sha) return;
+    await fetch(apiBase, {
+      method: 'DELETE',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: commitMessage,
+        sha: existingData.sha,
+        branch: branch || 'main'
+      })
+    });
+  }
+
   // Save Blob locally with exact required filename
   async function saveBlobLocally(blob, exactFilename) {
+    const isGif = /\.gif$/i.test(exactFilename || '');
     if (window.showSaveFilePicker) {
       try {
         const handle = await window.showSaveFilePicker({
           suggestedName: exactFilename,
-          types: [{ description: 'JPEG Image', accept: { 'image/jpeg': ['.jpg', '.jpeg'] } }]
+          types: isGif
+            ? [{ description: 'Animated GIF', accept: { 'image/gif': ['.gif'] } }]
+            : [{ description: 'JPEG Image', accept: { 'image/jpeg': ['.jpg', '.jpeg'] } }]
         });
         const writable = await handle.createWritable();
         await writable.write(blob);
@@ -783,22 +827,39 @@
     }
   }
 
-  // Hero Photo auto-loader & uploader
+  // Hero Photo / Animated GIF auto-loader & uploader
   function initHeroPhoto() {
     const img = document.getElementById('hero-photo');
-    const recentTs = state.recentUploads['assets/photos/kandy-and-hope.jpg'];
-    const qs = recentTs ? `?v=${recentTs}` : '';
+    const gifTs = state.recentUploads['assets/photos/kandy-and-hope.gif'];
+    const jpgTs = state.recentUploads['assets/photos/kandy-and-hope.jpg'];
+    const gifUrl = `assets/photos/kandy-and-hope.gif${gifTs ? `?v=${gifTs}` : ''}`;
+    const jpgUrl = `assets/photos/kandy-and-hope.jpg${jpgTs ? `?v=${jpgTs}` : ''}`;
+
     const candidates = [
-      `assets/photos/kandy-and-hope.jpg${qs}`,
-      'assets/photos/kandy-and-hope.jpeg',
-      'assets/photos/kandy-and-hope.png',
-      'assets/photos/kandy-and-hope.webp',
-      'assets/photos/kandy-and-hope.svg'
+      { url: gifUrl, isGif: true },
+      { url: jpgUrl, isGif: false },
+      { url: 'assets/photos/kandy-and-hope.jpeg', isGif: false },
+      { url: 'assets/photos/kandy-and-hope.png', isGif: false },
+      { url: 'assets/photos/kandy-and-hope.webp', isGif: false },
+      { url: 'assets/photos/kandy-and-hope.svg', isGif: false }
     ];
     let idx = 0;
     function tryNext() {
       if (idx >= candidates.length) return;
-      img.src = candidates[idx++];
+      const cand = candidates[idx++];
+      img.onload = () => {
+        if (cand.isGif) {
+          img.classList.add('vault-anim-gif');
+          img.dataset.gif = gifUrl;
+          img.dataset.poster = jpgUrl;
+          if (state.animationsPaused) syncAnimationsState();
+        } else {
+          img.classList.remove('vault-anim-gif');
+          delete img.dataset.gif;
+          delete img.dataset.poster;
+        }
+      };
+      img.src = cand.url;
     }
     img.onerror = tryNext;
     tryNext();
@@ -808,10 +869,16 @@
       if (!file) return;
       const previewUrl = URL.createObjectURL(file);
       img.onerror = null;
+      img.onload = null;
+      img.classList.remove('vault-anim-gif');
       img.src = previewUrl;
-      state.stagedHeroPhoto = { file, previewUrl };
+      state.stagedHeroPhoto = { file, previewUrl, isGif: isGifFile(file) };
       document.getElementById('hero-save-actions').classList.add('visible');
-      showToast('Previewing your photo! Click "Save to GitHub" or "Save Locally" below it.');
+      showToast(
+        state.stagedHeroPhoto.isGif
+          ? 'Previewing your animated GIF! Click "Save to GitHub" or "Save Locally" below it.'
+          : 'Previewing your photo! Click "Save to GitHub" or "Save Locally" below it.'
+      );
       e.target.value = '';
     });
 
@@ -825,17 +892,57 @@
       btn.disabled = true;
       btn.textContent = '⏳ Saving...';
       try {
-        const processed = await processImageBlob(state.stagedHeroPhoto.file, true);
-        await uploadToGitHub(
-          'assets/photos/kandy-and-hope.jpg',
-          processed.base64,
-          'Update hero photo: Kandy & Hope'
-        );
-        markRecentUpload('assets/photos/kandy-and-hope.jpg');
-        state.recentUploads = loadRecentUploads();
+        const { file, isGif } = state.stagedHeroPhoto;
+        if (isGif) {
+          // Upload raw animated GIF bytes untouched (preserves all animation frames!)
+          const rawGifBase64 = await readBlobAsBase64(file);
+          await uploadToGitHub(
+            'assets/photos/kandy-and-hope.gif',
+            rawGifBase64,
+            'Update hero animated GIF: Kandy & Hope'
+          );
+          // Also save frame 1 as static JPG poster for Animations: Paused mode
+          try {
+            const poster = await processImageBlob(file, true);
+            await uploadToGitHub(
+              'assets/photos/kandy-and-hope.jpg',
+              poster.base64,
+              'Update hero static poster: Kandy & Hope'
+            );
+            markRecentUpload('assets/photos/kandy-and-hope.jpg');
+          } catch (_) {}
+          markRecentUpload('assets/photos/kandy-and-hope.gif');
+          state.recentUploads = loadRecentUploads();
+          const freshGifUrl = `assets/photos/kandy-and-hope.gif?v=${state.recentUploads['assets/photos/kandy-and-hope.gif']}`;
+          const freshJpgUrl = `assets/photos/kandy-and-hope.jpg?v=${state.recentUploads['assets/photos/kandy-and-hope.jpg'] || Date.now()}`;
+          img.classList.add('vault-anim-gif');
+          img.dataset.gif = freshGifUrl;
+          img.dataset.poster = freshJpgUrl;
+        } else {
+          const processed = await processImageBlob(file, true);
+          await uploadToGitHub(
+            'assets/photos/kandy-and-hope.jpg',
+            processed.base64,
+            'Update hero photo: Kandy & Hope'
+          );
+          // Remove any previous hero GIF so the new static photo takes priority
+          await deleteFromGitHubIfExists(
+            'assets/photos/kandy-and-hope.gif',
+            'Replace hero GIF with static photo'
+          ).catch(() => {});
+          markRecentUpload('assets/photos/kandy-and-hope.jpg');
+          state.recentUploads = loadRecentUploads();
+          img.classList.remove('vault-anim-gif');
+          delete img.dataset.gif;
+          delete img.dataset.poster;
+        }
         document.getElementById('hero-save-actions').classList.remove('visible');
         state.stagedHeroPhoto = null;
-        showToast('✅ Kandy & Hope photo saved to GitHub! Live site refreshes in ~45s.');
+        showToast(
+          isGif
+            ? '✅ Animated hero GIF saved to GitHub! Live site refreshes in ~45s.'
+            : '✅ Kandy & Hope photo saved to GitHub! Live site refreshes in ~45s.'
+        );
         burstConfetti();
       } catch (err) {
         showToast(`Upload error: ${err.message}`);
@@ -848,9 +955,15 @@
     document.getElementById('hero-save-local-btn').addEventListener('click', async () => {
       if (!state.stagedHeroPhoto) return;
       try {
-        const processed = await processImageBlob(state.stagedHeroPhoto.file, true);
-        const res = await saveBlobLocally(processed.blob, 'kandy-and-hope.jpg');
-        if (res !== 'cancelled') showToast('💾 Saved locally as kandy-and-hope.jpg!');
+        const { file, isGif } = state.stagedHeroPhoto;
+        if (isGif) {
+          const res = await saveBlobLocally(file, 'kandy-and-hope.gif');
+          if (res !== 'cancelled') showToast('💾 Saved animated GIF locally as kandy-and-hope.gif!');
+        } else {
+          const processed = await processImageBlob(file, true);
+          const res = await saveBlobLocally(processed.blob, 'kandy-and-hope.jpg');
+          if (res !== 'cancelled') showToast('💾 Saved locally as kandy-and-hope.jpg!');
+        }
       } catch (err) {
         showToast(`Save error: ${err.message}`);
       }
@@ -2626,7 +2739,7 @@
 
     Array.from(files).forEach(file => {
       const ext = file.name.split('.').pop().toLowerCase();
-      if (!['jpg', 'jpeg', 'png', 'webp'].includes(ext)) return;
+      if (!['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) return;
       const stem = file.name.replace(/\.[^.]+$/, '').toLowerCase();
       if (stem === 'kandy-and-hope') {
         const heroImg = document.getElementById('hero-photo');
