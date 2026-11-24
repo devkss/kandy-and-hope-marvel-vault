@@ -11,6 +11,9 @@
 
   const CHROME_INSERT_DISPLAYS = DISPLAYS.filter(d => d.isChromeInsert);
   const CHROME_INSERT_IDS = new Set(CHROME_INSERT_DISPLAYS.map(d => d.id));
+  const NEON_INSERT_DISPLAYS = DISPLAYS.filter(d => d.isNeonInsert);
+  const NEON_INSERT_IDS = new Set(NEON_INSERT_DISPLAYS.map(d => d.id));
+  const ALL_INSERT_IDS = new Set([...CHROME_INSERT_IDS, ...NEON_INSERT_IDS]);
 
   function loadGHConfig() {
     try {
@@ -47,6 +50,7 @@
   // - Kandy's collapsible Chrome Insert subsets (101..129): default to 'owned'
   const defaultStatusFilters = { 1: 'owned', 2: 'owned' };
   CHROME_INSERT_DISPLAYS.forEach(d => { defaultStatusFilters[d.id] = 'owned'; });
+  NEON_INSERT_DISPLAYS.forEach(d => { defaultStatusFilters[d.id] = 'owned'; });
 
   const state = {
     activeTab: 'hope',
@@ -57,6 +61,7 @@
     sectionStatusFilter: defaultStatusFilters,
     expandedInserts: {},      // displayId -> true/false (all collapsed by default)
     chromeInsertFilter: 'all',// 'all' | 'with-owned'
+    neonInsertFilter: 'all',  // 'all' | 'with-owned'
     statusOverrides: loadLocalStatusOverrides(),
     sessionPhotos: {},
     realPhotoLoaded: {},
@@ -159,7 +164,7 @@
     if (tags.includes('case hit')) return 1010;
     if (sub.includes('classic comic')) return 1020;
     if (sub.includes('neon variation') || par.includes('etch')) return 1030;
-    if (tags.includes('insert') || CHROME_INSERT_IDS.has(c.display)) return 1040;
+    if (tags.includes('insert') || ALL_INSERT_IDS.has(c.display)) return 1040;
     if (sub === 'base' || par === 'base card') return 1060;
     return 1050;
   }
@@ -173,7 +178,7 @@
     if (par.includes('clawed')) return 0.1;
     if (sub.includes('facsimile autograph')) return 0.2;
     if (sub.includes('artist autograph')) return 0.3;
-    if (CHROME_INSERT_IDS.has(c.display) || ['marvel icons', 'future stars', 'fanfare', 'manga madness'].includes(sub)) return 0.4;
+    if (ALL_INSERT_IDS.has(c.display) || ['marvel icons', 'future stars', 'fanfare', 'manga madness'].includes(sub)) return 0.4;
 
     if (par.includes('raywave') || par.includes('ray wave')) return 1;
     if (par.includes('storm') || par.includes('lightning')) return 2;
@@ -518,7 +523,7 @@
     const hopeOwned = ownedCards.filter(c => c.owner === 'Hope');
     const kandyOwned = ownedCards.filter(c => c.owner === 'Kandy');
     const kandyChromeOwned = kandyOwned.filter(c => c.display === 3 || CHROME_INSERT_IDS.has(c.display));
-    const kandyNeonOwned = kandyOwned.filter(c => c.display === 5);
+    const kandyNeonOwned = kandyOwned.filter(c => c.display === 5 || NEON_INSERT_IDS.has(c.display));
     const ace10 = ownedCards.filter(c => c.grade && c.grade.includes('10')).length;
     const ace9 = ownedCards.filter(c => c.grade && c.grade.includes('9')).length;
     const ultraRare = ownedCards.filter(c => (c.printRun && c.printRun <= 10) || c.tags.includes('Case Hit')).length;
@@ -919,55 +924,65 @@
     }
   }
 
-  function renderKandyChromeVault(container) {
+  function renderVaultWithCollapsibleInserts(container, opts) {
+    const {
+      baseDisplayId,
+      insertDisplays,
+      insertIds,
+      filterStateKey,
+      headingText,
+      rerenderFn
+    } = opts;
+
     container.innerHTML = '';
 
     // 1. Top Section: Base Character Cards (Numbered Only)
-    renderDisplaySection(container, 3);
+    renderDisplaySection(container, baseDisplayId);
 
     // 2. Insert Sets Master Header & Controls (Zero Money Values!)
-    const allInsertCards = CARDS.filter(c => CHROME_INSERT_IDS.has(c.display));
+    const allInsertCards = CARDS.filter(c => insertIds.has(c.display));
     const ownedInsertCards = allInsertCards.filter(c => !isCardMissing(c));
-    const sectionsWithOwned = CHROME_INSERT_DISPLAYS.filter(d =>
+    const sectionsWithOwned = insertDisplays.filter(d =>
       CARDS.some(c => c.display === d.id && !isCardMissing(c))
     );
 
-    const visibleInsertDisplays = state.chromeInsertFilter === 'with-owned'
+    const activeFilter = state[filterStateKey] || 'all';
+    const visibleInsertDisplays = activeFilter === 'with-owned'
       ? sectionsWithOwned
-      : CHROME_INSERT_DISPLAYS;
+      : insertDisplays;
 
     const masterBar = document.createElement('div');
     masterBar.className = 'inserts-master-bar';
     masterBar.innerHTML = `
       <div class="inserts-master-title">
-        <h2>📚 2026 Topps Chrome Marvel Insert Sets (${CHROME_INSERT_DISPLAYS.length} Sections)</h2>
+        <h2>${headingText} (${insertDisplays.length} Sections)</h2>
         <p>${ownedInsertCards.length} of ${allInsertCards.length} checklist cards collected across ${sectionsWithOwned.length} active sets</p>
       </div>
       <div class="inserts-master-actions">
         <div class="segmented">
-          <button class="${state.chromeInsertFilter === 'all' ? 'active' : ''}" data-ifilter="all">All Sets (${CHROME_INSERT_DISPLAYS.length})</button>
-          <button class="${state.chromeInsertFilter === 'with-owned' ? 'active' : ''}" data-ifilter="with-owned">With Owned (${sectionsWithOwned.length})</button>
+          <button class="${activeFilter === 'all' ? 'active' : ''}" data-ifilter="all">All Sets (${insertDisplays.length})</button>
+          <button class="${activeFilter === 'with-owned' ? 'active' : ''}" data-ifilter="with-owned">With Owned (${sectionsWithOwned.length})</button>
         </div>
-        <button id="expand-all-inserts-btn" class="btn btn-soft" style="padding:7px 13px;font-size:0.8rem;">⊞ Expand All</button>
-        <button id="collapse-all-inserts-btn" class="btn btn-soft" style="padding:7px 13px;font-size:0.8rem;">⊟ Collapse All</button>
+        <button type="button" data-expand-all class="btn btn-soft" style="padding:7px 13px;font-size:0.8rem;">⊞ Expand All</button>
+        <button type="button" data-collapse-all class="btn btn-soft" style="padding:7px 13px;font-size:0.8rem;">⊟ Collapse All</button>
       </div>
     `;
 
     masterBar.querySelectorAll('button[data-ifilter]').forEach(btn => {
       btn.addEventListener('click', () => {
-        state.chromeInsertFilter = btn.dataset.ifilter;
-        renderKandyChromeVault(container);
+        state[filterStateKey] = btn.dataset.ifilter;
+        rerenderFn(container);
       });
     });
 
-    masterBar.querySelector('#expand-all-inserts-btn').addEventListener('click', () => {
+    masterBar.querySelector('[data-expand-all]').addEventListener('click', () => {
       visibleInsertDisplays.forEach(d => { state.expandedInserts[d.id] = true; });
-      renderKandyChromeVault(container);
+      rerenderFn(container);
     });
 
-    masterBar.querySelector('#collapse-all-inserts-btn').addEventListener('click', () => {
-      CHROME_INSERT_DISPLAYS.forEach(d => { state.expandedInserts[d.id] = false; });
-      renderKandyChromeVault(container);
+    masterBar.querySelector('[data-collapse-all]').addEventListener('click', () => {
+      insertDisplays.forEach(d => { state.expandedInserts[d.id] = false; });
+      rerenderFn(container);
     });
 
     container.appendChild(masterBar);
@@ -1025,6 +1040,28 @@
     });
   }
 
+  function renderKandyChromeVault(container) {
+    renderVaultWithCollapsibleInserts(container, {
+      baseDisplayId: 3,
+      insertDisplays: CHROME_INSERT_DISPLAYS,
+      insertIds: CHROME_INSERT_IDS,
+      filterStateKey: 'chromeInsertFilter',
+      headingText: '📚 2026 Topps Chrome Marvel Insert Sets',
+      rerenderFn: renderKandyChromeVault
+    });
+  }
+
+  function renderKandyNeonVault(container) {
+    renderVaultWithCollapsibleInserts(container, {
+      baseDisplayId: 5,
+      insertDisplays: NEON_INSERT_DISPLAYS,
+      insertIds: NEON_INSERT_IDS,
+      filterStateKey: 'neonInsertFilter',
+      headingText: '⚡ 2026 Topps Neon Marvel Insert Sets',
+      rerenderFn: renderKandyNeonVault
+    });
+  }
+
   // Render All-Cards Explorer Tab (Zero Money Values!)
   function renderExplorer() {
     const f = state.filters;
@@ -1039,6 +1076,8 @@
       if (f.display !== 'all') {
         if (f.display === 'chrome-inserts') {
           if (!CHROME_INSERT_IDS.has(c.display)) return false;
+        } else if (f.display === 'neon-inserts') {
+          if (!NEON_INSERT_IDS.has(c.display)) return false;
         } else if (String(c.display) !== f.display) {
           return false;
         }
@@ -1169,7 +1208,8 @@
       { label: 'Hope: Neon/Sapphire Others', owner: 'Hope', filter: c => c.display === 6 },
       { label: "Kandy: Chrome Base (Numbered Only)", owner: 'Kandy', filter: c => c.display === 3 },
       { label: `Kandy: Chrome Insert Sets (${CHROME_INSERT_DISPLAYS.length} Sets)`, owner: 'Kandy', filter: c => CHROME_INSERT_IDS.has(c.display) },
-      { label: "Kandy: Neon Marvel Vault", owner: 'Kandy', filter: c => c.display === 5 },
+      { label: "Kandy: Neon Base (Numbered Only)", owner: 'Kandy', filter: c => c.display === 5 },
+      { label: `Kandy: Neon Insert Sets (${NEON_INSERT_DISPLAYS.length} Sets)`, owner: 'Kandy', filter: c => NEON_INSERT_IDS.has(c.display) },
     ];
 
     const colClass = (m) => m === mode ? 'col-active-val' : '';
@@ -1547,8 +1587,7 @@
       renderKandyChromeVault(wrap);
     } else if (state.activeTab === 'neon') {
       const wrap = document.getElementById('neon-displays-wrap');
-      wrap.innerHTML = '';
-      renderDisplaySection(wrap, 5);
+      renderKandyNeonVault(wrap);
     } else if (state.activeTab === 'explorer') {
       renderExplorer();
     } else if (state.activeTab === 'sets') {
