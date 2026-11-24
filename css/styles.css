@@ -3348,3 +3348,40 @@ body.anims-paused .gif-paused-pill {
     margin-right: auto;
   }
 }
+
+/* ==========================================================================
+   V1.13 UI UPDATES: BANNER SQUARE GIF & SWAPPED NEON/SAPPHIRE DUO STICKER
+   ========================================================================== */
+.banner-gif-square {
+  width: clamp(118px, 11vw, 146px);
+  aspect-ratio: 1 / 1;
+  border-radius: 22px;
+  padding: 4px;
+  background: linear-gradient(135deg, #ec4899, #ef4444, #facc15);
+  box-shadow: 0 12px 26px rgba(236, 72, 153, 0.3);
+}
+.banner-gif-square img {
+  border-radius: 18px;
+}
+
+/* Slightly larger presence for the swapped MG & DD duo sticker in Neon/Sapphire Others */
+.section-header-sticker.sticker-duo {
+  height: 92px;
+  max-width: 102px;
+}
+
+@media (max-width: 1100px) {
+  .banner-gif-square {
+    width: 122px;
+  }
+}
+
+@media (max-width: 640px) {
+  .banner-gif-square {
+    width: 112px;
+  }
+  .section-header-sticker.sticker-duo {
+    height: 70px;
+    max-width: 78px;
+  }
+}

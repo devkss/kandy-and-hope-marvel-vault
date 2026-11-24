@@ -1,19 +1,10 @@
 (function () {
-  const APP_VERSION = 'V1.12';
+  const APP_VERSION = 'V1.13';
   const ANIM_PREF_KEY = 'kh_vault_anim_paused_v1';
   const DISPLAY_STICKERS = {
     1: { src: 'assets/stickers/moon-girl-topps.png', alt: 'Moon Girl Topps comic sticker', cls: 'sticker-tall' },
     2: { src: 'assets/stickers/devil-dinosaur.png', alt: 'Devil Dinosaur sticker', cls: 'sticker-wide' },
-    6: {
-      isGif: true,
-      src: 'assets/animations/superhero-trex-loop.gif',
-      poster: 'assets/animations/posters/superhero-trex-loop.jpg',
-      alt: 'Moon Girl and Devil Dinosaur comic high-five animation',
-      title: 'Moon Girl & Devil Dinosaur High-Five!',
-      caption: 'Our favorite duo celebrating Hope\'s 2026 Sapphire & Neon bonus rainbow pulls!',
-      width: 414,
-      height: 414
-    }
+    6: { src: 'assets/stickers/mg-dd-duo.png', alt: 'Moon Girl and Devil Dinosaur die-cut sticker', cls: 'sticker-duo' }
   };
   const BASE_CARDS = window.VAULT_CARDS || [];
   let CARDS = [...BASE_CARDS];
@@ -2840,8 +2831,34 @@
 
 
   // Boot & Event Wiring
+  // Auto-resolve Sets/Odds banner artwork (.jpg / .jpeg / .png / .webp with graceful fallback)
+  function initOddsBannerArt() {
+    const img = document.getElementById('sets-odds-banner-img');
+    const btn = document.getElementById('sets-odds-banner-btn');
+    if (!img) return;
+    const candidates = [
+      'assets/illustrations/kandy-hope-odds-confused.jpg',
+      'assets/illustrations/kandy-hope-odds-confused.jpeg',
+      'assets/illustrations/kandy-hope-odds-confused.png',
+      'assets/illustrations/kandy-hope-odds-confused.webp',
+      'assets/illustrations/kandy-hope-waving.jpg'
+    ];
+    let idx = 0;
+    function tryNext() {
+      if (idx >= candidates.length) return;
+      const url = candidates[idx++];
+      img.onload = () => {
+        if (btn) btn.dataset.gifSrc = url;
+      };
+      img.src = url;
+    }
+    img.onerror = tryNext;
+    tryNext();
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     initHeroPhoto();
+    initOddsBannerArt();
     updateGHButtonState();
 
     // Sync version labels & About modal controls
