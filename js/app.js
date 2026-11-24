@@ -1,5 +1,10 @@
 (function () {
-  const APP_VERSION = 'V1.10';
+  const APP_VERSION = 'V1.11';
+  const DISPLAY_STICKERS = {
+    1: { src: 'assets/stickers/moon-girl-topps.png', alt: 'Moon Girl Topps comic sticker', cls: 'sticker-tall' },
+    2: { src: 'assets/stickers/devil-dinosaur.png', alt: 'Devil Dinosaur sticker', cls: 'sticker-wide' },
+    6: { src: 'assets/stickers/mg-dd-team.png', alt: 'Moon Girl and Devil Dinosaur sticker', cls: 'sticker-duo' }
+  };
   const BASE_CARDS = window.VAULT_CARDS || [];
   let CARDS = [...BASE_CARDS];
   const BIOS = window.VAULT_CHARACTER_BIOS || {};
@@ -1038,10 +1043,15 @@
     const sec = document.createElement('section');
     sec.className = `bio-accordion ${bio.accentClass || ''}` + (isOpen ? ' is-open' : '');
 
+    const triggerStickerHTML = bio.sticker
+      ? `<img src="${bio.sticker}" alt="${bio.stickerAlt || bio.title}" class="comic-sticker bio-trigger-sticker" loading="lazy" />`
+      : '';
+
     sec.innerHTML = `
       <button type="button" class="bio-trigger" aria-expanded="${isOpen ? 'true' : 'false'}">
         <div class="bio-trigger-left">
           <span class="bio-chevron" aria-hidden="true">▸</span>
+          ${triggerStickerHTML}
           <div>
             <span class="bio-eyebrow">${bio.eyebrow}</span>
             <span class="bio-heading-title">${bio.title}</span>
@@ -1103,8 +1113,17 @@
         </div>
       `).join('');
 
+      const spotlightHTML = bio.spotlightSticker
+        ? `<div class="bio-spotlight-row">
+             <blockquote class="bio-quote">${bio.leadQuote}</blockquote>
+             <div class="bio-spotlight-art">
+               <img src="${bio.spotlightSticker}" alt="${bio.spotlightStickerAlt || bio.title}" class="comic-sticker bio-spotlight-sticker" loading="lazy" />
+             </div>
+           </div>`
+        : `<blockquote class="bio-quote">${bio.leadQuote}</blockquote>`;
+
       bodyEl.innerHTML = `
-        <blockquote class="bio-quote">${bio.leadQuote}</blockquote>
+        ${spotlightHTML}
 
         <div class="bio-facts-grid">${factsHTML}</div>
 
@@ -1226,12 +1245,23 @@
       ? `${ownedSectionCards.length} Owned · ${missingSectionCards.length} Missing`
       : `${ownedSectionCards.length} Cards`;
 
+    const dispSticker = DISPLAY_STICKERS[displayId] || null;
+    const titleBlockHTML = dispSticker
+      ? `<div class="display-title-with-sticker">
+           <img src="${dispSticker.src}" alt="${dispSticker.alt}" class="comic-sticker section-header-sticker ${dispSticker.cls || ''}" loading="lazy" />
+           <div class="display-title-group">
+             <h2>${meta.title}</h2>
+             <p>${meta.subtitle}</p>
+           </div>
+         </div>`
+      : `<div class="display-title-group">
+           <h2>${meta.title}</h2>
+           <p>${meta.subtitle}</p>
+         </div>`;
+
     sec.innerHTML = `
       <div class="display-header">
-        <div class="display-title-group">
-          <h2>${meta.title}</h2>
-          <p>${meta.subtitle}</p>
-        </div>
+        ${titleBlockHTML}
         <div class="display-badges">
           <span class="pill ${meta.owner === 'Hope' ? 'pill-pink' : 'pill-cyan'}">${countBadgeText}</span>
           <button type="button" class="btn btn-primary btn-add-inline gh-only" data-add-display="${displayId}">➕ Add Card</button>

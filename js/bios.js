@@ -189,7 +189,11 @@ window.VAULT_CHARACTER_BIOS = {
         "title": "Cultural & Media Breakthrough (2023\u20132026)",
         "detail": "Executive-produced by Laurence Fishburne, Disney's Emmy-winning animated series (2023\u20132025, starring Diamond White as Lunella) brought Lunella's graffiti-pop aesthetic to global audiences, followed by appearances in Spidey and His Amazing Friends, LEGO Marvel, Marvel Snap, and Marvel Rivals."
       }
-    ]
+    ],
+    "sticker": "assets/stickers/moon-girl-flex.png",
+    "stickerAlt": "Moon Girl flexing red boxing gloves sticker",
+    "spotlightSticker": "assets/stickers/mg-dd-chill.png",
+    "spotlightStickerAlt": "Moon Girl and Devil Dinosaur sticker"
   },
   "devil-dinosaur": {
     "id": "devil-dinosaur",
@@ -370,6 +374,10 @@ window.VAULT_CHARACTER_BIOS = {
         "title": "Screen & Gaming Legacy (2013\u20132026)",
         "detail": "Voiced by Steve Blum in Hulk and the Agents of S.M.A.S.H. and Fred Tatasciore in Disney's Emmy-winning Moon Girl and Devil Dinosaur (2023\u20132025), Devil is also one of the most iconic meta-defining cards in Marvel Snap (and featured on Hope's 2026 Topps Neon #MS-19!)."
       }
-    ]
+    ],
+    "sticker": "assets/stickers/devil-dinosaur.png",
+    "stickerAlt": "Devil Dinosaur roaring sticker",
+    "spotlightSticker": "assets/stickers/mg-dd-team.png",
+    "spotlightStickerAlt": "Moon Girl and Devil Dinosaur team sticker"
   }
 };
