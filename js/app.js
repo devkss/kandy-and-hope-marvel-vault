@@ -1,6 +1,7 @@
 (function () {
-  const APP_VERSION = 'V1.8';
+  const APP_VERSION = 'V1.9';
   const CARDS = window.VAULT_CARDS || [];
+  const BIOS = window.VAULT_CHARACTER_BIOS || {};
   const DISPLAYS = window.VAULT_DISPLAYS || [];
   const SETS = window.VAULT_SETS || [];
   const ODDS = window.VAULT_ODDS || [];
@@ -61,6 +62,7 @@
     sectionSort: {},          // displayId -> 'rarity' | 'name' (Hope always locked to 'rarity')
     sectionStatusFilter: defaultStatusFilters,
     expandedInserts: {},      // displayId -> true/false (all collapsed by default)
+    expandedBios: {},         // bioKey -> true/false (both collapsed by default)
     chromeInsertFilter: 'all',// 'all' | 'with-owned'
     neonInsertFilter: 'all',  // 'all' | 'with-owned'
     statusOverrides: loadLocalStatusOverrides(),
@@ -674,6 +676,139 @@
 
     tile.addEventListener('click', () => openCardModal(card, false));
     return tile;
+  }
+
+  // Render Collapsible Character Biography Dossier (starts collapsed by default)
+  function renderCharacterBioSection(container, bioKey) {
+    const bio = BIOS[bioKey];
+    if (!bio) return;
+
+    const isOpen = Boolean(state.expandedBios[bioKey]);
+    const sec = document.createElement('section');
+    sec.className = `bio-accordion ${bio.accentClass || ''}` + (isOpen ? ' is-open' : '');
+
+    sec.innerHTML = `
+      <button type="button" class="bio-trigger" aria-expanded="${isOpen ? 'true' : 'false'}">
+        <div class="bio-trigger-left">
+          <span class="bio-chevron" aria-hidden="true">▸</span>
+          <div>
+            <span class="bio-eyebrow">${bio.eyebrow}</span>
+            <span class="bio-heading-title">${bio.title}</span>
+            <span class="bio-heading-sub">${bio.subtitle}</span>
+          </div>
+        </div>
+        <div class="bio-trigger-right">
+          <span class="bio-toggle-pill">${isOpen ? '📖 Hide Bio' : '📖 ' + bio.badgeText}</span>
+        </div>
+      </button>
+      <div class="bio-body"></div>
+    `;
+
+    const trigger = sec.querySelector('.bio-trigger');
+    const bodyEl = sec.querySelector('.bio-body');
+    const pillEl = sec.querySelector('.bio-toggle-pill');
+
+    function populateBioBody() {
+      const factsHTML = bio.facts.map(f => `
+        <div class="bio-fact-card">
+          <span class="bio-fact-label">${f.label}</span>
+          <div class="bio-fact-value">${f.value}</div>
+        </div>
+      `).join('');
+
+      const originHTML = bio.originParagraphs.map(p => `<p>${p}</p>`).join('');
+
+      const creatorsHTML = bio.creators.map(cr => `
+        <div class="bio-creator-card">
+          <div class="bio-creator-name">${cr.name}</div>
+          <div class="bio-creator-role">${cr.role}</div>
+          <p class="bio-creator-detail">${cr.detail}</p>
+        </div>
+      `).join('');
+
+      const issuesHTML = bio.seminalIssues.map(iss => `
+        <div class="bio-issue-card">
+          <div class="bio-issue-top">
+            <span class="bio-issue-code">${iss.issue}</span>
+            <span class="bio-issue-date">${iss.date}</span>
+          </div>
+          <div class="bio-issue-title">${iss.title}</div>
+          <p class="bio-issue-detail">${iss.detail}</p>
+        </div>
+      `).join('');
+
+      const alliesHTML = bio.interactions.allies.map(a =>
+        `<li><strong>${a.name}:</strong> ${a.note}</li>`
+      ).join('');
+
+      const villainsHTML = bio.interactions.villains.map(v =>
+        `<li><strong>${v.name}:</strong> ${v.note}</li>`
+      ).join('');
+
+      const storiesHTML = bio.bestStoriesAndArt.map(st => `
+        <div class="bio-story-card">
+          <h5>${st.title}</h5>
+          <p>${st.detail}</p>
+        </div>
+      `).join('');
+
+      bodyEl.innerHTML = `
+        <blockquote class="bio-quote">${bio.leadQuote}</blockquote>
+
+        <div class="bio-facts-grid">${factsHTML}</div>
+
+        <div class="bio-block">
+          <h4 class="bio-block-title">📰 Origin &amp; Comic Book History</h4>
+          <div class="bio-prose">${originHTML}</div>
+        </div>
+
+        <div class="bio-block">
+          <h4 class="bio-block-title">🎨 Creators, Writers &amp; Key Artists</h4>
+          <div class="bio-creators-grid">${creatorsHTML}</div>
+        </div>
+
+        <div class="bio-block">
+          <h4 class="bio-block-title">📚 Seminal Issues &amp; Key Milestones</h4>
+          <div class="bio-issues-grid">${issuesHTML}</div>
+        </div>
+
+        <div class="bio-block">
+          <h4 class="bio-block-title">🤝 Marvel Universe Interactions</h4>
+          <div class="bio-relations-grid">
+            <div class="bio-rel-col">
+              <h5>🦸 Allies, Partners &amp; Team-Ups</h5>
+              <ul class="bio-rel-list">${alliesHTML}</ul>
+            </div>
+            <div class="bio-rel-col">
+              <h5>⚡ Villains, Rivals &amp; Cosmic Foes</h5>
+              <ul class="bio-rel-list">${villainsHTML}</ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="bio-block">
+          <h4 class="bio-block-title">🌟 Best Stories, Iconic Art &amp; Beyond Comics</h4>
+          <div class="bio-stories-grid">${storiesHTML}</div>
+        </div>
+      `;
+    }
+
+    if (isOpen) {
+      populateBioBody();
+    }
+
+    trigger.addEventListener('click', () => {
+      const nowOpen = !state.expandedBios[bioKey];
+      state.expandedBios[bioKey] = nowOpen;
+      sec.classList.toggle('is-open', nowOpen);
+      trigger.setAttribute('aria-expanded', nowOpen ? 'true' : 'false');
+      pillEl.textContent = nowOpen ? '📖 Hide Bio' : '📖 ' + bio.badgeText;
+      if (nowOpen && !bodyEl.hasChildNodes()) {
+        populateBioBody();
+      }
+    });
+
+    container.appendChild(sec);
   }
 
   // Render Standard Display Section (Hope Displays 1, 2, 6 + Kandy Base Numbered 3 + Kandy Neon 5)
@@ -1590,7 +1725,9 @@
     if (state.activeTab === 'hope') {
       const wrap = document.getElementById('hope-displays-wrap');
       wrap.innerHTML = '';
+      renderCharacterBioSection(wrap, 'moon-girl');
       renderDisplaySection(wrap, 1);
+      renderCharacterBioSection(wrap, 'devil-dinosaur');
       renderDisplaySection(wrap, 2);
       renderDisplaySection(wrap, 6);
     } else if (state.activeTab === 'chrome') {

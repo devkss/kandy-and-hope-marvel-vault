@@ -2290,3 +2290,445 @@ body.dark-vault .about-version-badge strong {
 .about-duo-strip strong {
   color: var(--text);
 }
+
+/* ==========================================================================
+   V1.9 UI UPDATES: COLLAPSIBLE CHARACTER DOSSIERS (MOON GIRL & DEVIL DINOSAUR)
+   ========================================================================== */
+.bio-accordion {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 26px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+  overflow: hidden;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.bio-accordion.bio-moon-girl {
+  border-color: rgba(236, 72, 153, 0.36);
+}
+.bio-accordion.bio-moon-girl.is-open {
+  border-color: rgba(236, 72, 153, 0.6);
+  box-shadow: 0 18px 44px rgba(236, 72, 153, 0.18);
+  margin-bottom: 22px;
+}
+
+.bio-accordion.bio-devil-dino {
+  border-color: rgba(239, 68, 68, 0.36);
+}
+.bio-accordion.bio-devil-dino.is-open {
+  border-color: rgba(239, 68, 68, 0.62);
+  box-shadow: 0 18px 44px rgba(239, 68, 68, 0.18);
+  margin-bottom: 22px;
+}
+
+.bio-trigger {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 22px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.18s ease;
+}
+
+.bio-accordion.bio-moon-girl .bio-trigger {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.08), rgba(139, 92, 246, 0.06) 55%, transparent);
+}
+.bio-accordion.bio-devil-dino .bio-trigger {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.09), rgba(245, 158, 11, 0.06) 55%, transparent);
+}
+.bio-trigger:hover {
+  background: var(--surface-soft) !important;
+}
+
+.bio-trigger-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 240px;
+  flex: 1 1 auto;
+}
+
+.bio-chevron {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface-soft);
+  border: 1.5px solid var(--border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--pink);
+  transition: transform 0.24s ease, background 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
+}
+.bio-accordion.bio-devil-dino .bio-chevron {
+  color: #ef4444;
+}
+.bio-accordion.is-open .bio-chevron {
+  transform: rotate(90deg);
+  color: #fff;
+  border-color: transparent;
+}
+.bio-accordion.bio-moon-girl.is-open .bio-chevron {
+  background: linear-gradient(135deg, #ec4899, #8b5cf6);
+}
+.bio-accordion.bio-devil-dino.is-open .bio-chevron {
+  background: linear-gradient(135deg, #ef4444, #f59e0b);
+}
+
+.bio-eyebrow {
+  display: block;
+  font-size: 0.69rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--pink);
+  margin-bottom: 2px;
+}
+.bio-accordion.bio-devil-dino .bio-eyebrow {
+  color: #dc2626;
+}
+body.dark-vault .bio-accordion.bio-devil-dino .bio-eyebrow {
+  color: #fb923c;
+}
+
+.bio-heading-title {
+  display: block;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.32rem;
+  font-weight: 700;
+  line-height: 1.18;
+  color: var(--text);
+}
+
+.bio-heading-sub {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.bio-trigger-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bio-toggle-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  background: var(--surface-soft);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  transition: all 0.2s ease;
+}
+.bio-accordion.bio-moon-girl .bio-toggle-pill {
+  background: rgba(236, 72, 153, 0.14);
+  border-color: rgba(236, 72, 153, 0.36);
+  color: #be185d;
+}
+body.dark-vault .bio-accordion.bio-moon-girl .bio-toggle-pill { color: #f9a8d4; }
+
+.bio-accordion.bio-devil-dino .bio-toggle-pill {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.36);
+  color: #b91c1c;
+}
+body.dark-vault .bio-accordion.bio-devil-dino .bio-toggle-pill { color: #fca5a5; }
+
+/* Expanded Bio Content Body */
+.bio-body {
+  display: none;
+  padding: 20px 24px 26px;
+  border-top: 1.5px solid var(--border);
+  animation: fadeSlide 0.24s ease;
+}
+.bio-accordion.is-open .bio-body {
+  display: block;
+}
+
+/* Pull Quote Banner */
+.bio-quote {
+  margin: 0 0 20px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  font-size: 0.96rem;
+  font-weight: 700;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--surface-soft);
+  border-left: 5px solid var(--pink);
+}
+.bio-accordion.bio-devil-dino .bio-quote {
+  border-left-color: #ef4444;
+}
+
+/* Quick Fact File Grid */
+.bio-facts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 22px;
+}
+@media (max-width: 860px) {
+  .bio-facts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 540px) {
+  .bio-facts-grid { grid-template-columns: 1fr; }
+}
+
+.bio-fact-card {
+  background: var(--surface-soft);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 11px 14px;
+}
+.bio-fact-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+}
+.bio-fact-value {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+/* Bio Sub-Section Headings */
+.bio-block {
+  margin-bottom: 24px;
+}
+.bio-block:last-child {
+  margin-bottom: 0;
+}
+
+.bio-block-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.18rem;
+  margin: 0 0 12px;
+  color: var(--text);
+}
+
+.bio-prose p {
+  margin: 0 0 12px;
+  color: var(--text-muted);
+  font-size: 0.93rem;
+  line-height: 1.66;
+}
+.bio-prose p:last-child { margin-bottom: 0; }
+.bio-prose strong { color: var(--text); }
+
+/* Creators & Artists Grid */
+.bio-creators-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 720px) {
+  .bio-creators-grid { grid-template-columns: 1fr; }
+}
+
+.bio-creator-card {
+  background: var(--surface-soft);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 13px 16px;
+}
+.bio-creator-name {
+  font-weight: 800;
+  font-size: 0.94rem;
+  color: var(--text);
+}
+.bio-creator-role {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--purple);
+  margin: 2px 0 6px;
+}
+body.dark-vault .bio-creator-role { color: #c4b5fd; }
+.bio-accordion.bio-devil-dino .bio-creator-role { color: #ea580c; }
+body.dark-vault .bio-accordion.bio-devil-dino .bio-creator-role { color: #fdba74; }
+
+.bio-creator-detail {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.52;
+  color: var(--text-muted);
+}
+
+/* Seminal Issues Timeline Grid */
+.bio-issues-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 820px) {
+  .bio-issues-grid { grid-template-columns: 1fr; }
+}
+
+.bio-issue-card {
+  background: var(--surface-solid);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 13px 15px;
+  transition: transform 0.16s ease, border-color 0.16s ease;
+}
+.bio-issue-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--pink);
+}
+.bio-accordion.bio-devil-dino .bio-issue-card:hover {
+  border-color: #f97316;
+}
+
+.bio-issue-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+.bio-issue-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: var(--purple);
+  background: rgba(139, 92, 246, 0.12);
+  padding: 3px 8px;
+  border-radius: 8px;
+}
+body.dark-vault .bio-issue-code { color: #f9a8d4; background: rgba(236, 72, 153, 0.18); }
+.bio-accordion.bio-devil-dino .bio-issue-code {
+  color: #b91c1c;
+  background: rgba(239, 68, 68, 0.12);
+}
+body.dark-vault .bio-accordion.bio-devil-dino .bio-issue-code {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.22);
+}
+
+.bio-issue-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.73rem;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+.bio-issue-title {
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.bio-issue-detail {
+  margin: 0;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* Interactions Two-Column Split (Allies vs. Villains) */
+.bio-relations-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+@media (max-width: 780px) {
+  .bio-relations-grid { grid-template-columns: 1fr; }
+}
+
+.bio-rel-col {
+  background: var(--surface-soft);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 15px 17px;
+}
+.bio-rel-col h5 {
+  margin: 0 0 10px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text);
+}
+.bio-rel-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.bio-rel-list li {
+  font-size: 0.84rem;
+  line-height: 1.48;
+  color: var(--text-muted);
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--border);
+}
+.bio-rel-list li:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+.bio-rel-list strong {
+  color: var(--text);
+}
+
+/* Best Stories & Iconic Art Cards */
+.bio-stories-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 760px) {
+  .bio-stories-grid { grid-template-columns: 1fr; }
+}
+
+.bio-story-card {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.07), var(--surface-soft));
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 14px 16px;
+}
+.bio-accordion.bio-devil-dino .bio-story-card {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), var(--surface-soft));
+}
+.bio-story-card h5 {
+  margin: 0 0 5px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text);
+}
+.bio-story-card p {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.54;
+  color: var(--text-muted);
+}
