@@ -894,5 +894,12 @@
     "valLow": 0,
     "valHigh": 0,
     "updatedAt": 1795601559016
+  },
+  "kc-104-ow-20-020": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795601734193
   }
 }
