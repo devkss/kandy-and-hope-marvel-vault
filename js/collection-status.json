@@ -299,5 +299,12 @@
     "valLow": 0,
     "valHigh": 0,
     "updatedAt": 1795591529679
+  },
+  "kc-109-tb-01-001": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795591704745
   }
 }
