@@ -908,5 +908,19 @@
     "valLow": 0,
     "valHigh": 0,
     "updatedAt": 1795615481176
+  },
+  "kn-201-gu-2-002": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795615529111
+  },
+  "kn-201-gu-13-013": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795617921967
   }
 }
