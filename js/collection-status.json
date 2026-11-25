@@ -558,5 +558,26 @@
     "valLow": 0,
     "valHigh": 0,
     "updatedAt": 1795592426900
+  },
+  "kc-105-fs-19-019": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795592439040
+  },
+  "kc-105-fs-20-020": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795592460447
+  },
+  "kc-103-mw-02-002": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795597919534
   }
 }
