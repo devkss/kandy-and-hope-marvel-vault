@@ -803,5 +803,26 @@
     "valLow": 0,
     "valHigh": 0,
     "updatedAt": 1795601320449
+  },
+  "kc-104-ow-06-006": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795601354413
+  },
+  "kc-104-ow-07-007": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795601375361
+  },
+  "kc-104-ow-08-008": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795601387958
   }
 }
