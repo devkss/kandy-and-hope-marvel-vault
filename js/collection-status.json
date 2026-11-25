@@ -824,5 +824,33 @@
     "valLow": 0,
     "valHigh": 0,
     "updatedAt": 1795601387958
+  },
+  "kc-104-ow-09-009": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795601400711
+  },
+  "kc-104-ow-10-010": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795601422941
+  },
+  "kc-104-ow-11-011": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795601445949
+  },
+  "kc-104-ow-12-012": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795601458765
   }
 }
