@@ -467,5 +467,33 @@
     "valLow": 0,
     "valHigh": 0,
     "updatedAt": 1795592205712
+  },
+  "kc-105-fs-06-006": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795592230637
+  },
+  "kc-105-fs-07-007": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795592245280
+  },
+  "kc-105-fs-08-008": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795592263249
+  },
+  "kc-105-fs-09-009": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795592277753
   }
 }
