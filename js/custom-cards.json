@@ -1711,6 +1711,40 @@
       "missing": false,
       "isCustom": true,
       "updatedAt": 1795685418334
+    },
+    {
+      "id": "custom-5-csacp-tq3c",
+      "display": 5,
+      "row": 98,
+      "col": 1,
+      "slot": "189",
+      "owner": "Kandy",
+      "set": "2026 Topps Neon Marvel",
+      "cardNum": "#189",
+      "character": "Tigra",
+      "artist": null,
+      "subset": "Neon Parallel",
+      "parallel": "pink",
+      "serial": "106/250",
+      "printRun": 250,
+      "format": "All Formats",
+      "odds": "Numbered /250",
+      "valLow": 0,
+      "valHigh": 0,
+      "grade": null,
+      "tags": [
+        "Neon"
+      ],
+      "theme": "neon-cyan",
+      "pattern": "smooth",
+      "orientation": "portrait",
+      "folder": "display-5-neon-marvel",
+      "baseFilename": "custom_d5_189_tigra_pink_106-250_csacp",
+      "recommendedPath": "assets/cards/display-5-neon-marvel/custom_d5_189_tigra_pink_106-250_csacp.jpg",
+      "placeholderSvg": null,
+      "missing": false,
+      "isCustom": true,
+      "updatedAt": 1795685503849
     }
   ],
   "deletedIds": [
