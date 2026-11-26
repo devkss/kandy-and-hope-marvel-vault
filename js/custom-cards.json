@@ -1283,9 +1283,42 @@
       "missing": false,
       "isCustom": true,
       "updatedAt": 1795680698115
+    },
+    {
+      "id": "custom-3-9y5af-nsj6",
+      "display": 3,
+      "row": 98,
+      "col": 1,
+      "slot": "4",
+      "owner": "Kandy",
+      "set": "2026 Topps Chrome Marvel",
+      "cardNum": "#4",
+      "character": "Amaranth",
+      "artist": null,
+      "subset": "Base Parallel",
+      "parallel": "Spider-Web Refractor",
+      "serial": "132/399",
+      "printRun": 399,
+      "format": "All Formats",
+      "odds": "Numbered /399",
+      "valLow": 0,
+      "valHigh": 0,
+      "grade": null,
+      "tags": [],
+      "theme": "purple",
+      "pattern": "smooth",
+      "orientation": "portrait",
+      "folder": "display-3-chrome-hits",
+      "baseFilename": "custom_d3_4_amaranth_spider-web-refractor_132-399_9y5af",
+      "recommendedPath": "assets/cards/display-3-chrome-hits/custom_d3_4_amaranth_spider-web-refractor_132-399_9y5af.jpg",
+      "placeholderSvg": null,
+      "missing": false,
+      "isCustom": true,
+      "updatedAt": 1795680738375
     }
   ],
   "deletedIds": [
-    "custom-3-8wfao-hox4"
+    "custom-3-8wfao-hox4",
+    "custom-3-9yan1-qiq2"
   ]
 }
