@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=JetBrains+Mono:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=1.15" />
+  <link rel="stylesheet" href="css/styles.css?v=1.16" />
 </head>
 <body>
   <canvas id="confetti-canvas"></canvas>
@@ -25,7 +25,7 @@
       <div class="brand-pill">
         <span class="brand-dot"></span>
         <span>Kandy &amp; Hope's Marvel Card Vault · 2026 Edition</span>
-        <button type="button" id="app-version-pill" class="version-chip" title="About &amp; Version Info">V1.15</button>
+        <button type="button" id="app-version-pill" class="version-chip" title="About &amp; Version Info">V1.16</button>
       </div>
       <div class="top-actions">
         <span id="photo-progress-badge" class="pill">0 / 180 Real Photos Loaded</span>
@@ -90,6 +90,7 @@
       <button class="tab-btn tab-hope active" data-tab="hope" id="tab-btn-hope">🌈 Hope's Rainbow Room (66)</button>
       <button class="tab-btn tab-chrome" data-tab="chrome" id="tab-btn-chrome">🏆 Kandy's Chrome Vault (75)</button>
       <button class="tab-btn tab-neon" data-tab="neon" id="tab-btn-neon">⚡ Kandy's Neon Vault (39)</button>
+      <button class="tab-btn tab-sapphire" data-tab="sapphire" id="tab-btn-sapphire">💎 Kandy's Sapphire Vault (0)</button>
       <button class="tab-btn" data-tab="explorer" id="tab-btn-explorer">🔎 Vault Explorer</button>
       <button class="tab-btn" data-tab="sets">📚 Sets, Checklists &amp; Odds</button>
       <button class="tab-btn tab-values" data-tab="values" id="tab-btn-values">💷 Estimated Values</button>
@@ -184,10 +185,36 @@
           <div class="mascot-copy">
             <span class="mascot-tag">⚡ Kandy's Neon Vault</span>
             <h3>2026 Topps Neon Marvel Foil Parallels &amp; Case Hits</h3>
-            <p>Sparkle &amp; Diamante foils, Jubilee's Fireworks /89, Manga Madness Gold /50, 1-UP &amp; Neon Heroines case hits across all 15 insert sets.</p>
+            <p>Sparkle &amp; Diamante foils, Jubilee's Fireworks /89, Manga Madness Gold /50, 1-UP &amp; Neon Heroines case hits across all 18 insert, variation &amp; sketch sets.</p>
           </div>
         </div>
         <div id="neon-displays-wrap"></div>
+      </section>
+
+      <!-- Tab 3b: Kandy's Sapphire Vault -->
+      <section id="panel-sapphire" class="tab-panel">
+        <div class="tab-mascot-banner mascot-sapphire">
+          <button type="button" class="gif-cinema-btn gif-frame-3x2 gif-rim-sapphire"
+            data-gif-src="assets/animations/kandy-card-victory.gif"
+            data-gif-title="Sapphire Edition Cracked-Ice Pulls!"
+            data-gif-caption="Hunting dazzling blue cracked-ice 2026 Topps Chrome Sapphire parallels, Infinite Sapphire, Hidden Gems, and Padparadscha 1/1s!"
+            aria-label="Enlarge Sapphire Edition animation">
+            <img class="vault-anim-gif"
+              src="assets/animations/kandy-card-victory.gif"
+              data-gif="assets/animations/kandy-card-victory.gif"
+              data-poster="assets/animations/posters/kandy-card-victory.jpg"
+              alt="Kandy celebrating a glowing Sapphire trading card pull"
+              width="508" height="337" loading="lazy" decoding="async" />
+            <span class="gif-zoom-pill" aria-hidden="true">🔍 Watch Big</span>
+            <span class="gif-paused-pill" aria-hidden="true">▶ Paused</span>
+          </button>
+          <div class="mascot-copy">
+            <span class="mascot-tag">💎 Kandy's Sapphire Vault</span>
+            <h3>2026 Topps Chrome Sapphire Marvel Parallels &amp; Chases</h3>
+            <p>Numbered Sapphire base parallels (Green /99 down to Padparadscha 1/1) up front, plus all 6 collapsible Sapphire insert &amp; facsimile autograph sets below.</p>
+          </div>
+        </div>
+        <div id="sapphire-displays-wrap"></div>
       </section>
 
       <!-- Tab 4: Vault Explorer -->
@@ -236,7 +263,9 @@
               <option value="3">Kandy: Chrome Base (Numbered Only)</option>
               <option value="chrome-inserts">Kandy: Chrome Insert Sets (29 Sets)</option>
               <option value="5">Kandy: Neon Base (Numbered Only)</option>
-              <option value="neon-inserts">Kandy: Neon Insert Sets (15 Sets)</option>
+              <option value="neon-inserts">Kandy: Neon Insert &amp; Variation Sets (18 Sets)</option>
+              <option value="7">Kandy: Sapphire Base (Numbered Only)</option>
+              <option value="sapphire-inserts">Kandy: Sapphire Insert &amp; Auto Sets (6 Sets)</option>
             </select>
             <select id="f-set">
               <option value="all">All 2026 Sets</option>
@@ -754,7 +783,7 @@
       </div>
 
       <div class="about-version-row">
-        <span class="about-version-badge">Version <strong id="about-version-num">V1.15</strong></span>
+        <span class="about-version-badge">Version <strong id="about-version-num">V1.16</strong></span>
         <span class="about-meta-dot">•</span>
         <span class="about-edition-text">2026 Chrome &amp; Neon Marvel Edition</span>
       </div>
@@ -837,8 +866,8 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=1.15"></script>
+  <script src="js/data.js?v=1.16"></script>
   <script src="js/bios.js"></script>
-  <script src="js/app.js?v=1.15"></script>
+  <script src="js/app.js?v=1.16"></script>
 </body>
 </html>

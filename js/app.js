@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = 'V1.15';
+  const APP_VERSION = 'V1.16';
   const ANIM_PREF_KEY = 'kh_vault_anim_paused_v1';
   const DISPLAY_STICKERS = {
     1: { src: 'assets/stickers/moon-girl-topps.png', alt: 'Moon Girl Topps comic sticker', cls: 'sticker-tall' },
@@ -26,7 +26,9 @@
   const CHROME_INSERT_IDS = new Set(CHROME_INSERT_DISPLAYS.map(d => d.id));
   const NEON_INSERT_DISPLAYS = DISPLAYS.filter(d => d.isNeonInsert);
   const NEON_INSERT_IDS = new Set(NEON_INSERT_DISPLAYS.map(d => d.id));
-  const ALL_INSERT_IDS = new Set([...CHROME_INSERT_IDS, ...NEON_INSERT_IDS]);
+  const SAPPHIRE_INSERT_DISPLAYS = DISPLAYS.filter(d => d.isSapphireInsert);
+  const SAPPHIRE_INSERT_IDS = new Set(SAPPHIRE_INSERT_DISPLAYS.map(d => d.id));
+  const ALL_INSERT_IDS = new Set([...CHROME_INSERT_IDS, ...NEON_INSERT_IDS, ...SAPPHIRE_INSERT_IDS]);
 
   function loadGHConfig() {
     try {
@@ -156,6 +158,7 @@
   const defaultStatusFilters = { 1: 'owned', 2: 'owned' };
   CHROME_INSERT_DISPLAYS.forEach(d => { defaultStatusFilters[d.id] = 'owned'; });
   NEON_INSERT_DISPLAYS.forEach(d => { defaultStatusFilters[d.id] = 'owned'; });
+  SAPPHIRE_INSERT_DISPLAYS.forEach(d => { defaultStatusFilters[d.id] = 'owned'; });
 
   function loadInitialAnimPaused() {
     try {
@@ -178,6 +181,7 @@
     expandedBios: {},         // bioKey -> true/false (both collapsed by default)
     chromeInsertFilter: 'all',// 'all' | 'with-owned'
     neonInsertFilter: 'all',  // 'all' | 'with-owned'
+    sapphireInsertFilter: 'all', // 'all' | 'with-owned'
     statusOverrides: loadLocalStatusOverrides(),
     remoteStatusOverrides: {},
     remoteStatusLoaded: false,
@@ -970,6 +974,7 @@
     const kandyOwned = ownedCards.filter(c => c.owner === 'Kandy');
     const kandyChromeOwned = kandyOwned.filter(c => c.display === 3 || CHROME_INSERT_IDS.has(c.display));
     const kandyNeonOwned = kandyOwned.filter(c => c.display === 5 || NEON_INSERT_IDS.has(c.display));
+    const kandySapphireOwned = kandyOwned.filter(c => c.display === 7 || SAPPHIRE_INSERT_IDS.has(c.display));
     const ace10 = ownedCards.filter(c => c.grade && c.grade.includes('10')).length;
     const ace9 = ownedCards.filter(c => c.grade && c.grade.includes('9')).length;
     const ultraRare = ownedCards.filter(c => (c.printRun && c.printRun <= 10) || c.tags.includes('Case Hit')).length;
@@ -988,6 +993,9 @@
 
     const neonTabBtn = document.getElementById('tab-btn-neon');
     if (neonTabBtn) neonTabBtn.textContent = `⚡ Kandy's Neon Vault (${kandyNeonOwned.length})`;
+
+    const sapphireTabBtn = document.getElementById('tab-btn-sapphire');
+    if (sapphireTabBtn) sapphireTabBtn.textContent = `💎 Kandy's Sapphire Vault (${kandySapphireOwned.length})`;
   }
 
   function escSvg(str) {
@@ -1490,7 +1498,15 @@
       const grid = document.createElement('div');
       grid.className = 'cards-grid';
       if (!sortedCards.length) {
-        grid.innerHTML = '<div style="padding:24px;color:var(--text-muted);font-weight:700;">No cards in this filter view.</div>';
+        if (displayId === 7) {
+          grid.style.display = 'block';
+          grid.innerHTML = `
+            <div class="empty-owned-state">
+              <span>No numbered <strong>2026 Topps Chrome Sapphire</strong> base parallels logged for Kandy yet. When you pull or pick one up, click <strong>➕ Add Card</strong> above to add it here with full official Sapphire odds!</span>
+            </div>`;
+        } else {
+          grid.innerHTML = '<div style="padding:24px;color:var(--text-muted);font-weight:700;">No cards in this filter view.</div>';
+        }
       } else {
         sortedCards.forEach(c => grid.appendChild(createCardTile(c)));
       }
@@ -1746,8 +1762,19 @@
       insertDisplays: NEON_INSERT_DISPLAYS,
       insertIds: NEON_INSERT_IDS,
       filterStateKey: 'neonInsertFilter',
-      headingText: '⚡ 2026 Topps Neon Marvel Insert Sets',
+      headingText: '⚡ 2026 Topps Neon Marvel Insert, Variation & Sketch Sets',
       rerenderFn: renderKandyNeonVault
+    });
+  }
+
+  function renderKandySapphireVault(container) {
+    renderVaultWithCollapsibleInserts(container, {
+      baseDisplayId: 7,
+      insertDisplays: SAPPHIRE_INSERT_DISPLAYS,
+      insertIds: SAPPHIRE_INSERT_IDS,
+      filterStateKey: 'sapphireInsertFilter',
+      headingText: '💎 2026 Topps Chrome Sapphire Marvel Insert & Autograph Sets',
+      rerenderFn: renderKandySapphireVault
     });
   }
 
@@ -1767,6 +1794,8 @@
           if (!CHROME_INSERT_IDS.has(c.display)) return false;
         } else if (f.display === 'neon-inserts') {
           if (!NEON_INSERT_IDS.has(c.display)) return false;
+        } else if (f.display === 'sapphire-inserts') {
+          if (!SAPPHIRE_INSERT_IDS.has(c.display)) return false;
         } else if (String(c.display) !== f.display) {
           return false;
         }
@@ -1898,7 +1927,9 @@
       { label: "Kandy: Chrome Base (Numbered Only)", owner: 'Kandy', filter: c => c.display === 3 },
       { label: `Kandy: Chrome Insert Sets (${CHROME_INSERT_DISPLAYS.length} Sets)`, owner: 'Kandy', filter: c => CHROME_INSERT_IDS.has(c.display) },
       { label: "Kandy: Neon Base (Numbered Only)", owner: 'Kandy', filter: c => c.display === 5 },
-      { label: `Kandy: Neon Insert Sets (${NEON_INSERT_DISPLAYS.length} Sets)`, owner: 'Kandy', filter: c => NEON_INSERT_IDS.has(c.display) },
+      { label: `Kandy: Neon Insert & Variation Sets (${NEON_INSERT_DISPLAYS.length} Sets)`, owner: 'Kandy', filter: c => NEON_INSERT_IDS.has(c.display) },
+      { label: "Kandy: Sapphire Base (Numbered Only)", owner: 'Kandy', filter: c => c.display === 7 },
+      { label: `Kandy: Sapphire Insert & Auto Sets (${SAPPHIRE_INSERT_DISPLAYS.length} Sets)`, owner: 'Kandy', filter: c => SAPPHIRE_INSERT_IDS.has(c.display) },
     ];
 
     const colClass = (m) => m === mode ? 'col-active-val' : '';
@@ -2249,7 +2280,7 @@
       return DISPLAYS.filter(d => d.id === 5 || d.id === 6 || d.isNeonInsert);
     }
     if (setName === '2026 Topps Chrome Marvel Sapphire') {
-      return DISPLAYS.filter(d => d.id === 6 || d.id === 3);
+      return DISPLAYS.filter(d => d.id === 7 || d.id === 6 || d.isSapphireInsert);
     }
     // 2026 Topps Chrome Marvel
     return DISPLAYS.filter(d => d.id === 1 || d.id === 2 || d.id === 3 || d.isChromeInsert);
@@ -2259,6 +2290,7 @@
     const d = DISPLAYS.find(x => x.id === displayId);
     if (!d) return '2026 Topps Chrome Marvel';
     if (d.id === 5 || d.isNeonInsert) return '2026 Topps Neon Marvel';
+    if (d.id === 7 || d.isSapphireInsert) return '2026 Topps Chrome Marvel Sapphire';
     if (d.id === 6) return '2026 Topps Neon Marvel';
     return '2026 Topps Chrome Marvel';
   }
@@ -2269,8 +2301,8 @@
     const groups = [];
 
     const hopeDisps = valid.filter(d => d.owner === 'Hope');
-    const kandyBase = valid.filter(d => d.owner === 'Kandy' && !d.isChromeInsert && !d.isNeonInsert);
-    const kandyIns = valid.filter(d => d.isChromeInsert || d.isNeonInsert);
+    const kandyBase = valid.filter(d => d.owner === 'Kandy' && !d.isChromeInsert && !d.isNeonInsert && !d.isSapphireInsert);
+    const kandyIns = valid.filter(d => d.isChromeInsert || d.isNeonInsert || d.isSapphireInsert);
 
     if (hopeDisps.length) groups.push({ label: "🌈 Hope's Sections", items: hopeDisps });
     if (kandyBase.length) groups.push({ label: "🏆 Kandy's Base Sections", items: kandyBase });
@@ -2290,7 +2322,7 @@
 
   function getOfficialParallelsForForm(setName, displayId) {
     const disp = DISPLAYS.find(d => d.id === displayId);
-    if (disp && (disp.isChromeInsert || disp.isNeonInsert)) {
+    if (disp && (disp.isChromeInsert || disp.isNeonInsert || disp.isSapphireInsert)) {
       return (CHECKLIST_REF.insertParallels && CHECKLIST_REF.insertParallels[String(displayId)]) || [];
     }
     return (CHECKLIST_REF.baseParallels && CHECKLIST_REF.baseParallels[setName]) || [];
@@ -2310,7 +2342,7 @@
     const disp = DISPLAYS.find(d => d.id === displayId);
 
     // 1. Base 1-200 checklist lookup (Chrome, Sapphire, Neon)
-    if (disp && !disp.isChromeInsert && !disp.isNeonInsert && /^\d+$/.test(bare)) {
+    if (disp && !disp.isChromeInsert && !disp.isNeonInsert && !disp.isSapphireInsert && /^\d+$/.test(bare)) {
       const baseMap = CHECKLIST_REF.base && CHECKLIST_REF.base[setName];
       if (baseMap && baseMap[String(parseInt(bare, 10))]) {
         return { character: baseMap[String(parseInt(bare, 10))], source: `${setName} Base Checklist` };
@@ -2547,7 +2579,7 @@
     const character = (document.getElementById('add-character').value || '').trim() || 'New Card';
     const { serial, printRun } = parseNumberedInput(document.getElementById('add-numbered').value);
     const rawPar = (document.getElementById('add-parallel').value || '').trim();
-    const isInsert = Boolean(disp.isChromeInsert || disp.isNeonInsert);
+    const isInsert = Boolean(disp.isChromeInsert || disp.isNeonInsert || disp.isSapphireInsert);
     const officialPar = findOfficialParallel(setName, displayId, rawPar);
     const parallel = officialPar
       ? officialPar.name
@@ -2727,6 +2759,7 @@
     if (!targetDisplayId) {
       if (state.activeTab === 'chrome') targetDisplayId = 3;
       else if (state.activeTab === 'neon') targetDisplayId = 5;
+      else if (state.activeTab === 'sapphire') targetDisplayId = 7;
       else targetDisplayId = 1;
     }
 
@@ -2934,7 +2967,7 @@
     const pr = card.printRun;
 
     // 1. Base Card # vs Official 1-200 Checklist
-    if (disp && !disp.isChromeInsert && !disp.isNeonInsert && /^\d+$/.test(bareNum)) {
+    if (disp && !disp.isChromeInsert && !disp.isNeonInsert && !disp.isSapphireInsert && /^\d+$/.test(bareNum)) {
       const baseMap = CHECKLIST_REF.base && CHECKLIST_REF.base[card.set];
       if (baseMap) {
         const official = baseMap[String(parseInt(bareNum, 10))];
@@ -2960,7 +2993,7 @@
     }
 
     // 3. Official Parallel Name check (Base sections)
-    if (disp && !disp.isChromeInsert && !disp.isNeonInsert && card.display !== 6) {
+    if (disp && !disp.isChromeInsert && !disp.isNeonInsert && !disp.isSapphireInsert && card.display !== 6) {
       const validPars = (CHECKLIST_REF.baseParallels && CHECKLIST_REF.baseParallels[card.set]) || [];
       if (validPars.length > 0 && !validPars.some(p => p.name.toLowerCase() === String(card.parallel || '').toLowerCase())) {
         flags.push(`Non-standard parallel "${card.parallel}"`);
@@ -3206,6 +3239,9 @@
     } else if (state.activeTab === 'neon') {
       const wrap = document.getElementById('neon-displays-wrap');
       renderKandyNeonVault(wrap);
+    } else if (state.activeTab === 'sapphire') {
+      const wrap = document.getElementById('sapphire-displays-wrap');
+      renderKandySapphireVault(wrap);
     } else if (state.activeTab === 'explorer') {
       renderExplorer();
     } else if (state.activeTab === 'sets') {

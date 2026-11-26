@@ -3536,3 +3536,25 @@ body.dark-vault .add-validation-box.is-warn { color: #fde047; }
   color: #dc2626;
 }
 body.dark-vault .add-validation-box.is-error { color: #fca5a5; }
+
+/* ==========================================================================
+   V1.16 UI UPDATES: SAPPHIRE VAULT TAB, BANNER & CRACKED-ICE ACCENT THEME
+   ========================================================================== */
+.tab-btn.tab-sapphire.active {
+  background: linear-gradient(135deg, #2563eb, #0284c7, #38bdf8);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.36);
+}
+
+.tab-mascot-banner.mascot-sapphire {
+  border-color: rgba(37, 99, 235, 0.38);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.11), rgba(56, 189, 248, 0.08) 55%, var(--surface));
+}
+.tab-mascot-banner.mascot-sapphire::after {
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+}
+
+.gif-rim-sapphire {
+  background: linear-gradient(135deg, #1d4ed8, #38bdf8, #818cf8);
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.34);
+}
