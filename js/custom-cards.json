@@ -1881,6 +1881,40 @@
       "missing": false,
       "isCustom": true,
       "updatedAt": 1795686119811
+    },
+    {
+      "id": "custom-5-d9tis-qz9x",
+      "display": 5,
+      "row": 98,
+      "col": 1,
+      "slot": "38",
+      "owner": "Kandy",
+      "set": "2026 Topps Neon Marvel",
+      "cardNum": "#38",
+      "character": "Ghost-Spider",
+      "artist": null,
+      "subset": "Neon Parallel",
+      "parallel": "Blue Foil (Chrome)",
+      "serial": "023/150",
+      "printRun": 150,
+      "format": "All Formats",
+      "odds": "Numbered /150",
+      "valLow": 0,
+      "valHigh": 0,
+      "grade": null,
+      "tags": [
+        "Neon"
+      ],
+      "theme": "neon-cyan",
+      "pattern": "smooth",
+      "orientation": "portrait",
+      "folder": "display-5-neon-marvel",
+      "baseFilename": "custom_d5_38_ghost-spider_blue-foil-chrome_023-150_d9tis",
+      "recommendedPath": "assets/cards/display-5-neon-marvel/custom_d5_38_ghost-spider_blue-foil-chrome_023-150_d9tis.jpg",
+      "placeholderSvg": null,
+      "missing": false,
+      "isCustom": true,
+      "updatedAt": 1795686321844
     }
   ],
   "deletedIds": [
