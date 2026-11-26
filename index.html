@@ -1,3 +1,8 @@
+<!-- ==========================================================================
+     Kandy & Hope's Marvel Card Vault — SPA Shell (V1.17)
+     [DOC §3.2] See DESIGN.md at repository root for full code-level architecture.
+     Search "[DOC §" across index.html, css/styles.css, js/app.js & js/data.js.
+     ========================================================================== -->
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
@@ -20,6 +25,7 @@
   <input type="file" id="add-card-photo-input" accept="image/*" hidden />
 
   <div class="container">
+    <!-- [DOC §6.1] Top Control Strip (.gh-only buttons unlock only when body.gh-can-edit is active) -->
     <!-- Top Control Strip -->
     <div class="top-strip">
       <div class="brand-pill">
@@ -41,6 +47,7 @@
       </div>
     </div>
 
+    <!-- [DOC §1.1 & §6.3] Hero Banner (Photo/GIF frame + 3-column money-free KPI stats) -->
     <!-- Hero Banner -->
     <header class="hero">
       <div class="hero-photo-wrap">
@@ -85,6 +92,7 @@
       </div>
     </header>
 
+    <!-- [DOC §7.3] Primary 7-Tab Navigation Bar (routed by renderActiveTab() in js/app.js) -->
     <!-- Navigation Tabs -->
     <nav class="nav-tabs" aria-label="Vault Sections">
       <button class="tab-btn tab-hope active" data-tab="hope" id="tab-btn-hope">🌈 Hope's Rainbow Room (66)</button>
@@ -97,6 +105,7 @@
     </nav>
 
     <main>
+      <!-- [DOC §7.3 & §4.5] Hope's Rainbow Room (Bios + Displays 1, 2, 6) -->
       <!-- Tab 1: Hope's Rainbow Room -->
       <section id="panel-hope" class="tab-panel active">
         <div class="tab-mascot-banner mascot-hope mascot-banner-panoramic has-banner-sticker">
@@ -139,6 +148,7 @@
         <div id="hope-displays-wrap"></div>
       </section>
 
+      <!-- [DOC §7.3] Kandy's Chrome Vault (Display 3 + 29 Collapsible Inserts D101–D129) -->
       <!-- Tab 2: Kandy's Chrome Vault -->
       <section id="panel-chrome" class="tab-panel">
         <div class="tab-mascot-banner mascot-chrome">
@@ -165,6 +175,7 @@
         <div id="chrome-displays-wrap"></div>
       </section>
 
+      <!-- [DOC §7.3] Kandy's Neon Vault (Display 5 + 18 Collapsible Inserts/Vars D201–D218) -->
       <!-- Tab 3: Kandy's Neon Vault -->
       <section id="panel-neon" class="tab-panel">
         <div class="tab-mascot-banner mascot-neon">
@@ -191,6 +202,7 @@
         <div id="neon-displays-wrap"></div>
       </section>
 
+      <!-- [DOC §7.3] Kandy's Sapphire Vault (Display 7 + 6 Collapsible Inserts/Autos D301–D306) -->
       <!-- Tab 3b: Kandy's Sapphire Vault -->
       <section id="panel-sapphire" class="tab-panel">
         <div class="tab-mascot-banner mascot-sapphire">
@@ -217,6 +229,7 @@
         <div id="sapphire-displays-wrap"></div>
       </section>
 
+      <!-- [DOC §7.4] Master Vault Explorer (Global Search, Multi-Filter & Quick-Tag Chips) -->
       <!-- Tab 4: Vault Explorer -->
       <section id="panel-explorer" class="tab-panel">
         <div class="tab-mascot-banner mascot-explorer">
@@ -294,6 +307,7 @@
         </div>
       </section>
 
+      <!-- [DOC §7.4 & §4.3] Sets, Checklists, Pull Odds & Chase Tracker (Money-Free) -->
       <!-- Tab 5: Sets, Checklists & Odds (No Money Values) -->
       <section id="panel-sets" class="tab-panel">
         <div class="tab-mascot-banner mascot-sets">
@@ -358,6 +372,7 @@
         </div>
       </section>
 
+      <!-- [DOC §7.4 & §1.2] Dedicated Estimated Values Dashboard (ONLY tab showing £ GBP) -->
       <!-- Tab 6: Dedicated Estimated Values Dashboard -->
       <section id="panel-values" class="tab-panel">
         <div class="tab-mascot-banner mascot-values">
@@ -489,6 +504,7 @@
     </main>
   </div>
 
+  <!-- [DOC §7.5 & §6.3] Modal 1: Card Inspector, Status Toggle & Photo Upload Studio -->
   <!-- Card Inspector & Photo Upload Studio Modal -->
   <div id="card-modal" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal-box">
@@ -575,6 +591,7 @@
     </div>
   </div>
 
+  <!-- [DOC §6.1 & §5.3] Modal 2: GitHub Fine-Grained PAT Config & Local-vs-Remote Drift Sync -->
   <!-- GitHub Direct Sync Settings Modal -->
   <div id="gh-modal" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal-box gh-modal-box">
@@ -629,6 +646,7 @@
 
 
 
+  <!-- [DOC §7.5 & §4.4] Modal 3: Add Card Studio with Live VAULT_CHECKLIST_REF Validation -->
   <!-- Add New Card Modal (GitHub Connected Only) -->
   <div id="add-card-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="add-card-modal-title">
     <div class="modal-box add-card-modal-box">
@@ -768,6 +786,7 @@
     </div>
   </div>
 
+  <!-- [DOC §7.5] Modal 4: About & Version Info -->
   <!-- About Modal -->
   <div id="about-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="about-modal-title">
     <div class="modal-box about-modal-box">
@@ -808,6 +827,7 @@
   </div>
 
 
+  <!-- [DOC §7.5 & §8.3] Modal 5: Animated GIF Cinema Lightbox -->
   <!-- Animated Comic Cinema Lightbox Modal -->
   <div id="gif-lightbox-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="gif-lightbox-title">
     <div class="modal-box gif-lightbox-box">
@@ -824,6 +844,7 @@
   </div>
 
 
+  <!-- [DOC §7.5 & §2.2] Modal 6: Date-Safe CSV/TSV Spreadsheet Export & Automated Audit -->
   <!-- Export Vault Spreadsheet Modal (GitHub Connected Only) -->
   <div id="export-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="export-modal-title">
     <div class="modal-box export-modal-box">
@@ -871,6 +892,7 @@
     </div>
   </div>
 
+  <!-- [DOC §3.2 & §9.2] Script Load Order: data.js -> bios.js -> app.js (bump ?v= on release) -->
   <script src="js/data.js?v=1.17"></script>
   <script src="js/bios.js"></script>
   <script src="js/app.js?v=1.17"></script>

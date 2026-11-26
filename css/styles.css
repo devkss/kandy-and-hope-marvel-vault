@@ -1,4 +1,5 @@
 /* Kandy & Hope's Marvel Card Vault — Modern Bubbly Collector UI */
+/* [DOC §8.1] Dual Theme Design Tokens — Bubble Pop Light (:root) & Dark Vault (body.dark-vault) */
 :root {
   --bg: #fff8fc;
   --bg-grad: radial-gradient(circle at 12% 14%, rgba(244,114,182,0.22), transparent 36%),
@@ -149,6 +150,7 @@ body::before {
   backdrop-filter: blur(10px);
 }
 
+/* [DOC §8.2] Hero Layout & Responsive Grid */
 /* HERO BANNER */
 .hero {
   position: relative;
@@ -325,6 +327,7 @@ body.dark-vault .hero-eyebrow { color: #f472b6; }
   color: #fff;
 }
 
+/* [DOC §7.3 & §8.2] 7-Tab Navigation Bar */
 /* NAVIGATION TABS */
 .nav-tabs {
   display: flex;
@@ -549,6 +552,7 @@ body.dark-vault .pill-cyan { color: #67e8f9; }
   gap: 18px;
 }
 
+/* [DOC §7.2 & §8.2] 3D Perspective Card Tiles, Holo Glare & Uniform Row Alignment */
 /* 3D HOLOGRAPHIC CARD TILE */
 .card-tile {
   position: relative;
@@ -855,6 +859,7 @@ code.fname {
   padding: 18px;
 }
 
+/* [DOC §7.5] Shared Modal Backdrop & Dialog Container */
 /* MODAL */
 .modal-backdrop {
   position: fixed;
@@ -2736,6 +2741,7 @@ body.dark-vault .bio-accordion.bio-devil-dino .bio-issue-code {
 /* ==========================================================================
    V1.10 UI UPDATES: ADD CARD STUDIO, GITHUB PERMISSION GATE & CUSTOM CARDS
    ========================================================================== */
+/* [DOC §6.1] Security Permission Gate — hides owner tools from public visitors */
 .gh-only {
   display: none !important;
 }
@@ -3073,6 +3079,7 @@ body.dark-vault .comic-sticker {
 /* ==========================================================================
    V1.12 UI UPDATES: ART-DIRECTED ANIMATED GIF CINEMA BANNERS & LIGHTBOX
    ========================================================================== */
+/* [DOC §8.3] Aspect-Ratio-Locked Animated GIF Cinema Frames (Zero CLS) & Paused State */
 .gif-cinema-btn {
   position: relative;
   display: block;
@@ -3398,6 +3405,7 @@ body.dark-vault .pill-sapphire {
   color: #7dd3fc;
 }
 
+/* [DOC §7.5] Export Sheet Modal & Add Card Live Validation Hints */
 .export-modal-box {
   max-width: 620px;
 }
@@ -3540,6 +3548,7 @@ body.dark-vault .add-validation-box.is-error { color: #fca5a5; }
 /* ==========================================================================
    V1.16 UI UPDATES: SAPPHIRE VAULT TAB, BANNER & CRACKED-ICE ACCENT THEME
    ========================================================================== */
+/* [DOC §7.3 & §8.1] Sapphire Cracked-Ice Tab & Banner Theme */
 .tab-btn.tab-sapphire.active {
   background: linear-gradient(135deg, #2563eb, #0284c7, #38bdf8);
   color: #ffffff;
@@ -3562,6 +3571,7 @@ body.dark-vault .add-validation-box.is-error { color: #fca5a5; }
 /* ==========================================================================
    V1.17 UI UPDATES: VALUATION AUDIT STRIP
    ========================================================================== */
+/* [DOC §7.4] Valuation Audit Strip inside Estimated Values Tab */
 .val-audit-strip {
   display: flex;
   flex-wrap: wrap;

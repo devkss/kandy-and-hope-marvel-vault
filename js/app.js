@@ -1,3 +1,8 @@
+// ============================================================================
+// Kandy & Hope's Marvel Card Vault — Main Application Engine (V1.17)
+// [DOC §2.1] Wrapped in an IIFE to keep global scope clean (zero dependencies).
+// See DESIGN.md at repository root — match any "[DOC §X.Y]" tag directly.
+// ============================================================================
 (function () {
   const APP_VERSION = 'V1.17';
   const ANIM_PREF_KEY = 'kh_vault_anim_paused_v1';
@@ -15,6 +20,7 @@
   const CHASES = window.VAULT_CHASES || [];
   const CHECKLIST_REF = window.VAULT_CHECKLIST_REF || { base: {}, baseParallels: {}, insertParallels: {} };
 
+  // [DOC §5.2] Browser Storage Keys (localStorage & IndexedDB offline photo cache)
   const GH_STORAGE_KEY = 'kh_vault_gh_config_v1';
   const RECENT_UPLOADS_KEY = 'kh_vault_recent_uploads_v1';
   const STATUS_STORAGE_KEY = 'kh_vault_card_status_v1';
@@ -76,6 +82,7 @@
   }
 
   // Lightweight IndexedDB store so locally-added card photos survive page refreshes offline
+  // [DOC §5.2] IndexedDB Offline Photo Blob Store (survives offline page refreshes)
   function openLocalPhotoDB() {
     return new Promise((resolve, reject) => {
       if (!window.indexedDB) return resolve(null);
@@ -169,6 +176,7 @@
     return Boolean(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }
 
+  // [DOC §5.1] Single Global In-Memory Application State
   const state = {
     animationsPaused: loadInitialAnimPaused(),
     activeTab: 'hope',
@@ -216,6 +224,7 @@
   // ==========================================================================
   // EFFECTIVE CARD ACCESSORS (MERGING BASE DATA + STATUS OVERRIDES)
   // ==========================================================================
+  // [DOC §5.1 & §2.2] Effective Card Accessors — ALWAYS use these instead of raw card fields!
   function getCardOverride(c) {
     return state.statusOverrides[c.id] || null;
   }
@@ -280,6 +289,7 @@
     return clean;
   }
 
+  // [DOC §5.3] Local-vs-GitHub Drift Detection & Remote Overlay Hydration
   function computeLocalGitHubDrift() {
     const driftItems = [];
     if (state.remoteStatusLoaded) {
@@ -451,6 +461,7 @@
   // ==========================================================================
   // SMART SORTING (PULL RARITY / CHECKLIST POSITION / NAME / VALUE [VALUES TAB])
   // ==========================================================================
+  // [DOC §7.1] Smart Sorting & Pull-Rarity Ranking Engine (Tier -> Finish -> Card# -> Serial)
   function parseSerialNum(serial) {
     if (!serial || String(serial).toLowerCase() === 'unnumbered') return 999999;
     const m = String(serial).match(/^(\d+)\s*\//);
@@ -560,6 +571,7 @@
   }
 
   // Convert any image Blob/File into an optimised crisp web JPEG
+  // [DOC §6.3] Client-Side Canvas JPEG Optimiser & UTF-8 Base64 Encoder
   function processImageBlob(blob, optimise = true) {
     return new Promise((resolve, reject) => {
       const url = URL.createObjectURL(blob);
@@ -615,6 +627,7 @@
   }
 
   // Upload/Overwrite a file directly in GitHub via REST Contents API
+  // [DOC §6.2] GitHub REST Contents API (SHA check + Base64 PUT / DELETE)
   async function uploadToGitHub(repoFilePath, base64Content, commitMessage) {
     const { owner, repo, branch, token } = state.gh;
     if (!token || !owner || !repo) throw new Error('NOT_CONFIGURED');
@@ -752,6 +765,7 @@
     return 'download';
   }
 
+  // [DOC §6.1] Security & Permission Gate (Read-Only Visitor vs Connected Owner)
   function hasGitHubEditPermissions() {
     return Boolean(
       state.gh &&
@@ -824,6 +838,7 @@
   }
 
   // Hero Photo / Animated GIF auto-loader & uploader
+  // [DOC §6.3] Hero Photo / Animated GIF Waterfall Loader & Dual-Format Uploader
   function initHeroPhoto() {
     const img = document.getElementById('hero-photo');
     const gifTs = state.recentUploads['assets/photos/kandy-and-hope.gif'];
@@ -1035,6 +1050,7 @@
   }
 
   // Smart Image Resolver per Card
+  // [DOC §6.3] Smart Card Image Fallback Waterfall (Session/IDB -> .jpg -> .webp -> SVG)
   function attachSmartImage(imgEl, card, tileEl) {
     if (state.sessionPhotos[card.id]) {
       imgEl.onload = null;
@@ -1081,6 +1097,7 @@
   }
 
   // Create a Uniform-Height, Bottom-Aligned 3D Holographic Card Tile (ZERO Money Values!)
+  // [DOC §7.2] 3D Holographic Card Tile Factory (Money-Free, Uniform Height, Greyscale Missing)
   function createCardTile(card) {
     const missing = isCardMissing(card);
     const serial = getCardSerial(card);
@@ -1168,6 +1185,7 @@
   }
 
   // Render Collapsible Character Biography Dossier (starts collapsed by default)
+  // [DOC §7.3 & §4.5] Lazy Collapsible Character Dossiers (js/bios.js)
   function renderCharacterBioSection(container, bioKey) {
     const bio = BIOS[bioKey];
     if (!bio) return;
@@ -1315,6 +1333,7 @@
   }
 
   // Render Standard Display Section (Hope Displays 1, 2, 6 + Kandy Base Numbered 3 + Kandy Neon 5)
+  // [DOC §7.3] Standard Display Renderer (Rainbows, Base Sections & D6 Set/Char Groups)
   function renderDisplaySection(container, displayId) {
     const meta = DISPLAYS.find(d => d.id === displayId);
     const isHopeSection = meta.owner === 'Hope';
@@ -1627,6 +1646,7 @@
     }
   }
 
+  // [DOC §7.3] Shared Collapsible Insert/Variation Accordion Engine (Chrome, Neon, Sapphire)
   function renderVaultWithCollapsibleInserts(container, opts) {
     const {
       baseDisplayId,
@@ -1779,6 +1799,7 @@
   }
 
   // Render All-Cards Explorer Tab (Zero Money Values!)
+  // [DOC §7.4] Master Vault Explorer (Global Search, Multi-Filter & Quick-Tags)
   function renderExplorer() {
     const f = state.filters;
     let list = CARDS.filter(c => {
@@ -1834,6 +1855,7 @@
   }
 
   // Render Sets, Checklists, Pull Odds & Chase Tracker Tab (Zero Money Values!)
+  // [DOC §7.4 & §4.3] Sets, Checklists, Pull Odds & Chase Tracker Tab (Money-Free)
   function renderSetsTab() {
     const setsWrap = document.getElementById('sets-cards-wrap');
     setsWrap.innerHTML = SETS.map(s => `
@@ -1880,6 +1902,7 @@
   // ==========================================================================
   // DEDICATED ESTIMATED VALUES TAB (BREAKDOWN + RANKED DESCENDING LIST)
   // ==========================================================================
+  // [DOC §7.4 & §1.2] Dedicated Estimated Values Dashboard (ONLY tab rendering £ GBP)
   function renderValuesTab() {
     const ownedAll = CARDS.filter(c => !isCardMissing(c));
     const ownedKandy = ownedAll.filter(c => c.owner === 'Kandy');
@@ -2173,6 +2196,7 @@
     }
   }
 
+  // [DOC §7.5] Card Inspector Modal, Status Toggle & Staged Photo Studio
   function openCardModal(card, showValueContext = false) {
     currentModalCard = card;
     currentModalShowValue = Boolean(showValueContext || state.activeTab === 'values');
@@ -2342,6 +2366,7 @@
     return list.find(p => p.name.toLowerCase() === target) || null;
   }
 
+  // [DOC §7.5 & §4.4] Add Card Studio Live Validation Engine (VAULT_CHECKLIST_REF)
   function lookupOfficialCharacter(setName, displayId, rawCardNum) {
     const normNum = normalizeCardNumInput(rawCardNum);
     if (!normNum) return null;
@@ -2782,6 +2807,7 @@
     document.getElementById('add-card-modal').classList.remove('open');
   }
 
+  // [DOC §7.5 & §4.6] Commit Added Custom Card (Appends to custom-cards.json without touching data.js)
   async function commitNewCard(saveToGitHub = false) {
     const numVal = (document.getElementById('add-card-num').value || '').trim();
     const charVal = (document.getElementById('add-character').value || '').trim();
@@ -2966,6 +2992,7 @@
   // ==========================================================================
   // V1.15 VAULT SPREADSHEET EXPORT & AUTOMATED DATA AUDIT ENGINE
   // ==========================================================================
+  // [DOC §7.5 & §2.2] Automated Vault Data Audit & Date-Safe CSV/TSV Spreadsheet Export
   function auditCardRecord(card) {
     const flags = [];
     const disp = DISPLAYS.find(d => d.id === card.display);
@@ -3226,6 +3253,7 @@
   }
 
   // Render active tab
+  // [DOC §7.3] Central Tab Router (renders only active tab for fast performance)
   function renderActiveTab() {
     renderHeroStats();
     updateGHButtonState();
@@ -3338,6 +3366,7 @@
     tryNext();
   }
 
+  // [DOC §5.3 & §6.1] Application Bootstrap & DOM Event Wiring
   document.addEventListener('DOMContentLoaded', () => {
     initHeroPhoto();
     initOddsBannerArt();

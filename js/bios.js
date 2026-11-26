@@ -1,3 +1,8 @@
+// ============================================================================
+// Kandy & Hope's Marvel Card Vault — Character Biography Dossiers
+// [DOC §4.5] Consumed lazily by renderCharacterBioSection() in js/app.js.
+// See DESIGN.md §4.5 for schema details.
+// ============================================================================
 // Kandy & Hope's Marvel Card Vault — Character Dossiers (Moon Girl & Devil Dinosaur)
 window.VAULT_CHARACTER_BIOS = {
   "moon-girl": {
