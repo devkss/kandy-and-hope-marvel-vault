@@ -2187,6 +2187,41 @@
       "missing": false,
       "isCustom": true,
       "updatedAt": 1795687005645
+    },
+    {
+      "id": "custom-204-drckk-j83z",
+      "display": 204,
+      "row": 98,
+      "col": 1,
+      "slot": "MM-3",
+      "owner": "Kandy",
+      "set": "2026 Topps Neon Marvel",
+      "cardNum": "#MM-3",
+      "character": "Scarlet Witch",
+      "artist": null,
+      "subset": "Manga Madness",
+      "parallel": "Manga Madness",
+      "serial": "Unnumbered",
+      "printRun": null,
+      "format": "All Formats",
+      "odds": "Insert",
+      "valLow": 0,
+      "valHigh": 0,
+      "grade": null,
+      "tags": [
+        "Neon",
+        "Insert"
+      ],
+      "theme": "neon-cyan",
+      "pattern": "insert",
+      "orientation": "portrait",
+      "folder": "display-5-neon-marvel",
+      "baseFilename": "custom_d204_mm-3_scarlet-witch_manga-madness_unnumbered_drckk",
+      "recommendedPath": "assets/cards/display-5-neon-marvel/custom_d204_mm-3_scarlet-witch_manga-madness_unnumbered_drckk.jpg",
+      "placeholderSvg": null,
+      "missing": false,
+      "isCustom": true,
+      "updatedAt": 1795687139684
     }
   ],
   "deletedIds": [
