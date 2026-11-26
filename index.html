@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=JetBrains+Mono:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=1.14" />
+  <link rel="stylesheet" href="css/styles.css?v=1.15" />
 </head>
 <body>
   <canvas id="confetti-canvas"></canvas>
@@ -25,11 +25,12 @@
       <div class="brand-pill">
         <span class="brand-dot"></span>
         <span>Kandy &amp; Hope's Marvel Card Vault · 2026 Edition</span>
-        <button type="button" id="app-version-pill" class="version-chip" title="About &amp; Version Info">V1.14</button>
+        <button type="button" id="app-version-pill" class="version-chip" title="About &amp; Version Info">V1.15</button>
       </div>
       <div class="top-actions">
         <span id="photo-progress-badge" class="pill">0 / 180 Real Photos Loaded</span>
         <button id="add-card-btn" class="btn btn-primary gh-only">➕ Add Card</button>
+        <button id="export-sheet-btn" class="btn btn-soft gh-only" title="Export all card data to a spreadsheet for Google Sheets or Excel">📊 Export Sheet</button>
         <button id="about-btn" class="btn btn-soft">ℹ️ About</button>
         <button id="gh-drift-btn" class="btn btn-warn-sync" hidden title="Some local changes have not been pushed to GitHub yet">⚠️ Sync Local Changes</button>
         <button id="gh-settings-btn" class="btn btn-soft">☁️ GitHub Sync</button>
@@ -669,6 +670,7 @@
               <label for="add-character">Character Name *</label>
               <input type="text" id="add-character" list="vault-characters-list" placeholder="e.g. Venom, Moon Girl" required />
               <datalist id="vault-characters-list"></datalist>
+              <div id="add-char-hint" class="field-validation-hint" hidden></div>
             </div>
           </div>
 
@@ -719,6 +721,9 @@
             </div>
           </div>
 
+          <div id="add-resolved-meta" class="add-resolved-meta" hidden></div>
+          <div id="add-validation-box" class="add-validation-box" hidden></div>
+
           <div class="add-save-bar">
             <button type="button" id="add-save-gh-btn" class="btn btn-success">☁️ Add Card &amp; Save to GitHub</button>
             <button type="button" id="add-save-local-btn" class="btn btn-soft">💾 Add Card Locally</button>
@@ -749,7 +754,7 @@
       </div>
 
       <div class="about-version-row">
-        <span class="about-version-badge">Version <strong id="about-version-num">V1.14</strong></span>
+        <span class="about-version-badge">Version <strong id="about-version-num">V1.15</strong></span>
         <span class="about-meta-dot">•</span>
         <span class="about-edition-text">2026 Chrome &amp; Neon Marvel Edition</span>
       </div>
@@ -784,8 +789,56 @@
     </div>
   </div>
 
-  <script src="js/data.js"></script>
+
+  <!-- Export Vault Spreadsheet Modal (GitHub Connected Only) -->
+  <div id="export-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="export-modal-title">
+    <div class="modal-box export-modal-box">
+      <button id="export-close-btn" class="modal-close" aria-label="Close">✕</button>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px;">
+        <span class="pill pill-cyan">📊 Vault Spreadsheet Export</span>
+        <span class="pill pill-gold" id="export-summary-pill">180 cards ready</span>
+      </div>
+      <h2 id="export-modal-title" style="font-family:'Fredoka',sans-serif;font-size:1.7rem;margin:0 0 6px;">Export Vault Data to Google Sheets</h2>
+      <p style="margin:0 0 16px;color:var(--text-muted);font-size:0.9rem;line-height:1.5;">
+        Download a local spreadsheet file or copy directly to your clipboard to paste straight into <strong>Google Sheets</strong>. Includes all base cards, status updates, added custom cards, official pull odds, and automated data-audit checks.
+      </p>
+
+      <div class="export-options-card">
+        <div class="form-group" style="margin-bottom:12px;">
+          <label for="export-scope">Cards to Include</label>
+          <select id="export-scope">
+            <option value="owned" selected>Owned Cards Only (My Collection)</option>
+            <option value="all">All Tracked Cards (Owned + Missing Checklist Slots)</option>
+            <option value="missing">Missing Checklist Slots Only</option>
+            <option value="custom">Added Custom Cards Only</option>
+          </select>
+        </div>
+
+        <div class="export-checks">
+          <label class="staged-opt-label">
+            <input type="checkbox" id="export-opt-audit" checked />
+            Include automated Data Audit column (checks Card # vs Official Checklist, Serial bounds &amp; Parallel names)
+          </label>
+          <label class="staged-opt-label">
+            <input type="checkbox" id="export-opt-safe-serial" checked />
+            Protect serial numbers (e.g. <code>05/10</code>) so Google Sheets &amp; Excel never convert them into dates
+          </label>
+        </div>
+      </div>
+
+      <div id="export-audit-preview" class="export-audit-preview"></div>
+
+      <div class="export-actions-row">
+        <button type="button" id="export-download-csv-btn" class="btn btn-success">📥 Save Spreadsheet Locally (.csv)</button>
+        <button type="button" id="export-copy-tsv-btn" class="btn btn-primary">📋 Copy for Google Sheets (Ctrl+V)</button>
+        <a href="https://sheets.new" target="_blank" rel="noopener noreferrer" class="btn btn-soft">🌐 Open New Google Sheet ↗</a>
+      </div>
+      <div id="export-status-msg" class="upload-status"></div>
+    </div>
+  </div>
+
+  <script src="js/data.js?v=1.15"></script>
   <script src="js/bios.js"></script>
-  <script src="js/app.js?v=1.14"></script>
+  <script src="js/app.js?v=1.15"></script>
 </body>
 </html>

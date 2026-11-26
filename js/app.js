@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = 'V1.14';
+  const APP_VERSION = 'V1.15';
   const ANIM_PREF_KEY = 'kh_vault_anim_paused_v1';
   const DISPLAY_STICKERS = {
     1: { src: 'assets/stickers/moon-girl-topps.png', alt: 'Moon Girl Topps comic sticker', cls: 'sticker-tall' },
@@ -13,6 +13,7 @@
   const SETS = window.VAULT_SETS || [];
   const ODDS = window.VAULT_ODDS || [];
   const CHASES = window.VAULT_CHASES || [];
+  const CHECKLIST_REF = window.VAULT_CHECKLIST_REF || { base: {}, baseParallels: {}, insertParallels: {} };
 
   const GH_STORAGE_KEY = 'kh_vault_gh_config_v1';
   const RECENT_UPLOADS_KEY = 'kh_vault_recent_uploads_v1';
@@ -1825,7 +1826,7 @@
     const oddsBody = document.getElementById('odds-tbody');
     oddsBody.innerHTML = ODDS.map(o => `
       <tr>
-        <td><span class="pill ${o.set === 'Chrome' ? 'pill-gold' : 'pill-cyan'}">${o.set}</span></td>
+        <td><span class="pill ${o.set === 'Chrome' ? 'pill-gold' : (o.set === 'Sapphire' ? 'pill-sapphire' : 'pill-cyan')}">${o.set}</span></td>
         <td><strong>${o.item}</strong></td>
         <td style="font-family:'JetBrains Mono',monospace;">${o.hobby}</td>
         <td style="font-family:'JetBrains Mono',monospace;">${o.mega}</td>
@@ -2287,10 +2288,193 @@
     populateAddChecklistAndSuggestions();
   }
 
-  function populateAddChecklistAndSuggestions() {
+  function getOfficialParallelsForForm(setName, displayId) {
+    const disp = DISPLAYS.find(d => d.id === displayId);
+    if (disp && (disp.isChromeInsert || disp.isNeonInsert)) {
+      return (CHECKLIST_REF.insertParallels && CHECKLIST_REF.insertParallels[String(displayId)]) || [];
+    }
+    return (CHECKLIST_REF.baseParallels && CHECKLIST_REF.baseParallels[setName]) || [];
+  }
+
+  function findOfficialParallel(setName, displayId, rawParallel) {
+    const target = String(rawParallel || '').trim().toLowerCase();
+    if (!target) return null;
+    const list = getOfficialParallelsForForm(setName, displayId);
+    return list.find(p => p.name.toLowerCase() === target) || null;
+  }
+
+  function lookupOfficialCharacter(setName, displayId, rawCardNum) {
+    const normNum = normalizeCardNumInput(rawCardNum);
+    if (!normNum) return null;
+    const bare = normNum.replace(/^#/, '').trim();
+    const disp = DISPLAYS.find(d => d.id === displayId);
+
+    // 1. Base 1-200 checklist lookup (Chrome, Sapphire, Neon)
+    if (disp && !disp.isChromeInsert && !disp.isNeonInsert && /^\d+$/.test(bare)) {
+      const baseMap = CHECKLIST_REF.base && CHECKLIST_REF.base[setName];
+      if (baseMap && baseMap[String(parseInt(bare, 10))]) {
+        return { character: baseMap[String(parseInt(bare, 10))], source: `${setName} Base Checklist` };
+      }
+      if (baseMap) {
+        return { outOfRange: true, maxBase: 200, source: `${setName} Base Checklist (1–200)` };
+      }
+    }
+
+    // 2. Insert / Autograph sub-section checklist lookup
+    const secMatches = BASE_CARDS.filter(c =>
+      c.display === displayId &&
+      String(c.cardNum || '').replace(/^#/, '').trim().toLowerCase() === bare.toLowerCase()
+    );
+    if (secMatches.length > 0) {
+      return {
+        character: secMatches[0].character,
+        artist: secMatches[0].artist || null,
+        source: `${disp ? disp.title : 'Sub-Section'} Checklist`
+      };
+    }
+    return null;
+  }
+
+  function validateAddCardForm(autoFillBlankChar = false) {
     const setName = document.getElementById('add-set').value;
     const displayId = Number(document.getElementById('add-subsection').value);
     const disp = DISPLAYS.find(d => d.id === displayId);
+    const rawNum = (document.getElementById('add-card-num').value || '').trim();
+    const charEl = document.getElementById('add-character');
+    let charVal = (charEl.value || '').trim();
+    const rawNumbered = (document.getElementById('add-numbered').value || '').trim();
+    const rawPar = (document.getElementById('add-parallel').value || '').trim();
+
+    const errors = [];
+    const warnings = [];
+    const infos = [];
+
+    // 1. Official Card # -> Character cross-check
+    const charHintEl = document.getElementById('add-char-hint');
+    const officialHit = lookupOfficialCharacter(setName, displayId, rawNum);
+    if (officialHit && officialHit.outOfRange) {
+      errors.push(`Card #${rawNum.replace(/^#/, '')} is outside the official 1–${officialHit.maxBase} range for ${setName}.`);
+      if (charHintEl) { charHintEl.hidden = true; charHintEl.innerHTML = ''; }
+    } else if (officialHit && officialHit.character) {
+      if (autoFillBlankChar && !charVal) {
+        charEl.value = officialHit.character;
+        charVal = officialHit.character;
+        if (officialHit.artist && !document.getElementById('add-artist').value.trim()) {
+          document.getElementById('add-artist').value = officialHit.artist;
+        }
+      }
+      const normTyped = charVal.toLowerCase().replace(/\s+/g, ' ');
+      const normOfficial = officialHit.character.toLowerCase().replace(/\s+/g, ' ');
+      if (charVal && normTyped !== normOfficial) {
+        warnings.push(`Checklist mismatch: ${normalizeCardNumInput(rawNum)} is officially "${officialHit.character}" (${officialHit.source}), not "${charVal}".`);
+        if (charHintEl) {
+          charHintEl.hidden = false;
+          charHintEl.className = 'field-validation-hint is-warn';
+          charHintEl.innerHTML = `<span>⚠️ Official ${normalizeCardNumInput(rawNum)}: <strong>${escSvg(officialHit.character)}</strong></span> <button type="button" class="btn-mini-fix" id="add-apply-official-char">Use Official</button>`;
+          const fixBtn = document.getElementById('add-apply-official-char');
+          if (fixBtn) {
+            fixBtn.addEventListener('click', () => {
+              charEl.value = officialHit.character;
+              if (officialHit.artist && !document.getElementById('add-artist').value.trim()) {
+                document.getElementById('add-artist').value = officialHit.artist;
+              }
+              updateAddCardPreview();
+            });
+          }
+        }
+      } else if (charVal) {
+        infos.push(`Matches ${officialHit.source} (${normalizeCardNumInput(rawNum)} = ${officialHit.character}).`);
+        if (charHintEl) {
+          charHintEl.hidden = false;
+          charHintEl.className = 'field-validation-hint is-ok';
+          charHintEl.textContent = `✓ Verified in ${officialHit.source}`;
+        }
+      } else if (charHintEl) {
+        charHintEl.hidden = false;
+        charHintEl.className = 'field-validation-hint is-info';
+        charHintEl.innerHTML = `<span>💡 Official ${normalizeCardNumInput(rawNum)}: <strong>${escSvg(officialHit.character)}</strong></span> <button type="button" class="btn-mini-fix" id="add-apply-official-char">Fill</button>`;
+        const fixBtn = document.getElementById('add-apply-official-char');
+        if (fixBtn) {
+          fixBtn.addEventListener('click', () => {
+            charEl.value = officialHit.character;
+            updateAddCardPreview();
+          });
+        }
+      }
+    } else if (charHintEl) {
+      charHintEl.hidden = true;
+      charHintEl.innerHTML = '';
+    }
+
+    // 2. Serial / Numbered format & bounds validation
+    const { serial, printRun } = parseNumberedInput(rawNumbered);
+    if (rawNumbered && rawNumbered.toLowerCase() !== 'unnumbered') {
+      const m = rawNumbered.match(/^(\d*)\s*\/\s*(\d+)$/);
+      if (!m) {
+        errors.push(`Invalid numbered format "${rawNumbered}". Use e.g. 05/50, /25, or leave blank for Unnumbered.`);
+      } else {
+        const denom = parseInt(m[2], 10);
+        const num = m[1] ? parseInt(m[1], 10) : null;
+        if (denom < 1) {
+          errors.push(`Print run denominator "/${denom}" must be at least 1.`);
+        } else if (num !== null && (num < 1 || num > denom)) {
+          errors.push(`Serial "${num}/${denom}" is out of range (must be between 1 and ${denom}).`);
+        }
+      }
+    }
+
+    // 3. Official Parallel / Finish validation & auto-resolved Format + Pull Odds
+    const officialPar = findOfficialParallel(setName, displayId, rawPar);
+    const resolvedMetaEl = document.getElementById('add-resolved-meta');
+    if (officialPar) {
+      if (officialPar.printRun !== null && printRun !== null && officialPar.printRun !== printRun) {
+        errors.push(`"${officialPar.name}" is officially numbered /${officialPar.printRun}, not /${printRun}.`);
+      } else if (officialPar.printRun !== null && printRun === null) {
+        warnings.push(`"${officialPar.name}" is officially numbered /${officialPar.printRun} — enter the serial (e.g. 01/${officialPar.printRun}).`);
+      } else if (officialPar.printRun === null && printRun !== null) {
+        warnings.push(`"${officialPar.name}" is normally unnumbered, but you entered "${serial}".`);
+      }
+      if (resolvedMetaEl) {
+        resolvedMetaEl.hidden = false;
+        resolvedMetaEl.innerHTML = `<span>🎯 <strong>${escSvg(officialPar.name)}</strong></span><span>📦 ${escSvg(officialPar.format)}</span><span>🎲 ${escSvg(officialPar.odds)}</span>`;
+      }
+    } else {
+      if (rawPar) {
+        warnings.push(`"${rawPar}" is not in the standard official parallel list for ${disp ? disp.title : setName}. Pick from the dropdown for automatic odds & format.`);
+      }
+      if (resolvedMetaEl) {
+        resolvedMetaEl.hidden = true;
+        resolvedMetaEl.innerHTML = '';
+      }
+    }
+
+    // 4. Render live validation summary banner
+    const valBox = document.getElementById('add-validation-box');
+    if (valBox) {
+      if (errors.length > 0) {
+        valBox.hidden = false;
+        valBox.className = 'add-validation-box is-error';
+        valBox.innerHTML = errors.map(e => `<div>❌ ${escSvg(e)}</div>`).join('');
+      } else if (warnings.length > 0) {
+        valBox.hidden = false;
+        valBox.className = 'add-validation-box is-warn';
+        valBox.innerHTML = warnings.map(w => `<div>⚠️ ${escSvg(w)}</div>`).join('');
+      } else if (infos.length > 0 && officialPar) {
+        valBox.hidden = false;
+        valBox.className = 'add-validation-box is-ok';
+        valBox.innerHTML = `<div>✅ Verified: ${escSvg(infos[0])} Official odds &amp; format locked in!</div>`;
+      } else {
+        valBox.hidden = true;
+        valBox.innerHTML = '';
+      }
+    }
+
+    return { errors, warnings, officialPar, officialHit };
+  }
+
+  function populateAddChecklistAndSuggestions() {
+    const setName = document.getElementById('add-set').value;
+    const displayId = Number(document.getElementById('add-subsection').value);
 
     // 1. Populate Quick-Fill Checklist dropdown for this sub-section (unique cardNum slots)
     const pickSel = document.getElementById('add-checklist-pick');
@@ -2333,29 +2517,23 @@
       oriEl.value = 'portrait';
     }
 
-    // 3. Populate parallel autocomplete suggestions relevant to the chosen set
+    // 3. Populate ONLY official parallel suggestions valid for the chosen set & sub-section
     const parList = document.getElementById('vault-parallels-list');
-    const parSet = new Set();
-    if (disp && (disp.isChromeInsert || disp.isNeonInsert)) {
-      parSet.add(disp.title);
-      parSet.add(`${disp.title} — Gold Refractor`);
-      parSet.add(`${disp.title} — Orange Refractor`);
-      parSet.add(`${disp.title} — Black Refractor`);
-      parSet.add(`${disp.title} — Red Refractor`);
-      parSet.add(`${disp.title} — Purple Refractor`);
-      parSet.add(`${disp.title} — Green Refractor`);
-      parSet.add(`${disp.title} — Gold Foil`);
-    }
-    BASE_CARDS.filter(c => c.set === setName).forEach(c => {
-      if (c.parallel) parSet.add(c.parallel);
-    });
-    parList.innerHTML = [...parSet].sort().map(p => `<option value="${escSvg(p)}"></option>`).join('');
+    const officialPars = getOfficialParallelsForForm(setName, displayId);
+    parList.innerHTML = officialPars.map(p => {
+      const lbl = p.printRun ? `/${p.printRun} · ${p.format}` : p.format;
+      return `<option value="${escSvg(p.name)}" label="${escSvg(lbl)}"></option>`;
+    }).join('');
 
-    // 4. Populate character autocomplete datalist
+    // 4. Populate character autocomplete datalist from official 1-200 checklists + inserts
     const charList = document.getElementById('vault-characters-list');
     if (!charList.hasChildNodes()) {
-      const chars = [...new Set(BASE_CARDS.map(c => c.character).filter(Boolean))].sort();
-      charList.innerHTML = chars.map(ch => `<option value="${escSvg(ch)}"></option>`).join('');
+      const charSet = new Set();
+      Object.values(CHECKLIST_REF.base || {}).forEach(mp => {
+        Object.values(mp || {}).forEach(ch => charSet.add(ch));
+      });
+      BASE_CARDS.forEach(c => { if (c.character) charSet.add(c.character); });
+      charList.innerHTML = [...charSet].sort().map(ch => `<option value="${escSvg(ch)}"></option>`).join('');
     }
 
     updateAddCardPreview();
@@ -2370,7 +2548,11 @@
     const { serial, printRun } = parseNumberedInput(document.getElementById('add-numbered').value);
     const rawPar = (document.getElementById('add-parallel').value || '').trim();
     const isInsert = Boolean(disp.isChromeInsert || disp.isNeonInsert);
-    const parallel = rawPar || (isInsert ? disp.title : (printRun ? `Numbered Parallel /${printRun}` : 'Base Card'));
+    const officialPar = findOfficialParallel(setName, displayId, rawPar);
+    const parallel = officialPar
+      ? officialPar.name
+      : (rawPar || (isInsert ? disp.title : (printRun ? `Numbered Parallel /${printRun}` : 'Base Card')));
+    const finalPrintRun = printRun !== null ? printRun : (officialPar ? officialPar.printRun : null);
     const grade = document.getElementById('add-grade').value || null;
     const orientation = document.getElementById('add-orientation').value || 'portrait';
     const artist = (document.getElementById('add-artist').value || '').trim() || null;
@@ -2382,12 +2564,15 @@
     if (setName.includes('Neon')) tags.push('Neon');
     if (setName.includes('Sapphire')) tags.push('Sapphire');
     if (isInsert) tags.push('Insert');
+    if (/^Neon (Green|Purple|Gold|Orange|Black|Red) Refractor$|^Chrome Neon Etch$/i.test(parallel)) {
+      tags.push('Chrome Neon Etch');
+    }
     if (grade) tags.push(grade.includes('10') ? 'ACE 10' : 'ACE 9');
-    if (printRun && printRun <= 10) tags.push('Ultra Rare', `/${printRun} Hit`);
-    else if (printRun && printRun <= 25) tags.push('Low Numbered');
-    else if (printRun === 50) tags.push('Gold /50');
+    if (finalPrintRun && finalPrintRun <= 10) tags.push('Ultra Rare', `/${finalPrintRun} Hit`);
+    else if (finalPrintRun && finalPrintRun <= 25) tags.push('Low Numbered');
+    else if (finalPrintRun === 50) tags.push('Gold /50');
     if (serial.startsWith('1/') || serial.startsWith('01/') || serial.startsWith('001/')) tags.push('Alpha #1');
-    if (printRun && serial === `${printRun}/${printRun}`) tags.push('Bookend');
+    if (finalPrintRun && serial === `${finalPrintRun}/${finalPrintRun}`) tags.push('Bookend');
     if ((disp.title || '').toLowerCase().includes('autograph') || parallel.toLowerCase().includes('auto')) tags.push('Autograph');
     if (['1-UP', 'Neon Heroines', 'Neon Villains', 'Neon Tarots', 'Marvel Murals', 'Topps Originals', 'Varied Visage AoA', 'Astonishing', 'Marvel Reflections'].includes(disp.title)) {
       tags.push('Case Hit');
@@ -2402,9 +2587,17 @@
     const serSlug = slugifyStr(serial);
     const baseFilename = `custom_d${displayId}_${numSlug}_${charSlug}_${parSlug}_${serSlug}_${uniqueSuffix}`;
 
+    const isNeonChrome = setName.includes('Neon') && (/^Neon (Green|Purple|Gold|Orange|Black|Red) Refractor$|^Chrome Neon Etch$/i.test(parallel));
     const subset = isInsert
       ? disp.title
-      : (setName.includes('Neon') ? 'Neon Parallel' : (setName.includes('Sapphire') ? 'Sapphire Parallel' : 'Base Parallel'));
+      : (isNeonChrome ? 'Base Chrome Neon Etch'
+        : (setName.includes('Neon') ? 'Neon Parallel'
+          : (setName.includes('Sapphire') ? 'Sapphire Parallel' : 'Base Parallel')));
+
+    const resolvedFormat = officialPar ? officialPar.format : 'All Formats';
+    const resolvedOdds = officialPar
+      ? officialPar.odds
+      : (finalPrintRun ? `Numbered /${finalPrintRun}` : (isInsert ? 'Insert' : 'Base / Parallel'));
 
     return {
       id: `custom-${displayId}-${uniqueSuffix}-${Math.random().toString(36).slice(2, 6)}`,
@@ -2420,9 +2613,9 @@
       subset,
       parallel,
       serial,
-      printRun,
-      format: 'All Formats',
-      odds: printRun ? `Numbered /${printRun}` : (isInsert ? 'Insert' : 'Base / Parallel'),
+      printRun: finalPrintRun,
+      format: resolvedFormat,
+      odds: resolvedOdds,
       valLow,
       valHigh,
       grade,
@@ -2440,7 +2633,8 @@
     };
   }
 
-  function updateAddCardPreview() {
+  function updateAddCardPreview(autoFillBlankChar = false) {
+    validateAddCardForm(autoFillBlankChar);
     const draft = buildCardObjectFromAddForm();
     const previewTile = document.getElementById('add-drop-zone');
     const preview3d = document.getElementById('add-preview-3d');
@@ -2555,6 +2749,13 @@
 
     if (!numVal || !charVal) {
       st.textContent = 'Please enter both a Card Serial # (e.g. #FF-46) and Character Name.';
+      st.className = 'upload-status err';
+      return;
+    }
+
+    const valCheck = validateAddCardForm(false);
+    if (valCheck.errors.length > 0) {
+      st.textContent = `Please fix validation error before saving: ${valCheck.errors[0]}`;
       st.className = 'upload-status err';
       return;
     }
@@ -2722,6 +2923,233 @@
     if (modal) modal.classList.remove('open');
   }
 
+  // ==========================================================================
+  // V1.15 VAULT SPREADSHEET EXPORT & AUTOMATED DATA AUDIT ENGINE
+  // ==========================================================================
+  function auditCardRecord(card) {
+    const flags = [];
+    const disp = DISPLAYS.find(d => d.id === card.display);
+    const bareNum = String(card.cardNum || '').replace(/^#/, '').trim();
+    const serial = getCardSerial(card);
+    const pr = card.printRun;
+
+    // 1. Base Card # vs Official 1-200 Checklist
+    if (disp && !disp.isChromeInsert && !disp.isNeonInsert && /^\d+$/.test(bareNum)) {
+      const baseMap = CHECKLIST_REF.base && CHECKLIST_REF.base[card.set];
+      if (baseMap) {
+        const official = baseMap[String(parseInt(bareNum, 10))];
+        if (!official) {
+          flags.push(`Card #${bareNum} not in ${card.set} 1-200 checklist`);
+        } else if (official.toLowerCase() !== String(card.character || '').trim().toLowerCase()) {
+          flags.push(`Card #${bareNum} is officially "${official}"`);
+        }
+      }
+    }
+
+    // 2. Serial vs PrintRun consistency
+    const sm = String(serial).match(/^(\d*)\s*\/\s*(\d+)$/);
+    if (sm) {
+      const denom = parseInt(sm[2], 10);
+      const num = sm[1] ? parseInt(sm[1], 10) : null;
+      if (pr !== denom) flags.push(`Serial /${denom} != printRun /${pr}`);
+      if (num !== null && (num < 1 || num > denom)) flags.push(`Serial ${num}/${denom} out of range`);
+    } else if (serial !== 'Unnumbered') {
+      flags.push(`Unusual serial "${serial}"`);
+    } else if (pr !== null && pr !== undefined) {
+      flags.push(`Unnumbered but printRun=/${pr}`);
+    }
+
+    // 3. Official Parallel Name check (Base sections)
+    if (disp && !disp.isChromeInsert && !disp.isNeonInsert && card.display !== 6) {
+      const validPars = (CHECKLIST_REF.baseParallels && CHECKLIST_REF.baseParallels[card.set]) || [];
+      if (validPars.length > 0 && !validPars.some(p => p.name.toLowerCase() === String(card.parallel || '').toLowerCase())) {
+        flags.push(`Non-standard parallel "${card.parallel}"`);
+      }
+    }
+
+    return flags.length === 0 ? 'OK' : `Review: ${flags.join('; ')}`;
+  }
+
+  function getExportFilteredCards(scope) {
+    let list = CARDS;
+    if (scope === 'owned') list = CARDS.filter(c => !isCardMissing(c));
+    else if (scope === 'missing') list = CARDS.filter(c => isCardMissing(c));
+    else if (scope === 'custom') list = CARDS.filter(c => Boolean(c.isCustom));
+    return [...list].sort((a, b) => {
+      if (a.owner !== b.owner) return a.owner.localeCompare(b.owner);
+      if (a.display !== b.display) return a.display - b.display;
+      return compareChecklistPosition(a, b);
+    });
+  }
+
+  function buildExportTableData() {
+    const scope = (document.getElementById('export-scope') && document.getElementById('export-scope').value) || 'owned';
+    const includeAudit = Boolean(document.getElementById('export-opt-audit') && document.getElementById('export-opt-audit').checked);
+    const safeSerial = Boolean(document.getElementById('export-opt-safe-serial') && document.getElementById('export-opt-safe-serial').checked);
+
+    const list = getExportFilteredCards(scope);
+    const headers = [
+      'Owner', 'Set', 'Section', 'Status', 'Source', 'Card #', 'Character', 'Artist',
+      'Subset', 'Parallel / Finish', 'Serial', 'Print Run', 'Grade', 'Format', 'Pull Odds',
+      'Val Low (£)', 'Val Mid (£)', 'Val High (£)', 'Real Photo Loaded', 'Photo Path'
+    ];
+    if (includeAudit) headers.push('Data Audit Check');
+
+    let reviewCount = 0;
+    const rows = list.map(c => {
+      const disp = DISPLAYS.find(d => d.id === c.display);
+      const missing = isCardMissing(c);
+      const serial = getCardSerial(c);
+      const { low, high } = getCardValBounds(c);
+      const mid = Math.round((low + high) / 2);
+      const auditText = auditCardRecord(c);
+      if (auditText !== 'OK') reviewCount++;
+
+      const serialCell = (safeSerial && /^\d+\s*\/\s*\d+$/.test(serial))
+        ? `="${serial}"`
+        : serial;
+
+      const row = [
+        c.owner || '',
+        c.set || '',
+        disp ? disp.title : `Display ${c.display}`,
+        missing ? 'Missing' : 'Owned',
+        c.isCustom ? 'Added Custom' : 'Base Vault',
+        c.cardNum || '',
+        c.character || '',
+        c.artist || '',
+        c.subset || '',
+        c.parallel || '',
+        serialCell,
+        c.printRun != null ? c.printRun : '',
+        missing ? '' : (c.grade || 'Raw'),
+        c.format || '',
+        c.odds || '',
+        low,
+        mid,
+        high,
+        state.realPhotoLoaded[c.id] ? 'Yes' : 'No',
+        c.recommendedPath || ''
+      ];
+      if (includeAudit) row.push(auditText);
+      return row;
+    });
+
+    return { headers, rows, total: list.length, reviewCount, scope };
+  }
+
+  function updateExportPreview() {
+    const { total, reviewCount, scope } = buildExportTableData();
+    const pill = document.getElementById('export-summary-pill');
+    const preview = document.getElementById('export-audit-preview');
+    const scopeLabel = scope === 'owned' ? 'owned cards' : (scope === 'missing' ? 'missing slots' : (scope === 'custom' ? 'added custom cards' : 'tracked cards'));
+    if (pill) pill.textContent = `${total} ${scopeLabel}`;
+    if (preview) {
+      if (total === 0) {
+        preview.className = 'export-audit-preview is-warn';
+        preview.textContent = 'No cards match this export filter.';
+      } else if (reviewCount === 0) {
+        preview.className = 'export-audit-preview is-ok';
+        preview.textContent = `✅ Automated Audit: All ${total} ${scopeLabel} passed official checklist, serial, and parallel verification (0 anomalies).`;
+      } else {
+        preview.className = 'export-audit-preview is-warn';
+        preview.textContent = `⚠️ Automated Audit: ${reviewCount} of ${total} ${scopeLabel} flagged for review in the "Data Audit Check" column.`;
+      }
+    }
+  }
+
+  function openExportModal() {
+    if (!hasGitHubEditPermissions()) {
+      openGHModal('Connect GitHub Sync to export your vault spreadsheet.');
+      return;
+    }
+    const st = document.getElementById('export-status-msg');
+    if (st) { st.textContent = ''; st.className = 'upload-status'; }
+    updateExportPreview();
+    document.getElementById('export-modal').classList.add('open');
+  }
+
+  function closeExportModal() {
+    const modal = document.getElementById('export-modal');
+    if (modal) modal.classList.remove('open');
+  }
+
+  function csvEscapeCell(val) {
+    const str = String(val === null || val === undefined ? '' : val);
+    if (/^[="]/.test(str) && str.startsWith('="')) return str;
+    if (/[",\r\n]/.test(str)) return `"${str.replace(/"/g, '""')}"`;
+    return str;
+  }
+
+  async function downloadVaultCsv() {
+    const { headers, rows, total, scope } = buildExportTableData();
+    const st = document.getElementById('export-status-msg');
+    if (!total) {
+      st.textContent = 'Nothing to export in this filter.';
+      st.className = 'upload-status err';
+      return;
+    }
+    const lines = [headers.map(csvEscapeCell).join(',')];
+    rows.forEach(r => lines.push(r.map(csvEscapeCell).join(',')));
+    // UTF-8 BOM so £ and em-dashes display perfectly in Excel & Google Sheets
+    const csvBlob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+    const today = new Date().toISOString().slice(0, 10);
+    const filename = `kandy-hope-marvel-vault-${scope}-${today}.csv`;
+
+    try {
+      if (window.showSaveFilePicker) {
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: filename,
+            types: [{ description: 'CSV Spreadsheet (Google Sheets / Excel)', accept: { 'text/csv': ['.csv'] } }]
+          });
+          const writable = await handle.createWritable();
+          await writable.write(csvBlob);
+          await writable.close();
+        } catch (err) {
+          if (err && err.name === 'AbortError') return;
+          throw err;
+        }
+      } else {
+        const url = URL.createObjectURL(csvBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+      }
+      st.textContent = `✅ Saved ${total} cards to ${filename}! Upload or import into Google Sheets (File → Import → Upload).`;
+      st.className = 'upload-status ok';
+      showToast(`📊 Exported ${total} cards to ${filename}!`);
+    } catch (err) {
+      st.textContent = `❌ Export error: ${err.message}`;
+      st.className = 'upload-status err';
+    }
+  }
+
+  async function copyVaultTsvForSheets() {
+    const { headers, rows, total } = buildExportTableData();
+    const st = document.getElementById('export-status-msg');
+    if (!total) {
+      st.textContent = 'Nothing to copy in this filter.';
+      st.className = 'upload-status err';
+      return;
+    }
+    const cleanTsv = (v) => String(v === null || v === undefined ? '' : v).replace(/[\t\r\n]+/g, ' ');
+    const tsv = [headers.map(cleanTsv).join('\t'), ...rows.map(r => r.map(cleanTsv).join('\t'))].join('\n');
+    try {
+      await navigator.clipboard.writeText(tsv);
+      st.textContent = `✅ Copied ${total} cards! Click "Open New Google Sheet ↗" and press Ctrl+V in cell A1.`;
+      st.className = 'upload-status ok';
+      showToast(`📋 Copied ${total} rows for Google Sheets!`);
+    } catch (_) {
+      st.textContent = 'Could not access clipboard automatically — click "Save Spreadsheet Locally (.csv)" instead.';
+      st.className = 'upload-status err';
+    }
+  }
+
   // Batch Folder Photo Loader
   function handleFolderUpload(files) {
     let matched = 0;
@@ -2880,6 +3308,15 @@
 
     document.getElementById('about-btn').addEventListener('click', openAboutModal);
     document.getElementById('add-card-btn').addEventListener('click', () => openAddCardModal(null));
+    document.getElementById('export-sheet-btn').addEventListener('click', openExportModal);
+    document.getElementById('export-close-btn').addEventListener('click', closeExportModal);
+    document.getElementById('export-modal').addEventListener('click', (e) => { if (e.target.id === 'export-modal') closeExportModal(); });
+    ['export-scope', 'export-opt-audit', 'export-opt-safe-serial'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('change', updateExportPreview);
+    });
+    document.getElementById('export-download-csv-btn').addEventListener('click', downloadVaultCsv);
+    document.getElementById('export-copy-tsv-btn').addEventListener('click', copyVaultTsvForSheets);
     document.getElementById('add-card-close-btn').addEventListener('click', closeAddCardModal);
     document.getElementById('add-card-modal').addEventListener('click', (e) => {
       if (e.target.id === 'add-card-modal') closeAddCardModal();
@@ -2905,8 +3342,8 @@
     ['add-card-num', 'add-character', 'add-numbered', 'add-parallel', 'add-grade', 'add-orientation', 'add-artist'].forEach(id => {
       const el = document.getElementById(id);
       if (el) {
-        el.addEventListener('input', updateAddCardPreview);
-        el.addEventListener('change', updateAddCardPreview);
+        el.addEventListener('input', () => updateAddCardPreview(id === 'add-card-num'));
+        el.addEventListener('change', () => updateAddCardPreview(id === 'add-card-num'));
       }
     });
 
@@ -3224,7 +3661,7 @@
     document.getElementById('modal-close-btn').addEventListener('click', closeCardModal);
     document.getElementById('card-modal').addEventListener('click', (e) => { if (e.target.id === 'card-modal') closeCardModal(); });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeCardModal(); closeGHModal(); closeAboutModal(); closeAddCardModal(); closeGifLightbox(); }
+      if (e.key === 'Escape') { closeCardModal(); closeGHModal(); closeAboutModal(); closeAddCardModal(); closeGifLightbox(); closeExportModal(); }
     });
 
     document.getElementById('modal-copy-btn').addEventListener('click', () => {

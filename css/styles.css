@@ -3385,3 +3385,154 @@ body.anims-paused .gif-paused-pill {
     max-width: 78px;
   }
 }
+
+/* ==========================================================================
+   V1.15 UI UPDATES: SPREADSHEET EXPORT MODAL, ADD CARD VALIDATION & SAPPHIRE
+   ========================================================================== */
+.pill-sapphire {
+  background: rgba(37, 99, 235, 0.16);
+  border-color: rgba(56, 189, 248, 0.52);
+  color: #1d4ed8;
+}
+body.dark-vault .pill-sapphire {
+  color: #7dd3fc;
+}
+
+.export-modal-box {
+  max-width: 620px;
+}
+
+.export-options-card {
+  background: var(--surface-soft);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 15px 17px;
+  margin-bottom: 14px;
+}
+
+.export-options-card select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: var(--surface-solid);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.export-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.export-audit-preview {
+  padding: 11px 14px;
+  border-radius: 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.45;
+  margin-bottom: 16px;
+  border: 1.5px solid var(--border);
+}
+.export-audit-preview.is-ok {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.42);
+  color: #047857;
+}
+body.dark-vault .export-audit-preview.is-ok { color: #6ee7b7; }
+.export-audit-preview.is-warn {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.48);
+  color: #b45309;
+}
+body.dark-vault .export-audit-preview.is-warn { color: #fde047; }
+
+.export-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Add Card Studio Live Validation & Official Checklist Hints */
+.field-validation-hint {
+  margin-top: 5px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.field-validation-hint[hidden] { display: none !important; }
+.field-validation-hint.is-ok { color: #059669; }
+body.dark-vault .field-validation-hint.is-ok { color: #34d399; }
+.field-validation-hint.is-warn { color: #d97706; }
+body.dark-vault .field-validation-hint.is-warn { color: #fbbf24; }
+.field-validation-hint.is-info { color: var(--purple); }
+body.dark-vault .field-validation-hint.is-info { color: #c4b5fd; }
+
+.btn-mini-fix {
+  border: none;
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--purple), var(--pink));
+  color: #ffffff;
+}
+.btn-mini-fix:hover { opacity: 0.9; }
+
+.add-resolved-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  padding: 9px 13px;
+  border-radius: 13px;
+  background: var(--surface-soft);
+  border: 1.5px solid rgba(139, 92, 246, 0.3);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.add-resolved-meta[hidden] { display: none !important; }
+
+.add-validation-box {
+  padding: 10px 13px;
+  border-radius: 14px;
+  font-size: 0.79rem;
+  font-weight: 700;
+  line-height: 1.45;
+  margin-bottom: 10px;
+  border: 1.5px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.add-validation-box[hidden] { display: none !important; }
+.add-validation-box.is-ok {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.42);
+  color: #047857;
+}
+body.dark-vault .add-validation-box.is-ok { color: #6ee7b7; }
+.add-validation-box.is-warn {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.48);
+  color: #b45309;
+}
+body.dark-vault .add-validation-box.is-warn { color: #fde047; }
+.add-validation-box.is-error {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.48);
+  color: #dc2626;
+}
+body.dark-vault .add-validation-box.is-error { color: #fca5a5; }
