@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = 'V1.16';
+  const APP_VERSION = 'V1.17';
   const ANIM_PREF_KEY = 'kh_vault_anim_paused_v1';
   const DISPLAY_STICKERS = {
     1: { src: 'assets/stickers/moon-girl-topps.png', alt: 'Moon Girl Topps comic sticker', cls: 'sticker-tall' },
@@ -1918,6 +1918,13 @@
     document.getElementById('val-kpi-top-sub').textContent = topCard
       ? `${topCard.character} · ${getCardSerial(topCard)}${topCard.grade ? ' · ' + topCard.grade.replace(' Gem Mint', '').replace(' Mint', '') : ''}`
       : '—';
+
+    const unpricedCount = ownedAll.filter(c => cardVal(c, 'mid') <= 0).length;
+    const unpricedPill = document.getElementById('val-unpriced-pill');
+    if (unpricedPill) {
+      unpricedPill.hidden = unpricedCount === 0;
+      unpricedPill.textContent = `⚠️ ${unpricedCount} unpriced card${unpricedCount === 1 ? '' : 's'} (£0)`;
+    }
 
     // 3. Estimated Market Value Breakdown Table
     const summaryRows = [

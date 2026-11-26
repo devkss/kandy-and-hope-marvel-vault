@@ -1,5 +1,5 @@
-// Kandy & Hope's Marvel Card Vault — Verified Master Data (V1.16)
-// Audited against official 2026 Topps Chrome, Chrome Sapphire & Neon Marvel checklists & pull odds
+// Kandy & Hope's Marvel Card Vault — Verified Master Data (V1.17)
+// Audited against official 2026 Topps Chrome, Chrome Sapphire & Neon Marvel checklists, odds & Nov 26, 2026 market comps
 window.VAULT_DISPLAYS = [
   {
     "id": 1,
@@ -1028,8 +1028,8 @@ window.VAULT_CARDS = [
     "printRun": 10,
     "format": "Hobby Exclusive",
     "odds": "1:347 Hobby",
-    "valLow": 95,
-    "valHigh": 150,
+    "valLow": 65,
+    "valHigh": 105,
     "grade": null,
     "tags": [
       "Ultra Rare",
@@ -1061,8 +1061,8 @@ window.VAULT_CARDS = [
     "printRun": 20,
     "format": "Hobby Exclusive",
     "odds": "1:174 Hobby",
-    "valLow": 50,
-    "valHigh": 85,
+    "valLow": 38,
+    "valHigh": 60,
     "grade": null,
     "tags": [
       "Short Print",
@@ -1094,8 +1094,8 @@ window.VAULT_CARDS = [
     "printRun": 5,
     "format": "Mega Exclusive",
     "odds": "1:901 Mega",
-    "valLow": 110,
-    "valHigh": 180,
+    "valLow": 95,
+    "valHigh": 155,
     "grade": null,
     "tags": [
       "Ultra Rare",
@@ -1127,8 +1127,8 @@ window.VAULT_CARDS = [
     "printRun": 25,
     "format": "Blaster Exclusive",
     "odds": "1:611 Blaster",
-    "valLow": 25,
-    "valHigh": 45,
+    "valLow": 20,
+    "valHigh": 34,
     "grade": null,
     "tags": [
       "Low Numbered"
@@ -1159,8 +1159,8 @@ window.VAULT_CARDS = [
     "printRun": 25,
     "format": "Hobby Exclusive",
     "odds": "1:139 Hobby",
-    "valLow": 30,
-    "valHigh": 50,
+    "valLow": 24,
+    "valHigh": 40,
     "grade": null,
     "tags": [
       "Bookend",
@@ -1192,8 +1192,8 @@ window.VAULT_CARDS = [
     "printRun": 25,
     "format": "All Formats",
     "odds": "1:295 Hobby / 1:1,060 Mega / 1:1,696 Blaster",
-    "valLow": 22,
-    "valHigh": 40,
+    "valLow": 20,
+    "valHigh": 34,
     "grade": null,
     "tags": [
       "Low Numbered"
@@ -1224,8 +1224,8 @@ window.VAULT_CARDS = [
     "printRun": 39,
     "format": "All Formats",
     "odds": "1:190 Hobby / 1:679 Mega / 1:1,088 Blaster",
-    "valLow": 18,
-    "valHigh": 32,
+    "valLow": 14,
+    "valHigh": 24,
     "grade": null,
     "tags": [
       "Character Foil"
@@ -1256,8 +1256,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "Blaster Exclusive",
     "odds": "1:306 Blaster",
-    "valLow": 14,
-    "valHigh": 24,
+    "valLow": 11,
+    "valHigh": 18,
     "grade": null,
     "tags": [
       "Gold /50"
@@ -1288,8 +1288,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "Mega Exclusive",
     "odds": "1:91 Mega",
-    "valLow": 14,
-    "valHigh": 24,
+    "valLow": 11,
+    "valHigh": 18,
     "grade": null,
     "tags": [
       "Gold /50"
@@ -1320,8 +1320,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "Hobby Exclusive",
     "odds": "1:70 Hobby",
-    "valLow": 15,
-    "valHigh": 25,
+    "valLow": 12,
+    "valHigh": 19,
     "grade": null,
     "tags": [
       "Gold /50"
@@ -1352,8 +1352,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "Hobby Exclusive",
     "odds": "1:70 Hobby",
-    "valLow": 15,
-    "valHigh": 25,
+    "valLow": 12,
+    "valHigh": 19,
     "grade": null,
     "tags": [
       "Gold /50"
@@ -1384,8 +1384,8 @@ window.VAULT_CARDS = [
     "printRun": 61,
     "format": "Hobby Exclusive",
     "odds": "1:57 Hobby",
-    "valLow": 13,
-    "valHigh": 22,
+    "valLow": 12,
+    "valHigh": 20,
     "grade": null,
     "tags": [
       "Logofractor"
@@ -1566,8 +1566,8 @@ window.VAULT_CARDS = [
     "printRun": 80,
     "format": "All Formats",
     "odds": "1:93 Hobby / 1:331 Mega / 1:531 Blaster",
-    "valLow": 8,
-    "valHigh": 14,
+    "valLow": 11,
+    "valHigh": 18,
     "grade": null,
     "tags": [
       "Character Foil"
@@ -2052,8 +2052,8 @@ window.VAULT_CARDS = [
     "printRun": 99,
     "format": "Sapphire Edition",
     "odds": "1:6 Sapphire Packs",
-    "valLow": 15,
-    "valHigh": 28,
+    "valLow": 10,
+    "valHigh": 18,
     "grade": null,
     "tags": [
       "Sapphire"
@@ -2116,8 +2116,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "Hobby Exclusive",
     "odds": "1:10 Hobby",
-    "valLow": 5,
-    "valHigh": 10,
+    "valLow": 6,
+    "valHigh": 12,
     "grade": null,
     "tags": [
       "Neon",
@@ -2149,8 +2149,8 @@ window.VAULT_CARDS = [
     "printRun": 10,
     "format": "Hobby Exclusive",
     "odds": "1:347 Hobby",
-    "valLow": 105,
-    "valHigh": 165,
+    "valLow": 70,
+    "valHigh": 115,
     "grade": null,
     "tags": [
       "Bookend",
@@ -2183,8 +2183,8 @@ window.VAULT_CARDS = [
     "printRun": 10,
     "format": "Mega Exclusive",
     "odds": "1:451 Mega",
-    "valLow": 60,
-    "valHigh": 100,
+    "valLow": 48,
+    "valHigh": 80,
     "grade": null,
     "tags": [
       "Ultra Rare",
@@ -2216,8 +2216,8 @@ window.VAULT_CARDS = [
     "printRun": 25,
     "format": "Hobby Exclusive",
     "odds": "1:139 Hobby",
-    "valLow": 24,
-    "valHigh": 42,
+    "valLow": 20,
+    "valHigh": 34,
     "grade": null,
     "tags": [
       "Low Numbered"
@@ -2248,8 +2248,8 @@ window.VAULT_CARDS = [
     "printRun": 39,
     "format": "All Formats",
     "odds": "1:190 Hobby / 1:679 Mega / 1:1,088 Blaster",
-    "valLow": 18,
-    "valHigh": 30,
+    "valLow": 14,
+    "valHigh": 24,
     "grade": null,
     "tags": [
       "Character Foil"
@@ -2280,8 +2280,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "Hobby Exclusive",
     "odds": "1:70 Hobby",
-    "valLow": 15,
-    "valHigh": 26,
+    "valLow": 12,
+    "valHigh": 19,
     "grade": null,
     "tags": [
       "Gold /50"
@@ -2312,8 +2312,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "All Formats",
     "odds": "1:148 Hobby / 1:530 Mega / 1:849 Blaster",
-    "valLow": 14,
-    "valHigh": 24,
+    "valLow": 11,
+    "valHigh": 18,
     "grade": null,
     "tags": [
       "Gold /50"
@@ -2344,8 +2344,8 @@ window.VAULT_CARDS = [
     "printRun": 62,
     "format": "All Formats",
     "odds": "1:119 Hobby / 1:428 Mega / 1:684 Blaster",
-    "valLow": 15,
-    "valHigh": 26,
+    "valLow": 12,
+    "valHigh": 20,
     "grade": null,
     "tags": [
       "Character Foil"
@@ -2466,8 +2466,8 @@ window.VAULT_CARDS = [
     "printRun": 80,
     "format": "All Formats",
     "odds": "1:93 Hobby / 1:331 Mega / 1:531 Blaster",
-    "valLow": 8,
-    "valHigh": 14,
+    "valLow": 11,
+    "valHigh": 18,
     "grade": null,
     "tags": [
       "Character Foil"
@@ -2498,8 +2498,8 @@ window.VAULT_CARDS = [
     "printRun": 80,
     "format": "All Formats",
     "odds": "1:93 Hobby / 1:331 Mega / 1:531 Blaster",
-    "valLow": 8,
-    "valHigh": 14,
+    "valLow": 11,
+    "valHigh": 18,
     "grade": null,
     "tags": [
       "Character Foil"
@@ -3050,8 +3050,8 @@ window.VAULT_CARDS = [
     "printRun": 99,
     "format": "Sapphire Edition",
     "odds": "1:6 Sapphire Packs",
-    "valLow": 14,
-    "valHigh": 25,
+    "valLow": 10,
+    "valHigh": 18,
     "grade": null,
     "tags": [
       "Sapphire"
@@ -3082,8 +3082,8 @@ window.VAULT_CARDS = [
     "printRun": 10,
     "format": "All Formats",
     "odds": "1:9,881 Hobby / 1:35,834 Mega / 1:57,199 Blaster",
-    "valLow": 450,
-    "valHigh": 750,
+    "valLow": 320,
+    "valHigh": 460,
     "grade": "ACE 9 Mint",
     "tags": [
       "ACE 9",
@@ -3117,8 +3117,8 @@ window.VAULT_CARDS = [
     "printRun": 75,
     "format": "All Formats",
     "odds": "1:364 Hobby / 1:2,024 Mega / 1:12,055 Blaster",
-    "valLow": 85,
-    "valHigh": 140,
+    "valLow": 75,
+    "valHigh": 125,
     "grade": "ACE 10 Gem Mint",
     "tags": [
       "ACE 10",
@@ -3150,8 +3150,8 @@ window.VAULT_CARDS = [
     "printRun": 25,
     "format": "All Formats",
     "odds": "1:1,060 Hobby / 1:5,891 Mega / 1:35,147 Blaster",
-    "valLow": 80,
-    "valHigh": 135,
+    "valLow": 75,
+    "valHigh": 125,
     "grade": null,
     "tags": [
       "Autograph",
@@ -3183,8 +3183,8 @@ window.VAULT_CARDS = [
     "printRun": 75,
     "format": "All Formats",
     "odds": "1:364 Hobby / 1:2,024 Mega / 1:12,055 Blaster",
-    "valLow": 45,
-    "valHigh": 75,
+    "valLow": 35,
+    "valHigh": 58,
     "grade": null,
     "tags": [
       "Autograph"
@@ -3215,8 +3215,8 @@ window.VAULT_CARDS = [
     "printRun": 75,
     "format": "All Formats",
     "odds": "1:364 Hobby / 1:2,024 Mega / 1:12,055 Blaster",
-    "valLow": 55,
-    "valHigh": 90,
+    "valLow": 40,
+    "valHigh": 68,
     "grade": null,
     "tags": [
       "Autograph"
@@ -3247,8 +3247,8 @@ window.VAULT_CARDS = [
     "printRun": 99,
     "format": "All Formats",
     "odds": "1:276 Hobby / 1:1,533 Mega / 1:9,116 Blaster",
-    "valLow": 70,
-    "valHigh": 115,
+    "valLow": 60,
+    "valHigh": 100,
     "grade": "ACE 10 Gem Mint",
     "tags": [
       "ACE 10",
@@ -3280,8 +3280,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:91 Hobby / 1:504 Mega / 1:2,992 Blaster",
-    "valLow": 65,
-    "valHigh": 105,
+    "valLow": 55,
+    "valHigh": 90,
     "grade": "ACE 10 Gem Mint",
     "tags": [
       "ACE 10",
@@ -3314,7 +3314,7 @@ window.VAULT_CARDS = [
     "format": "All Formats",
     "odds": "1:2,649 Hobby / 1:14,828 Mega / 1:88,398 Blaster",
     "valLow": 85,
-    "valHigh": 135,
+    "valHigh": 140,
     "grade": null,
     "tags": [
       "Autograph",
@@ -3347,8 +3347,8 @@ window.VAULT_CARDS = [
     "printRun": 5,
     "format": "Mega Exclusive",
     "odds": "1:901 Mega",
-    "valLow": 280,
-    "valHigh": 450,
+    "valLow": 350,
+    "valHigh": 520,
     "grade": "ACE 9 Mint",
     "tags": [
       "ACE 9",
@@ -3381,8 +3381,8 @@ window.VAULT_CARDS = [
     "printRun": 5,
     "format": "Hobby Exclusive",
     "odds": "1:694 Hobby",
-    "valLow": 220,
-    "valHigh": 350,
+    "valLow": 170,
+    "valHigh": 270,
     "grade": "ACE 10 Gem Mint",
     "tags": [
       "ACE 10",
@@ -3415,8 +3415,8 @@ window.VAULT_CARDS = [
     "printRun": 10,
     "format": "Blaster Exclusive",
     "odds": "1:1,527 Blaster",
-    "valLow": 55,
-    "valHigh": 90,
+    "valLow": 42,
+    "valHigh": 70,
     "grade": null,
     "tags": [
       "Ultra Rare",
@@ -3448,8 +3448,8 @@ window.VAULT_CARDS = [
     "printRun": 10,
     "format": "Hobby Exclusive",
     "odds": "1:347 Hobby",
-    "valLow": 110,
-    "valHigh": 180,
+    "valLow": 80,
+    "valHigh": 130,
     "grade": "ACE 10 Gem Mint",
     "tags": [
       "ACE 10",
@@ -3482,8 +3482,8 @@ window.VAULT_CARDS = [
     "printRun": 10,
     "format": "Mega Exclusive",
     "odds": "1:451 Mega",
-    "valLow": 110,
-    "valHigh": 180,
+    "valLow": 85,
+    "valHigh": 135,
     "grade": "ACE 10 Gem Mint",
     "tags": [
       "ACE 10",
@@ -3516,8 +3516,8 @@ window.VAULT_CARDS = [
     "printRun": 10,
     "format": "All Formats",
     "odds": "1:738 Hobby / 1:2,647 Mega / 1:4,240 Blaster",
-    "valLow": 55,
-    "valHigh": 90,
+    "valLow": 42,
+    "valHigh": 70,
     "grade": null,
     "tags": [
       "Ultra Rare",
@@ -3549,8 +3549,8 @@ window.VAULT_CARDS = [
     "printRun": 25,
     "format": "Hobby Exclusive",
     "odds": "1:139 Hobby",
-    "valLow": 90,
-    "valHigh": 145,
+    "valLow": 120,
+    "valHigh": 190,
     "grade": "ACE 10 Gem Mint",
     "tags": [
       "ACE 10",
@@ -3582,8 +3582,8 @@ window.VAULT_CARDS = [
     "printRun": 25,
     "format": "Hobby Exclusive",
     "odds": "1:139 Hobby",
-    "valLow": 45,
-    "valHigh": 75,
+    "valLow": 38,
+    "valHigh": 62,
     "grade": "ACE 9 Mint",
     "tags": [
       "ACE 9",
@@ -3615,8 +3615,8 @@ window.VAULT_CARDS = [
     "printRun": 25,
     "format": "All Formats",
     "odds": "1:295 Hobby / 1:1,060 Mega / 1:1,696 Blaster",
-    "valLow": 70,
-    "valHigh": 115,
+    "valLow": 55,
+    "valHigh": 90,
     "grade": "ACE 10 Gem Mint",
     "tags": [
       "ACE 10",
@@ -3648,8 +3648,8 @@ window.VAULT_CARDS = [
     "printRun": 25,
     "format": "Blaster Exclusive",
     "odds": "1:611 Blaster",
-    "valLow": 35,
-    "valHigh": 58,
+    "valLow": 24,
+    "valHigh": 42,
     "grade": null,
     "tags": [
       "Low Numbered"
@@ -3680,8 +3680,8 @@ window.VAULT_CARDS = [
     "printRun": 25,
     "format": "Blaster Exclusive",
     "odds": "1:611 Blaster",
-    "valLow": 35,
-    "valHigh": 58,
+    "valLow": 24,
+    "valHigh": 42,
     "grade": null,
     "tags": [
       "Low Numbered"
@@ -3712,8 +3712,8 @@ window.VAULT_CARDS = [
     "printRun": 39,
     "format": "All Formats",
     "odds": "1:190 Hobby / 1:679 Mega / 1:1,088 Blaster",
-    "valLow": 65,
-    "valHigh": 110,
+    "valLow": 85,
+    "valHigh": 135,
     "grade": "ACE 10 Gem Mint",
     "tags": [
       "ACE 10",
@@ -3745,8 +3745,8 @@ window.VAULT_CARDS = [
     "printRun": 39,
     "format": "All Formats",
     "odds": "1:190 Hobby / 1:679 Mega / 1:1,088 Blaster",
-    "valLow": 45,
-    "valHigh": 75,
+    "valLow": 38,
+    "valHigh": 62,
     "grade": null,
     "tags": [
       "Alpha #1",
@@ -3778,8 +3778,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "Blaster Exclusive",
     "odds": "1:306 Blaster",
-    "valLow": 35,
-    "valHigh": 58,
+    "valLow": 30,
+    "valHigh": 50,
     "grade": null,
     "tags": [
       "Gold /50"
@@ -3810,8 +3810,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "All Formats",
     "odds": "1:148 Hobby / 1:530 Mega / 1:849 Blaster",
-    "valLow": 25,
-    "valHigh": 42,
+    "valLow": 20,
+    "valHigh": 34,
     "grade": null,
     "tags": [
       "Gold /50"
@@ -3842,8 +3842,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "Hobby Exclusive",
     "odds": "1:70 Hobby",
-    "valLow": 110,
-    "valHigh": 180,
+    "valLow": 160,
+    "valHigh": 260,
     "grade": "ACE 10 Gem Mint",
     "tags": [
       "ACE 10",
@@ -3875,8 +3875,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "Mega Exclusive",
     "odds": "1:91 Mega",
-    "valLow": 20,
-    "valHigh": 35,
+    "valLow": 14,
+    "valHigh": 24,
     "grade": null,
     "tags": [
       "Gold /50"
@@ -3907,8 +3907,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "Blaster Exclusive",
     "odds": "1:306 Blaster",
-    "valLow": 20,
-    "valHigh": 35,
+    "valLow": 14,
+    "valHigh": 24,
     "grade": null,
     "tags": [
       "Gold /50"
@@ -3939,8 +3939,8 @@ window.VAULT_CARDS = [
     "printRun": 61,
     "format": "Hobby Exclusive",
     "odds": "1:57 Hobby",
-    "valLow": 30,
-    "valHigh": 50,
+    "valLow": 26,
+    "valHigh": 44,
     "grade": null,
     "tags": [
       "Logofractor"
@@ -3971,8 +3971,8 @@ window.VAULT_CARDS = [
     "printRun": 62,
     "format": "All Formats",
     "odds": "1:119 Hobby / 1:428 Mega / 1:684 Blaster",
-    "valLow": 65,
-    "valHigh": 105,
+    "valLow": 70,
+    "valHigh": 115,
     "grade": "ACE 10 Gem Mint",
     "tags": [
       "ACE 10",
@@ -4222,8 +4222,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:192 Hobby / 1:230 Mega / 1:480 Blaster",
-    "valLow": 12,
-    "valHigh": 22,
+    "valLow": 10,
+    "valHigh": 17,
     "grade": null,
     "tags": [
       "Comic Cover",
@@ -4255,8 +4255,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:192 Hobby / 1:230 Mega / 1:480 Blaster",
-    "valLow": 12,
-    "valHigh": 22,
+    "valLow": 10,
+    "valHigh": 17,
     "grade": null,
     "tags": [
       "Comic Cover",
@@ -4288,8 +4288,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:192 Hobby / 1:230 Mega / 1:480 Blaster",
-    "valLow": 12,
-    "valHigh": 22,
+    "valLow": 11,
+    "valHigh": 18,
     "grade": null,
     "tags": [
       "Comic Cover",
@@ -4321,8 +4321,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:192 Hobby / 1:230 Mega / 1:480 Blaster",
-    "valLow": 12,
-    "valHigh": 22,
+    "valLow": 10,
+    "valHigh": 17,
     "grade": null,
     "tags": [
       "Comic Cover",
@@ -4354,8 +4354,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:192 Hobby / 1:230 Mega / 1:480 Blaster",
-    "valLow": 15,
-    "valHigh": 26,
+    "valLow": 14,
+    "valHigh": 22,
     "grade": null,
     "tags": [
       "Comic Cover",
@@ -4387,8 +4387,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:192 Hobby / 1:230 Mega / 1:480 Blaster",
-    "valLow": 12,
-    "valHigh": 22,
+    "valLow": 10,
+    "valHigh": 17,
     "grade": null,
     "tags": [
       "Comic Cover",
@@ -4420,8 +4420,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:192 Hobby / 1:230 Mega / 1:480 Blaster",
-    "valLow": 12,
-    "valHigh": 22,
+    "valLow": 10,
+    "valHigh": 17,
     "grade": null,
     "tags": [
       "Comic Cover",
@@ -4453,8 +4453,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:192 Hobby / 1:230 Mega / 1:480 Blaster",
-    "valLow": 12,
-    "valHigh": 22,
+    "valLow": 10,
+    "valHigh": 17,
     "grade": null,
     "tags": [
       "Comic Cover",
@@ -4486,8 +4486,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:192 Hobby / 1:230 Mega / 1:480 Blaster",
-    "valLow": 10,
-    "valHigh": 18,
+    "valLow": 9,
+    "valHigh": 15,
     "grade": null,
     "tags": [
       "Comic Cover",
@@ -5063,8 +5063,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "All Formats",
     "odds": "1:1,475 Hobby / 1:5,309 Mega / 1:8,480 Blaster",
-    "valLow": 25,
-    "valHigh": 45,
+    "valLow": 20,
+    "valHigh": 36,
     "grade": null,
     "tags": [
       "Gold /50",
@@ -5096,8 +5096,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:576 Hobby / 1:1,920 Mega / 1:2,880 Blaster",
-    "valLow": 45,
-    "valHigh": 85,
+    "valLow": 38,
+    "valHigh": 64,
     "grade": null,
     "tags": [
       "Case Hit",
@@ -5129,8 +5129,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:960 Hobby / 1:3,200 Mega / 1:4,800 Blaster",
-    "valLow": 55,
-    "valHigh": 95,
+    "valLow": 40,
+    "valHigh": 65,
     "grade": null,
     "tags": [
       "Case Hit",
@@ -5162,8 +5162,8 @@ window.VAULT_CARDS = [
     "printRun": 10,
     "format": "All Formats",
     "odds": "1:7,356 Hobby / 1:26,875 Mega / 1:42,278 Blaster",
-    "valLow": 130,
-    "valHigh": 210,
+    "valLow": 85,
+    "valHigh": 140,
     "grade": "ACE 10 Gem Mint",
     "tags": [
       "ACE 10",
@@ -5196,8 +5196,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:6 Hobby / 1:8 Mega / 1:32 Blaster",
-    "valLow": 4,
-    "valHigh": 8,
+    "valLow": 2,
+    "valHigh": 4,
     "grade": null,
     "tags": [
       "Insert"
@@ -5228,8 +5228,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:6 Hobby / 1:8 Mega / 1:32 Blaster",
-    "valLow": 4,
-    "valHigh": 8,
+    "valLow": 2,
+    "valHigh": 4,
     "grade": null,
     "tags": [
       "Insert"
@@ -5260,8 +5260,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:6 Hobby / 1:8 Mega / 1:32 Blaster",
-    "valLow": 6,
-    "valHigh": 12,
+    "valLow": 4,
+    "valHigh": 8,
     "grade": null,
     "tags": [
       "Insert"
@@ -5292,8 +5292,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:6 Hobby / 1:8 Mega / 1:32 Blaster",
-    "valLow": 5,
-    "valHigh": 10,
+    "valLow": 6,
+    "valHigh": 12,
     "grade": null,
     "tags": [
       "Insert"
@@ -5324,8 +5324,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:6 Hobby / 1:8 Mega / 1:32 Blaster",
-    "valLow": 4,
-    "valHigh": 8,
+    "valLow": 5,
+    "valHigh": 10,
     "grade": null,
     "tags": [
       "Insert"
@@ -5356,8 +5356,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:6 Hobby / 1:8 Mega / 1:32 Blaster",
-    "valLow": 4,
-    "valHigh": 8,
+    "valLow": 5,
+    "valHigh": 10,
     "grade": null,
     "tags": [
       "Insert"
@@ -5388,8 +5388,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "All Formats",
     "odds": "1:591 Hobby / 1:2,119 Mega / 1:3,393 Blaster",
-    "valLow": 65,
-    "valHigh": 110,
+    "valLow": 380,
+    "valHigh": 560,
     "grade": null,
     "tags": [
       "Gold /50",
@@ -5421,8 +5421,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:6 Hobby / 1:8 Mega / 1:32 Blaster",
-    "valLow": 4,
-    "valHigh": 8,
+    "valLow": 5,
+    "valHigh": 10,
     "grade": null,
     "tags": [
       "Insert"
@@ -5453,8 +5453,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:6 Hobby / 1:8 Mega / 1:32 Blaster",
-    "valLow": 4,
-    "valHigh": 8,
+    "valLow": 5,
+    "valHigh": 10,
     "grade": null,
     "tags": [
       "Insert"
@@ -5485,8 +5485,8 @@ window.VAULT_CARDS = [
     "printRun": 99,
     "format": "Hobby Exclusive",
     "odds": "1:63 Hobby",
-    "valLow": 5,
-    "valHigh": 9,
+    "valLow": 12,
+    "valHigh": 20,
     "grade": null,
     "tags": [
       "Neon",
@@ -6070,8 +6070,8 @@ window.VAULT_CARDS = [
     "printRun": 75,
     "format": "Hobby Exclusive",
     "odds": "1:83 Hobby",
-    "valLow": 7,
-    "valHigh": 12,
+    "valLow": 18,
+    "valHigh": 30,
     "grade": null,
     "tags": [
       "Neon",
@@ -6135,8 +6135,8 @@ window.VAULT_CARDS = [
     "printRun": 75,
     "format": "Hobby Exclusive",
     "odds": "1:83 Hobby",
-    "valLow": 7,
-    "valHigh": 12,
+    "valLow": 18,
+    "valHigh": 30,
     "grade": null,
     "tags": [
       "Neon",
@@ -6168,8 +6168,8 @@ window.VAULT_CARDS = [
     "printRun": 75,
     "format": "Hobby Exclusive",
     "odds": "1:83 Hobby",
-    "valLow": 6,
-    "valHigh": 10,
+    "valLow": 15,
+    "valHigh": 26,
     "grade": null,
     "tags": [
       "Neon",
@@ -6266,8 +6266,8 @@ window.VAULT_CARDS = [
     "printRun": 10,
     "format": "Hobby Exclusive",
     "odds": "1:625 Hobby",
-    "valLow": 55,
-    "valHigh": 95,
+    "valLow": 30,
+    "valHigh": 50,
     "grade": null,
     "tags": [
       "Neon",
@@ -6301,8 +6301,8 @@ window.VAULT_CARDS = [
     "printRun": 25,
     "format": "Retail Exclusive",
     "odds": "1:489 Mega / 1:1,063 Blaster / 1:1,614 Super Box",
-    "valLow": 30,
-    "valHigh": 52,
+    "valLow": 24,
+    "valHigh": 42,
     "grade": null,
     "tags": [
       "Neon",
@@ -6335,8 +6335,8 @@ window.VAULT_CARDS = [
     "printRun": 25,
     "format": "Hobby Exclusive",
     "odds": "1:250 Hobby",
-    "valLow": 26,
-    "valHigh": 44,
+    "valLow": 22,
+    "valHigh": 38,
     "grade": null,
     "tags": [
       "Neon",
@@ -6369,8 +6369,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "Hobby Exclusive",
     "odds": "1:125 Hobby",
-    "valLow": 20,
-    "valHigh": 34,
+    "valLow": 45,
+    "valHigh": 75,
     "grade": null,
     "tags": [
       "Neon",
@@ -6403,8 +6403,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "All Formats",
     "odds": "1:1,388 Hobby / 1:351 Mega / 1:1,064 Blaster / 1:517 Super Box",
-    "valLow": 20,
-    "valHigh": 34,
+    "valLow": 22,
+    "valHigh": 36,
     "grade": null,
     "tags": [
       "Neon",
@@ -6436,8 +6436,8 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "Retail Exclusive",
     "odds": "1:244 Mega / 1:532 Blaster / 1:807 Super Box",
-    "valLow": 15,
-    "valHigh": 26,
+    "valLow": 14,
+    "valHigh": 24,
     "grade": null,
     "tags": [
       "Neon",
@@ -6503,8 +6503,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:720 Hobby / 1:600 Mega / 1:840 Blaster / 1:2,148 Super Box",
-    "valLow": 65,
-    "valHigh": 115,
+    "valLow": 55,
+    "valHigh": 95,
     "grade": null,
     "tags": [
       "Neon",
@@ -6537,7 +6537,7 @@ window.VAULT_CARDS = [
     "printRun": 50,
     "format": "All Formats",
     "odds": "1:27,795 Hobby / 1:7,021 Mega / 1:21,300 Blaster / 1:10,349 Super Box",
-    "valLow": 95,
+    "valLow": 105,
     "valHigh": 165,
     "grade": null,
     "tags": [
@@ -6572,7 +6572,7 @@ window.VAULT_CARDS = [
     "format": "All Formats",
     "odds": "1:40 Hobby / 1:40 Mega / 1:42 Blaster / 1:40 Super Box",
     "valLow": 6,
-    "valHigh": 12,
+    "valHigh": 11,
     "grade": null,
     "tags": [
       "Neon",
@@ -6604,8 +6604,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:40 Hobby / 1:40 Mega / 1:42 Blaster / 1:40 Super Box",
-    "valLow": 5,
-    "valHigh": 9,
+    "valLow": 4,
+    "valHigh": 7,
     "grade": null,
     "tags": [
       "Neon",
@@ -6637,8 +6637,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:40 Hobby / 1:40 Mega / 1:42 Blaster / 1:40 Super Box",
-    "valLow": 6,
-    "valHigh": 11,
+    "valLow": 5,
+    "valHigh": 9,
     "grade": null,
     "tags": [
       "Neon",
@@ -6670,8 +6670,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:40 Hobby / 1:40 Mega / 1:42 Blaster / 1:40 Super Box",
-    "valLow": 5,
-    "valHigh": 9,
+    "valLow": 4,
+    "valHigh": 7,
     "grade": null,
     "tags": [
       "Neon",
@@ -6736,8 +6736,8 @@ window.VAULT_CARDS = [
     "printRun": null,
     "format": "All Formats",
     "odds": "1:880 Hobby / 1:1,020 Mega / 1:1,085 Blaster / 1:3,648 Super Box",
-    "valLow": 35,
-    "valHigh": 65,
+    "valLow": 22,
+    "valHigh": 38,
     "grade": null,
     "tags": [
       "Neon",

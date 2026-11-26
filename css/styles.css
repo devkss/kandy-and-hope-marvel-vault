@@ -3558,3 +3558,24 @@ body.dark-vault .add-validation-box.is-error { color: #fca5a5; }
   background: linear-gradient(135deg, #1d4ed8, #38bdf8, #818cf8);
   box-shadow: 0 14px 28px rgba(37, 99, 235, 0.34);
 }
+
+/* ==========================================================================
+   V1.17 UI UPDATES: VALUATION AUDIT STRIP
+   ========================================================================== */
+.val-audit-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 15px;
+  border-radius: 15px;
+  background: var(--surface-soft);
+  border: 1.5px solid rgba(16, 185, 129, 0.34);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.val-audit-strip strong { color: var(--text); }
+.val-audit-strip [hidden] { display: none !important; }
