@@ -1677,6 +1677,40 @@
       "missing": false,
       "isCustom": true,
       "updatedAt": 1795685351926
+    },
+    {
+      "id": "custom-5-cqgda-2eov",
+      "display": 5,
+      "row": 98,
+      "col": 1,
+      "slot": "85",
+      "owner": "Kandy",
+      "set": "2026 Topps Neon Marvel",
+      "cardNum": "#85",
+      "character": "Beta Ray Bill",
+      "artist": null,
+      "subset": "Neon Parallel",
+      "parallel": "Pink Foil",
+      "serial": "155/250",
+      "printRun": 250,
+      "format": "All Formats",
+      "odds": "Numbered /250",
+      "valLow": 0,
+      "valHigh": 0,
+      "grade": null,
+      "tags": [
+        "Neon"
+      ],
+      "theme": "neon-cyan",
+      "pattern": "smooth",
+      "orientation": "portrait",
+      "folder": "display-5-neon-marvel",
+      "baseFilename": "custom_d5_85_beta-ray-bill_pink-foil_155-250_cqgda",
+      "recommendedPath": "assets/cards/display-5-neon-marvel/custom_d5_85_beta-ray-bill_pink-foil_155-250_cqgda.jpg",
+      "placeholderSvg": null,
+      "missing": false,
+      "isCustom": true,
+      "updatedAt": 1795685418334
     }
   ],
   "deletedIds": [
