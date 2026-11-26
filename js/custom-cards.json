@@ -225,6 +225,40 @@
       "missing": false,
       "isCustom": true,
       "updatedAt": 1795632984768
+    },
+    {
+      "id": "custom-3-7w55b-1jco",
+      "display": 3,
+      "row": 98,
+      "col": 1,
+      "slot": "143",
+      "owner": "Kandy",
+      "set": "2026 Topps Chrome Marvel",
+      "cardNum": "#143",
+      "character": "Rapid",
+      "artist": null,
+      "subset": "Base Parallel",
+      "parallel": "Storm's Green Lightning Refractor",
+      "serial": "01/99",
+      "printRun": 99,
+      "format": "All Formats",
+      "odds": "Numbered /99",
+      "valLow": 0,
+      "valHigh": 0,
+      "grade": null,
+      "tags": [
+        "Alpha #1"
+      ],
+      "theme": "purple",
+      "pattern": "smooth",
+      "orientation": "portrait",
+      "folder": "display-3-chrome-hits",
+      "baseFilename": "custom_d3_143_rapid_storms-green-lightning-refra_01-99_7w55b",
+      "recommendedPath": "assets/cards/display-3-chrome-hits/custom_d3_143_rapid_storms-green-lightning-refra_01-99_7w55b.jpg",
+      "placeholderSvg": null,
+      "missing": false,
+      "isCustom": true,
+      "updatedAt": 1795677285647
     }
   ],
   "deletedIds": []
