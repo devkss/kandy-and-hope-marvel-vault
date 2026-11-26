@@ -1541,6 +1541,40 @@
       "missing": false,
       "isCustom": true,
       "updatedAt": 1795685042511
+    },
+    {
+      "id": "custom-5-ck721-ls8c",
+      "display": 5,
+      "row": 98,
+      "col": 1,
+      "slot": "145",
+      "owner": "Kandy",
+      "set": "2026 Topps Neon Marvel",
+      "cardNum": "#145",
+      "character": "Moonstar",
+      "artist": null,
+      "subset": "Neon Parallel",
+      "parallel": "Yellow Foil (Chrome)",
+      "serial": "156/275",
+      "printRun": 275,
+      "format": "All Formats",
+      "odds": "Numbered /275",
+      "valLow": 0,
+      "valHigh": 0,
+      "grade": null,
+      "tags": [
+        "Neon"
+      ],
+      "theme": "neon-cyan",
+      "pattern": "smooth",
+      "orientation": "portrait",
+      "folder": "display-5-neon-marvel",
+      "baseFilename": "custom_d5_145_moonstar_yellow-foil-chrome_156-275_ck721",
+      "recommendedPath": "assets/cards/display-5-neon-marvel/custom_d5_145_moonstar_yellow-foil-chrome_156-275_ck721.jpg",
+      "placeholderSvg": null,
+      "missing": false,
+      "isCustom": true,
+      "updatedAt": 1795685126329
     }
   ],
   "deletedIds": [
