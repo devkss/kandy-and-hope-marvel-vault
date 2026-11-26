@@ -1813,6 +1813,40 @@
       "missing": false,
       "isCustom": true,
       "updatedAt": 1795685933152
+    },
+    {
+      "id": "custom-5-d3a0o-evmr",
+      "display": 5,
+      "row": 98,
+      "col": 1,
+      "slot": "178",
+      "owner": "Kandy",
+      "set": "2026 Topps Neon Marvel",
+      "cardNum": "#178",
+      "character": "Rescue",
+      "artist": null,
+      "subset": "Neon Parallel",
+      "parallel": "Aqua Foil",
+      "serial": "059/199",
+      "printRun": 199,
+      "format": "All Formats",
+      "odds": "Numbered /199",
+      "valLow": 0,
+      "valHigh": 0,
+      "grade": null,
+      "tags": [
+        "Neon"
+      ],
+      "theme": "neon-cyan",
+      "pattern": "smooth",
+      "orientation": "portrait",
+      "folder": "display-5-neon-marvel",
+      "baseFilename": "custom_d5_178_rescue_aqua-foil_059-199_d3a0o",
+      "recommendedPath": "assets/cards/display-5-neon-marvel/custom_d5_178_rescue_aqua-foil_059-199_d3a0o.jpg",
+      "placeholderSvg": null,
+      "missing": false,
+      "isCustom": true,
+      "updatedAt": 1795686016632
     }
   ],
   "deletedIds": [
