@@ -1507,6 +1507,40 @@
       "missing": false,
       "isCustom": true,
       "updatedAt": 1795681304016
+    },
+    {
+      "id": "custom-5-ciedr-ikp0",
+      "display": 5,
+      "row": 98,
+      "col": 1,
+      "slot": "58",
+      "owner": "Kandy",
+      "set": "2026 Topps Neon Marvel",
+      "cardNum": "#58",
+      "character": "Hulkette",
+      "artist": null,
+      "subset": "Neon Parallel",
+      "parallel": "Yellow Foil (Chrome)",
+      "serial": "111/275",
+      "printRun": 275,
+      "format": "All Formats",
+      "odds": "Numbered /275",
+      "valLow": 0,
+      "valHigh": 0,
+      "grade": null,
+      "tags": [
+        "Neon"
+      ],
+      "theme": "neon-cyan",
+      "pattern": "smooth",
+      "orientation": "portrait",
+      "folder": "display-5-neon-marvel",
+      "baseFilename": "custom_d5_58_hulkette_yellow-foil-chrome_111-275_ciedr",
+      "recommendedPath": "assets/cards/display-5-neon-marvel/custom_d5_58_hulkette_yellow-foil-chrome_111-275_ciedr.jpg",
+      "placeholderSvg": null,
+      "missing": false,
+      "isCustom": true,
+      "updatedAt": 1795685042511
     }
   ],
   "deletedIds": [
