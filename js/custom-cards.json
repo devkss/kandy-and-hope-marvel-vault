@@ -1983,6 +1983,40 @@
       "missing": false,
       "isCustom": true,
       "updatedAt": 1795686480059
+    },
+    {
+      "id": "custom-5-dei09-6gdm",
+      "display": 5,
+      "row": 98,
+      "col": 1,
+      "slot": "85",
+      "owner": "Kandy",
+      "set": "2026 Topps Neon Marvel",
+      "cardNum": "#85",
+      "character": "Beta Ray Bill",
+      "artist": null,
+      "subset": "Neon Parallel",
+      "parallel": "Green Foil (Chrome)",
+      "serial": "06/99",
+      "printRun": 99,
+      "format": "All Formats",
+      "odds": "Numbered /99",
+      "valLow": 0,
+      "valHigh": 0,
+      "grade": null,
+      "tags": [
+        "Neon"
+      ],
+      "theme": "neon-cyan",
+      "pattern": "smooth",
+      "orientation": "portrait",
+      "folder": "display-5-neon-marvel",
+      "baseFilename": "custom_d5_85_beta-ray-bill_green-foil-chrome_06-99_dei09",
+      "recommendedPath": "assets/cards/display-5-neon-marvel/custom_d5_85_beta-ray-bill_green-foil-chrome_06-99_dei09.jpg",
+      "placeholderSvg": null,
+      "missing": false,
+      "isCustom": true,
+      "updatedAt": 1795686540201
     }
   ],
   "deletedIds": [
