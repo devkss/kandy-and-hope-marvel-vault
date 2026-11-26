@@ -1949,6 +1949,40 @@
       "missing": false,
       "isCustom": true,
       "updatedAt": 1795686382060
+    },
+    {
+      "id": "custom-5-dd7ln-v273",
+      "display": 5,
+      "row": 98,
+      "col": 1,
+      "slot": "64",
+      "owner": "Kandy",
+      "set": "2026 Topps Neon Marvel",
+      "cardNum": "#64",
+      "character": "Misty Knight",
+      "artist": null,
+      "subset": "Neon Parallel",
+      "parallel": "Green Diamante Foil",
+      "serial": "23/99",
+      "printRun": 99,
+      "format": "All Formats",
+      "odds": "Numbered /99",
+      "valLow": 0,
+      "valHigh": 0,
+      "grade": null,
+      "tags": [
+        "Neon"
+      ],
+      "theme": "neon-cyan",
+      "pattern": "smooth",
+      "orientation": "portrait",
+      "folder": "display-5-neon-marvel",
+      "baseFilename": "custom_d5_64_misty-knight_green-diamante-foil_23-99_dd7ln",
+      "recommendedPath": "assets/cards/display-5-neon-marvel/custom_d5_64_misty-knight_green-diamante-foil_23-99_dd7ln.jpg",
+      "placeholderSvg": null,
+      "missing": false,
+      "isCustom": true,
+      "updatedAt": 1795686480059
     }
   ],
   "deletedIds": [
