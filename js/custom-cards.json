@@ -1847,6 +1847,40 @@
       "missing": false,
       "isCustom": true,
       "updatedAt": 1795686016632
+    },
+    {
+      "id": "custom-5-d5hmr-eajp",
+      "display": 5,
+      "row": 98,
+      "col": 1,
+      "slot": "170",
+      "owner": "Kandy",
+      "set": "2026 Topps Neon Marvel",
+      "cardNum": "#170",
+      "character": "Deathlok",
+      "artist": null,
+      "subset": "Neon Parallel",
+      "parallel": "Blue Foil (Chrome)",
+      "serial": "028/150",
+      "printRun": 150,
+      "format": "All Formats",
+      "odds": "Numbered /150",
+      "valLow": 0,
+      "valHigh": 0,
+      "grade": null,
+      "tags": [
+        "Neon"
+      ],
+      "theme": "neon-cyan",
+      "pattern": "smooth",
+      "orientation": "portrait",
+      "folder": "display-5-neon-marvel",
+      "baseFilename": "custom_d5_170_deathlok_blue-foil-chrome_028-150_d5hmr",
+      "recommendedPath": "assets/cards/display-5-neon-marvel/custom_d5_170_deathlok_blue-foil-chrome_028-150_d5hmr.jpg",
+      "placeholderSvg": null,
+      "missing": false,
+      "isCustom": true,
+      "updatedAt": 1795686119811
     }
   ],
   "deletedIds": [
