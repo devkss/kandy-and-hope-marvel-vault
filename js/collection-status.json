@@ -1174,5 +1174,12 @@
     "valLow": 0,
     "valHigh": 0,
     "updatedAt": 1795794039564
+  },
+  "kc-106-bp-09-009": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795794071803
   }
 }
