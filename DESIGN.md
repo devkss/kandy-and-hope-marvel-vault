@@ -1,6 +1,6 @@
 # Kandy & Hope's Marvel Card Vault — Code-Level Project Design Document
 
-**Current Version:** `V1.17`  
+**Current Version:** `V1.18`  
 **Audience:** Junior Developers & Maintainers  
 **Hosting:** GitHub Pages (Zero-Build Static SPA)  
 **Cross-Reference Convention:** Every code file (`index.html`, `css/styles.css`, `js/app.js`, `js/data.js`, `js/bios.js`) contains inline **`[DOC §X.Y]`** comment tags that map directly to the sections in this document. Press `Ctrl+Shift+F` in VS Code and search `[DOC §` to jump straight between documentation and code.
@@ -234,9 +234,12 @@ sequenceDiagram
 * `verifyStoredGitHubPermissions()` silently calls `GET /repos/:owner/:repo` on boot to revoke edit UI automatically if a token expires or lacks push access.
 
 ### §6.2 GitHub REST Contents API (`[DOC §6.2]`)
-* **`uploadToGitHub(repoFilePath, base64Content, commitMessage)`:** Checks if the file exists (to grab its `sha`, required by GitHub for overwrites), then sends a `PUT` request with `X-GitHub-Api-Version: 2022-11-28`.
+* **`uploadToGitHub(repoFilePath, base64Content, commitMessage)`:** Implements three layers of protection against GitHub HTTP `409 Conflict` (`"<file> does not match <sha>"`) errors when updating the same JSON file (`js/collection-status.json` or `js/custom-cards.json`) multiple times within 60 seconds:
+  1. **Per-File Write Queue (`enqueueGitHubWrite` / `ghWriteQueues`):** Serializes concurrent writes to the same repository path so rapid clicks never race.
+  2. **Session SHA Memory (`ghKnownShas`) + `cache: 'no-store'`:** Stores the exact `content.sha` returned by GitHub after each successful `PUT`, and passes `cache: 'no-store'` on all `GET`/`PUT`/`DELETE` requests so the browser never serves a stale 60-second cached SHA from GitHub's `Cache-Control: max-age=60` header.
+  3. **Automatic `409` Conflict Retry (up to 3 attempts):** If GitHub still reports a SHA mismatch (e.g., another device committed simultaneously), clears `ghKnownShas[path]`, pauses briefly (`350ms × attempt`), fetches the live SHA, and retries transparently.
 * **`saveStatusOverridesToGitHub()`** & **`saveCustomCardsToGitHub()`:** UTF-8-safe Base64 encoding via `utf8ToBase64()` (`TextEncoder` → `btoa`) so `£`, `—`, and accented artist names never corrupt.
-* **`deleteFromGitHubIfExists()`:** Used when replacing an animated hero GIF with a static JPG photo.
+* **`deleteFromGitHubIfExists()`:** Uses `cache: 'no-store'` and clears `ghKnownShas[path]` when replacing an animated hero GIF with a static JPG photo.
 
 ### §6.3 Client-Side Image Pipeline (`[DOC §6.3]`)
 * **`processImageBlob(blob, optimise)`:** Draws any uploaded/pasted image onto an offscreen `<canvas>`, caps max dimension at `1200px` (or `2400px` unoptimised), fills background `#0f172a`, and encodes as JPEG (`quality: 0.88`). Animated hero GIFs bypass Canvas (`isGifFile()`) to preserve all animation frames, while also generating a frame-1 JPG poster for Paused mode.
@@ -338,6 +341,7 @@ Whenever you modify `index.html`, `css/styles.css`, `js/app.js`, or `js/data.js`
 | **Card photo shows placeholder SVG** | File extension/stem doesn't match `baseFilename` in `assets/cards/<folder>/`. | Open the card modal → click **📋 Copy Filename** to verify exact expected filename. |
 | **Add Card / Export Sheet buttons missing** | GitHub Sync is not connected (or stored token lost push permissions). | Click **☁️ GitHub Sync** and verify Fine-Grained PAT has `Contents: Read and write`. |
 | **Different browsers show different owned counts** | Unpushed local changes exist in `localStorage` on one device. | Click the orange **⚠️ Sync Local Changes** button → **Push Local Changes to GitHub** (or **Reset Local Cache**). |
+| **`js/collection-status.json does not match <sha>` (HTTP 409)** | Fixed in **V1.18**: previously caused by browser caching GitHub's `GET` SHA response for 60s between rapid status toggles. | Ensure you are running `V1.18+` (`cache: 'no-store'` + `ghKnownShas` + 409 auto-retry). If two people edit simultaneously, retry once. |
 | **JS Syntax Error / Blank Vault** | Unclosed brace, quote, or missing HTML element ID referenced by `getElementById()`. | Open browser DevTools (`F12` → Console) and check the line number; verify all `getElementById()` IDs exist in `index.html`. |
 
 ### §9.5 Suggested Future Improvements

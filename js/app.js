@@ -1,10 +1,10 @@
 // ============================================================================
-// Kandy & Hope's Marvel Card Vault — Main Application Engine (V1.17)
+// Kandy & Hope's Marvel Card Vault — Main Application Engine (V1.18)
 // [DOC §2.1] Wrapped in an IIFE to keep global scope clean (zero dependencies).
 // See DESIGN.md at repository root — match any "[DOC §X.Y]" tag directly.
 // ============================================================================
 (function () {
-  const APP_VERSION = 'V1.17';
+  const APP_VERSION = 'V1.18';
   const ANIM_PREF_KEY = 'kh_vault_anim_paused_v1';
   const DISPLAY_STICKERS = {
     1: { src: 'assets/stickers/moon-girl-topps.png', alt: 'Moon Girl Topps comic sticker', cls: 'sticker-tall' },
@@ -626,48 +626,101 @@
     return btoa(bin);
   }
 
+  // In-memory SHA cache & per-file write queue to eliminate 409 SHA conflicts
+  // [DOC §6.2] Prevents stale browser 60s HTTP cache & rapid back-to-back save collisions
+  const ghKnownShas = {};
+  const ghWriteQueues = {};
+
+  function enqueueGitHubWrite(repoFilePath, taskFn) {
+    const prev = ghWriteQueues[repoFilePath] || Promise.resolve();
+    const run = prev.catch(() => {}).then(taskFn);
+    ghWriteQueues[repoFilePath] = run;
+    return run;
+  }
+
   // Upload/Overwrite a file directly in GitHub via REST Contents API
-  // [DOC §6.2] GitHub REST Contents API (SHA check + Base64 PUT / DELETE)
+  // [DOC §6.2] GitHub REST Contents API (cache: 'no-store' SHA check + 409 auto-retry + write queue)
   async function uploadToGitHub(repoFilePath, base64Content, commitMessage) {
-    const { owner, repo, branch, token } = state.gh;
-    if (!token || !owner || !repo) throw new Error('NOT_CONFIGURED');
+    return enqueueGitHubWrite(repoFilePath, async () => {
+      const { owner, repo, branch, token } = state.gh;
+      if (!token || !owner || !repo) throw new Error('NOT_CONFIGURED');
 
-    const encodedPath = repoFilePath.split('/').map(encodeURIComponent).join('/');
-    const apiBase = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${encodedPath}`;
-    const headers = {
-      'Authorization': `Bearer ${token.trim()}`,
-      'Accept': 'application/vnd.github+json',
-      'X-GitHub-Api-Version': '2022-11-28'
-    };
+      const targetBranch = branch || 'main';
+      const encodedPath = repoFilePath.split('/').map(encodeURIComponent).join('/');
+      const apiBase = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${encodedPath}`;
+      const headers = {
+        'Authorization': `Bearer ${token.trim()}`,
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+      };
 
-    let existingSha = null;
-    const checkRes = await fetch(`${apiBase}?ref=${encodeURIComponent(branch || 'main')}`, { headers });
-    if (checkRes.status === 200) {
-      const existingData = await checkRes.json();
-      existingSha = existingData.sha || null;
-    } else if (checkRes.status !== 404) {
-      const errBody = await checkRes.json().catch(() => ({}));
-      throw new Error(errBody.message || `GitHub check failed (${checkRes.status})`);
-    }
+      const fetchLiveSha = async () => {
+        const checkRes = await fetch(`${apiBase}?ref=${encodeURIComponent(targetBranch)}`, {
+          headers,
+          cache: 'no-store'
+        });
+        if (checkRes.status === 200) {
+          const existingData = await checkRes.json();
+          return existingData.sha || null;
+        }
+        if (checkRes.status === 404) return null;
+        const errBody = await checkRes.json().catch(() => ({}));
+        throw new Error(errBody.message || `GitHub check failed (${checkRes.status})`);
+      };
 
-    const payload = {
-      message: commitMessage,
-      content: base64Content,
-      branch: branch || 'main'
-    };
-    if (existingSha) payload.sha = existingSha;
+      const maxAttempts = 3;
+      let lastError = null;
+      let preferKnownSha = true;
 
-    const putRes = await fetch(apiBase, {
-      method: 'PUT',
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        let existingSha = null;
+        const known = ghKnownShas[repoFilePath] || null;
+        if (attempt === 1 && preferKnownSha && known) {
+          // Use the exact SHA returned by our most recent successful PUT on this file
+          existingSha = known;
+        } else {
+          existingSha = await fetchLiveSha();
+        }
+
+        const payload = {
+          message: commitMessage,
+          content: base64Content,
+          branch: targetBranch
+        };
+        if (existingSha) payload.sha = existingSha;
+
+        const putRes = await fetch(apiBase, {
+          method: 'PUT',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          cache: 'no-store'
+        });
+
+        if (putRes.ok) {
+          const putData = await putRes.json();
+          if (putData && putData.content && putData.content.sha) {
+            ghKnownShas[repoFilePath] = putData.content.sha;
+          }
+          return putData;
+        }
+
+        const errBody = await putRes.json().catch(() => ({}));
+        const errMsg = errBody.message || `GitHub upload failed (${putRes.status})`;
+        const isShaConflict = putRes.status === 409 || /does not match/i.test(errMsg);
+        lastError = new Error(errMsg);
+
+        if (isShaConflict && attempt < maxAttempts) {
+          // Clear stale SHA memory, pause briefly for GitHub edge propagation, then re-fetch live SHA
+          delete ghKnownShas[repoFilePath];
+          preferKnownSha = false;
+          await new Promise(r => setTimeout(r, 350 * attempt));
+          continue;
+        }
+        throw lastError;
+      }
+
+      throw lastError || new Error('GitHub upload failed after retries');
     });
-
-    if (!putRes.ok) {
-      const errBody = await putRes.json().catch(() => ({}));
-      throw new Error(errBody.message || `GitHub upload failed (${putRes.status})`);
-    }
-    return await putRes.json();
   }
 
   async function saveStatusOverridesToGitHub(commitMsg) {
@@ -720,19 +773,24 @@
       'Accept': 'application/vnd.github+json',
       'X-GitHub-Api-Version': '2022-11-28'
     };
-    const checkRes = await fetch(`${apiBase}?ref=${encodeURIComponent(branch || 'main')}`, { headers });
+    const checkRes = await fetch(`${apiBase}?ref=${encodeURIComponent(branch || 'main')}`, {
+      headers,
+      cache: 'no-store'
+    });
     if (checkRes.status !== 200) return;
     const existingData = await checkRes.json();
     if (!existingData || !existingData.sha) return;
-    await fetch(apiBase, {
+    const delRes = await fetch(apiBase, {
       method: 'DELETE',
       headers: { ...headers, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         message: commitMessage,
         sha: existingData.sha,
         branch: branch || 'main'
-      })
+      }),
+      cache: 'no-store'
     });
+    if (delRes.ok) delete ghKnownShas[repoFilePath];
   }
 
   // Save Blob locally with exact required filename
@@ -818,7 +876,8 @@
             'Authorization': `Bearer ${state.gh.token.trim()}`,
             'Accept': 'application/vnd.github+json',
             'X-GitHub-Api-Version': '2022-11-28'
-          }
+          },
+          cache: 'no-store'
         }
       );
       if (res.ok) {
