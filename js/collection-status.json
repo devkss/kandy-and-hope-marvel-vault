@@ -1118,5 +1118,19 @@
     "valLow": 0,
     "valHigh": 0,
     "updatedAt": 1795763543208
+  },
+  "kn-216-rv-010": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795763594144
+  },
+  "kn-216-rv-019": {
+    "missing": false,
+    "serial": "Unnumbered",
+    "valLow": 0,
+    "valHigh": 0,
+    "updatedAt": 1795763657085
   }
 }
